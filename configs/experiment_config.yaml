@@ -1,0 +1,37 @@
+# Experiment Execution Configuration
+experiment_meta:
+  name: "CrossSite_PV_Uncertainty_Benchmark"
+  version: "0.1.0"
+  random_seed: 42
+
+forecasting_task:
+  primary_horizon: "1h_ahead"
+  secondary_horizon: ["3h_ahead", "6h_ahead"]
+  target_definition: "capacity_factor" # active_power / rated_capacity
+
+models:
+  baselines:
+    - "persistence"
+    - "seasonal_naive_24h"
+    - "ridge_regression"
+  classical_ml:
+    - "random_forest"
+    - "xgboost"
+    - "lightgbm"
+  deep_learning:
+    - "lstm"
+    - "tcn"
+
+adaptation_budgets_days: [0, 1, 3, 7, 14] # 0 = Zero-shot
+
+sensor_missingness_scenarios:
+  complete: 0.0
+  moderate_missing: 0.10
+  severe_missing: 0.30
+  extreme_missing: 0.50
+  weather_channel_drop: ["solar_rad", "temp", "cloud_cover"]
+
+uncertainty_quantification:
+  method: "conformalized_quantile_regression" # CQR via MAPIE
+  coverage_levels: [0.80, 0.90, 0.95]
+  metrics: ["pinball_loss", "picp", "mpiw", "winkler_score"]

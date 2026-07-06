@@ -1,0 +1,24 @@
+# Dataset Configuration
+seed: 42
+
+datasets:
+  romanian_two_site:
+    repo_url: "https://github.com/upb-nlp/PV-Generation-Dataset"
+    sites: ["site_A", "site_B"]
+    capacity_kwp: 50.0
+    nominal_resolution: "1h"
+    features:
+      weather: ["temp", "humidity", "cloud_cover", "wind_speed", "solar_rad"]
+      target: "active_power"
+
+  pvdaq:
+    source_url: "https://data.openei.org/submissions/4568"
+    s3_bucket: "s3://oedi-data-lake/pvdaq/"
+    candidate_systems: [4, 10, 34, 1199, 1283]
+    target_column: "dc_power" # or ac_power subject to audit
+    measurement_interval: "15m"
+
+  bangladesh_rooftop:
+    source_url: "https://data.mendeley.com/datasets/g6pxf8nnt6/2"
+    location: "Dhaka, Bangladesh"
+    type: "supplementary_tropical_validation"
