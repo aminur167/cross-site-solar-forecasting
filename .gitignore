@@ -44,11 +44,9 @@ data/interim/*
 data/processed/*
 !data/processed/.gitkeep
 
-# Models and experiment logs
+# Models and heavy artifacts (Keep results JSON/CSV tracked)
 experiments/logs/*
 !experiments/logs/.gitkeep
-experiments/results/*
-!experiments/results/.gitkeep
 *.pt
 *.pth
 *.onnx
