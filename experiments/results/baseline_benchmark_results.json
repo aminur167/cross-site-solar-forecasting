@@ -1,0 +1,42 @@
+{
+    "Persistence": {
+        "MAE": 0.1111,
+        "RMSE": 0.1535,
+        "nMAE_pct": 11.11,
+        "nRMSE_pct": 15.35,
+        "R2": 0.7995,
+        "Skill_Score_vs_Persist": 0.0
+    },
+    "Seasonal_Naive_24h": {
+        "MAE": 0.1068,
+        "RMSE": 0.1996,
+        "nMAE_pct": 10.68,
+        "nRMSE_pct": 19.96,
+        "R2": 0.6607,
+        "Skill_Score_vs_Persist": -0.3008
+    },
+    "Ridge_Regression": {
+        "MAE": 0.0599,
+        "RMSE": 0.0978,
+        "nMAE_pct": 5.99,
+        "nRMSE_pct": 9.78,
+        "R2": 0.9186,
+        "Skill_Score_vs_Persist": 0.3627
+    },
+    "Random_Forest": {
+        "MAE": 0.0481,
+        "RMSE": 0.0914,
+        "nMAE_pct": 4.81,
+        "nRMSE_pct": 9.14,
+        "R2": 0.9289,
+        "Skill_Score_vs_Persist": 0.4044
+    },
+    "Gradient_Boosting": {
+        "MAE": 0.0486,
+        "RMSE": 0.0923,
+        "nMAE_pct": 4.86,
+        "nRMSE_pct": 9.23,
+        "R2": 0.9274,
+        "Skill_Score_vs_Persist": 0.3983
+    }
+}
