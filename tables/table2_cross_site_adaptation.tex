@@ -1,0 +1,26 @@
+\begin{table}[htbp]
+\centering
+\caption{Cross-site transfer learning and data-efficient target adaptation results from Source Site A to Target Site B (50~kWp, test horizon: March--May 2026, $N=1,177$ daytime hours).}
+\label{tab:cross_site_adaptation}
+\begin{tabular}{lcccccc}
+\hline
+\textbf{Regime} & \textbf{Target Budget} & \textbf{nMAE (\%)} & \textbf{nRMSE (\%)} & \textbf{$R^2$} & \textbf{Skill Score} & \textbf{Error Reduction} \\
+\hline
+Persistence Baseline & --- & 11.12 & 15.60 & 0.7768 & 0.0000 & Reference \\
+Target Oracle (Full Data) & $\sim$315 days & 5.63 & 9.79 & 0.9121 & +0.3722 & Ceiling \\
+\hline
+\multicolumn{7}{l}{\textit{Target-Only from Scratch (No Transfer Learning)}} \\
+Target-Only & 1 day & 29.33 & 33.12 & -0.0066 & -1.1238 & Overfitting \\
+Target-Only & 3 days & 12.51 & 17.53 & 0.7182 & -0.1236 & Overfitting \\
+Target-Only & 7 days & 8.83 & 13.66 & 0.8288 & +0.1242 & $+20.6\%$ vs Persist \\
+Target-Only & 14 days & 7.66 & 12.41 & 0.8588 & +0.2047 & $+31.1\%$ vs Persist \\
+\hline
+\multicolumn{7}{l}{\textit{Transfer Learning \& Target Adaptation (Source + Target Budget)}} \\
+Zero-Shot Transfer & 0 days & 4.94 & 8.98 & 0.9260 & \textbf{+0.4243} & $+55.6\%$ vs Persist \\
+Adapted Transfer & 1 day & 5.05 & 9.10 & 0.9240 & +0.4164 & $\mathbf{-82.8\%}$ vs Scratch \\
+Adapted Transfer & 3 days & 5.10 & 9.13 & 0.9235 & +0.4147 & $\mathbf{-59.2\%}$ vs Scratch \\
+Adapted Transfer & 7 days & 5.07 & 9.06 & 0.9247 & +0.4192 & $\mathbf{-42.6\%}$ vs Scratch \\
+Adapted Transfer & 14 days & \textbf{4.98} & \textbf{8.97} & \textbf{0.9262} & \textbf{+0.4250} & $\mathbf{-35.0\%}$ vs Scratch \\
+\hline
+\end{tabular}
+\end{table}

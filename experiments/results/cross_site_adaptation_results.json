@@ -1,0 +1,112 @@
+{
+    "Persistence_Baseline": {
+        "MAE": 0.1112,
+        "RMSE": 0.156,
+        "nMAE_pct": 11.12,
+        "nRMSE_pct": 15.6,
+        "R2": 0.7768
+    },
+    "Target_Oracle_Full": {
+        "MAE": 0.0563,
+        "RMSE": 0.0979,
+        "nMAE_pct": 5.63,
+        "nRMSE_pct": 9.79,
+        "R2": 0.9121,
+        "Skill_Score_vs_Persist": 0.3722
+    },
+    "Zero_Shot_and_Adaptation": {
+        "k_0_days": {
+            "budget_days": 0,
+            "samples_used": 0,
+            "transfer_adapted_metrics": {
+                "MAE": 0.0494,
+                "RMSE": 0.0898,
+                "nMAE_pct": 4.94,
+                "nRMSE_pct": 8.98,
+                "R2": 0.926,
+                "Skill_Score_vs_Persist": 0.4243
+            },
+            "target_only_metrics": null
+        },
+        "k_1_days": {
+            "budget_days": 1,
+            "samples_used": 19,
+            "transfer_adapted_metrics": {
+                "MAE": 0.0505,
+                "RMSE": 0.091,
+                "nMAE_pct": 5.05,
+                "nRMSE_pct": 9.1,
+                "R2": 0.924,
+                "Skill_Score_vs_Persist": 0.4164
+            },
+            "target_only_metrics": {
+                "MAE": 0.2933,
+                "RMSE": 0.3312,
+                "nMAE_pct": 29.33,
+                "nRMSE_pct": 33.12,
+                "R2": -0.0066,
+                "Skill_Score_vs_Persist": -1.1238
+            }
+        },
+        "k_3_days": {
+            "budget_days": 3,
+            "samples_used": 55,
+            "transfer_adapted_metrics": {
+                "MAE": 0.051,
+                "RMSE": 0.0913,
+                "nMAE_pct": 5.1,
+                "nRMSE_pct": 9.13,
+                "R2": 0.9235,
+                "Skill_Score_vs_Persist": 0.4147
+            },
+            "target_only_metrics": {
+                "MAE": 0.1251,
+                "RMSE": 0.1753,
+                "nMAE_pct": 12.51,
+                "nRMSE_pct": 17.53,
+                "R2": 0.7182,
+                "Skill_Score_vs_Persist": -0.1236
+            }
+        },
+        "k_7_days": {
+            "budget_days": 7,
+            "samples_used": 124,
+            "transfer_adapted_metrics": {
+                "MAE": 0.0507,
+                "RMSE": 0.0906,
+                "nMAE_pct": 5.07,
+                "nRMSE_pct": 9.06,
+                "R2": 0.9247,
+                "Skill_Score_vs_Persist": 0.4192
+            },
+            "target_only_metrics": {
+                "MAE": 0.0883,
+                "RMSE": 0.1366,
+                "nMAE_pct": 8.83,
+                "nRMSE_pct": 13.66,
+                "R2": 0.8288,
+                "Skill_Score_vs_Persist": 0.1242
+            }
+        },
+        "k_14_days": {
+            "budget_days": 14,
+            "samples_used": 251,
+            "transfer_adapted_metrics": {
+                "MAE": 0.0498,
+                "RMSE": 0.0897,
+                "nMAE_pct": 4.98,
+                "nRMSE_pct": 8.97,
+                "R2": 0.9262,
+                "Skill_Score_vs_Persist": 0.425
+            },
+            "target_only_metrics": {
+                "MAE": 0.0766,
+                "RMSE": 0.1241,
+                "nMAE_pct": 7.66,
+                "nRMSE_pct": 12.41,
+                "R2": 0.8588,
+                "Skill_Score_vs_Persist": 0.2047
+            }
+        }
+    }
+}
