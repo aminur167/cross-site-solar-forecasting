@@ -1,0 +1,107 @@
+{
+    "Uncertainty_Calibration_Regimes": {
+        "Raw_Quantile_Regression": {
+            "PICP_pct": 90.91,
+            "Target_Coverage_pct": 90.0,
+            "MPIW": 0.2398,
+            "Winkler_Score": 0.3201,
+            "Coverage_Guaranteed": true
+        },
+        "Source_Calibrated_CQR": {
+            "PICP_pct": 91.5,
+            "Target_Coverage_pct": 90.0,
+            "MPIW": 0.2426,
+            "Winkler_Score": 0.3202,
+            "Coverage_Guaranteed": true
+        },
+        "Target_Adapted_CQR": {
+            "PICP_pct": 92.95,
+            "Target_Coverage_pct": 90.0,
+            "MPIW": 0.2501,
+            "Winkler_Score": 0.3212,
+            "Coverage_Guaranteed": true
+        }
+    },
+    "Sensor_Availability_Stress_Test": {
+        "Complete Telemetry (100% Sensors)": {
+            "point_metrics": {
+                "MAE": 0.0731,
+                "RMSE": 0.1081,
+                "nMAE_pct": 7.31,
+                "nRMSE_pct": 10.81,
+                "R2": 0.8927
+            },
+            "uncertainty_metrics": {
+                "PICP_pct": 92.95,
+                "Target_Coverage_pct": 90.0,
+                "MPIW": 0.2501,
+                "Winkler_Score": 0.3212,
+                "Coverage_Guaranteed": true
+            }
+        },
+        "Moderate Dropout (10% Missing)": {
+            "point_metrics": {
+                "MAE": 0.0735,
+                "RMSE": 0.1087,
+                "nMAE_pct": 7.35,
+                "nRMSE_pct": 10.87,
+                "R2": 0.8917
+            },
+            "uncertainty_metrics": {
+                "PICP_pct": 92.44,
+                "Target_Coverage_pct": 90.0,
+                "MPIW": 0.2489,
+                "Winkler_Score": 0.327,
+                "Coverage_Guaranteed": true
+            }
+        },
+        "Severe Dropout (30% Missing)": {
+            "point_metrics": {
+                "MAE": 0.0756,
+                "RMSE": 0.1105,
+                "nMAE_pct": 7.56,
+                "nRMSE_pct": 11.05,
+                "R2": 0.888
+            },
+            "uncertainty_metrics": {
+                "PICP_pct": 91.76,
+                "Target_Coverage_pct": 90.0,
+                "MPIW": 0.2498,
+                "Winkler_Score": 0.3351,
+                "Coverage_Guaranteed": true
+            }
+        },
+        "Extreme Dropout (50% Missing)": {
+            "point_metrics": {
+                "MAE": 0.0808,
+                "RMSE": 0.1145,
+                "nMAE_pct": 8.08,
+                "nRMSE_pct": 11.45,
+                "R2": 0.8798
+            },
+            "uncertainty_metrics": {
+                "PICP_pct": 89.38,
+                "Target_Coverage_pct": 90.0,
+                "MPIW": 0.2566,
+                "Winkler_Score": 0.3506,
+                "Coverage_Guaranteed": false
+            }
+        },
+        "Total Solar Irradiance Outage (No GHI)": {
+            "point_metrics": {
+                "MAE": 0.0932,
+                "RMSE": 0.1323,
+                "nMAE_pct": 9.32,
+                "nRMSE_pct": 13.23,
+                "R2": 0.8393
+            },
+            "uncertainty_metrics": {
+                "PICP_pct": 84.96,
+                "Target_Coverage_pct": 90.0,
+                "MPIW": 0.2777,
+                "Winkler_Score": 0.3931,
+                "Coverage_Guaranteed": false
+            }
+        }
+    }
+}
