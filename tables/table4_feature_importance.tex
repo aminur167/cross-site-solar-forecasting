@@ -1,0 +1,21 @@
+\begin{table}[htbp]
+\centering
+\caption{Global SHAP feature importance rankings and relative predictive contributions for cross-site solar PV forecasting.}
+\label{tab:feature_importance}
+\begin{tabular}{clcc}
+\hline
+\textbf{Rank} & \textbf{Feature Description} & \textbf{Mean $|\text{SHAP}|$ Value} & \textbf{Relative Contribution (\%)} \\
+\hline
+1 & \texttt{lag_0} & 0.2132 & 51.88\% \\
+2 & \texttt{hour_sin} & 0.0499 & 12.15\% \\
+3 & \texttt{ghi_diff_1h} & 0.0337 & 8.20\% \\
+4 & \texttt{solar_azimuth_deg} & 0.0275 & 6.68\% \\
+5 & \texttt{lag_23} & 0.0143 & 3.47\% \\
+6 & \texttt{cloud_lag_0} & 0.0135 & 3.30\% \\
+7 & \texttt{ghi_lag_0} & 0.0111 & 2.71\% \\
+8 & \texttt{solar_elevation_deg} & 0.0108 & 2.64\% \\
+9 & \texttt{rolling_std_3h} & 0.0105 & 2.57\% \\
+10 & \texttt{lag_1} & 0.0073 & 1.78\% \\
+\hline
+\end{tabular}
+\end{table}
