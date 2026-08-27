@@ -1,0 +1,5 @@
+- Unified transfer learning framework couples GBDTs with Conformal Prediction.
+- Transfer adaptation cuts forecast error by 82.8% on 1-day newly commissioned sites.
+- Calibrated CQR intervals achieve 92.95% empirical coverage on unseen target plants.
+- Forecaster maintains robustness under 30% random sensor dropout in the field.
+- Game-theoretic SHAP confirms pyranometer loss as the primary failure point.

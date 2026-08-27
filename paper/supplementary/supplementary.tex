@@ -1,0 +1,64 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{geometry}
+\geometry{a4paper, margin=1in}
+\usepackage{hyperref}
+
+\title{\textbf{Supplementary Material:\\Data-Efficient and Uncertainty-Calibrated Cross-Site Solar PV Power Forecasting Under Temporal and Sensor-Availability Shifts}}
+\author{Aminur Rahman\\Department of Computer Science and Engineering\\Hajee Mohammad Danesh Science and Technology University (HSTU), Bangladesh}
+\date{November 2026}
+
+\begin{document}
+\maketitle
+
+\section{Theoretical Guarantees of Conformalized Quantile Regression}
+Let $(X_i, Y_i)_{i=1}^{n_{\text{cal}}} \cup \{(X_{n_{\text{cal}}+1}, Y_{n_{\text{cal}}+1})\}$ be exchangeable random variables drawn from distribution $\mathcal{P}$. Suppose base quantile predictors $\hat{q}_{\alpha_{\text{low}}}$ and $\hat{q}_{\alpha_{\text{high}}}$ have been trained on an independent training set $\mathcal{D}_{\text{train}}$.
+
+Define the non-conformity score for any sample $(\mathbf{x}, y)$ as:
+\begin{equation}
+    E(\mathbf{x}, y) = \max\left( \hat{q}_{\alpha_{\text{low}}}(\mathbf{x}) - y, \, y - \hat{q}_{\alpha_{\text{high}}}(\mathbf{x}) \right)
+\end{equation}
+Let $E_1, \dots, E_{n_{\text{cal}}}$ be the calibration scores, and define $E_{(k)}$ as the $k$-th order statistic. Setting:
+\begin{equation}
+    p = \frac{\lceil (n_{\text{cal}} + 1)(1 - \alpha) \rceil}{n_{\text{cal}}}
+\end{equation}
+and $Q_{1-\alpha} = \text{Quantile}_p(\{E_i\}_{i=1}^{n_{\text{cal}}})$, the calibrated interval is:
+\begin{equation}
+    \hat{C}(X_{n_{\text{cal}}+1}) = \left[ \hat{q}_{\alpha_{\text{low}}}(X_{n_{\text{cal}}+1}) - Q_{1-\alpha}, \, \hat{q}_{\alpha_{\text{high}}}(X_{n_{\text{cal}}+1}) + Q_{1-\alpha} \right]
+\end{equation}
+By exchangeability of the calibration and test conformity scores, the probability of coverage satisfies:
+\begin{equation}
+    1 - \alpha \le \mathbb{P}\left( Y_{n_{\text{cal}}+1} \in \hat{C}(X_{n_{\text{cal}}+1}) \right) \le 1 - \alpha + \frac{1}{n_{\text{cal}} + 1}
+\end{equation}
+which provides finite-sample, distribution-free statistical validity without assuming Gaussianity or homoscedasticity of forecast errors.
+
+\section{Hyperparameter Configurations}
+\begin{table}[htbp]
+\centering
+\caption{Hyperparameter search grids and chosen configurations for tree ensemble and conformal models.}
+\label{tab:hyperparams}
+\begin{tabular}{lllc}
+\hline
+\textbf{Model Architecture} & \textbf{Hyperparameter} & \textbf{Search Space} & \textbf{Optimal Setting} \\
+\hline
+\multirow{4}{*}{LightGBM / GBDT} & Number of Trees ($M$) & $[50, 300]$ & 150 \\
+& Learning Rate ($\eta$) & $[0.01, 0.15]$ & 0.05 \\
+& Maximum Tree Depth & $[4, 12]$ & 6 \\
+& Number of Leaves & $[15, 63]$ & 31 \\
+\hline
+\multirow{3}{*}{CQR Quantile Heads} & Lower Quantile ($\alpha_{\text{low}}$) & Fixed & 0.05 \\
+& Upper Quantile ($\alpha_{\text{high}}$) & Fixed & 0.95 \\
+& Nominal Coverage ($1-\alpha$) & Fixed & 0.90 \\
+\hline
+\multirow{2}{*}{Domain Adaptation} & Target Loss Weight ($\gamma$) & $[1.0, 5.0]$ & 2.5 \\
+& Budget Windows ($k$) & $\{0, 1, 3, 7, 14\}$ & Frontier evaluated \\
+\hline
+\end{tabular}
+\end{table}
+
+\section{Code and Environment Manifest}
+All experiments were executed in Python 3.14 on a 64-bit Windows workstation and cross-validated with LightGBM 4.7.0, Scikit-Learn 1.9.0, MAPIE 1.6.0, and SHAP 0.54.1. The complete execution environment can be restored via the repository's \texttt{requirements.txt}.
+
+\end{document}

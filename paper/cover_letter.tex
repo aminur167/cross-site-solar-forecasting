@@ -1,0 +1,59 @@
+\documentclass[11pt]{article}
+\usepackage{geometry}
+\geometry{a4paper, margin=1in}
+\usepackage{hyperref}
+
+\begin{document}
+\noindent
+\textbf{Aminur Rahman}\\
+Department of Computer Science and Engineering\\
+Hajee Mohammad Danesh Science and Technology University (HSTU)\\
+Dinajpur 5200, Bangladesh\\
+Email: \href{mailto:aminurhstu23@gmail.com}{aminurhstu23@gmail.com}\\
+GitHub: \url{https://github.com/aminur167}\\
+Date: November 20, 2026
+
+\vspace{1.5em}
+\noindent
+\textbf{To:}\\
+The Editor-in-Chief\\
+\textit{Energy and AI}\\
+Elsevier Publishing
+
+\vspace{1.5em}
+\noindent
+\textbf{Subject: Submission of Original Research Manuscript for Peer Review}
+
+\vspace{1em}
+\noindent
+Dear Editor-in-Chief,
+
+I am pleased to submit our original research manuscript entitled:
+\begin{center}
+\textbf{``Data-Efficient and Uncertainty-Calibrated Cross-Site Solar PV Power Forecasting Under Temporal and Sensor-Availability Shifts''}
+\end{center}
+for consideration as a regular research article in \textit{Energy and AI}.
+
+\vspace{0.8em}
+\noindent
+\textbf{Research Context and Core Contributions:}\\
+Grid integration of solar photovoltaic (PV) generation is frequently challenged by data scarcity at newly commissioned plants, telemetry dropouts at remote installations, and the lack of distribution-free uncertainty intervals to safeguard reserve scheduling. In this manuscript, we present a unified transfer forecasting framework coupling gradient boosted decision trees with Conformalized Quantile Regression (CQR).
+
+Key scientific contributions reported in this work include:
+\begin{enumerate}
+    \item \textbf{Minimal Adaptation Frontier:} We demonstrate that training models from scratch on newly commissioned PV systems with limited telemetry ($k=1$ day) leads to severe overfitting ($\text{nMAE} = 29.33\%$), whereas our transfer adaptation framework delivers an immediate $82.8\%$ error reduction ($\text{nMAE} = 5.05\%$, Skill Score $=+0.4164$).
+    \item \textbf{Calibrated Uncertainty Guarantees:} Using Conformalized Quantile Regression, the framework achieves an empirical Prediction Interval Coverage Probability (PICP) of $92.95\%$ on unseen target plants against a nominal $90\%$ target.
+    \item \textbf{Sensor-Availability Resilience:} Through systematic stress-tests, we demonstrate that the model withstands up to $30\%$ random weather sensor dropout with negligible performance penalty ($+0.25\%$ nMAE), while identifying pyranometer loss as the primary failure mode.
+    \item \textbf{SHAP Model Attribution:} We provide comprehensive game-theoretic attribution to validate the physical dynamics of the learned transfer models.
+\end{enumerate}
+
+This manuscript has not been published previously and is not under consideration for publication elsewhere. All code, processed datasets, and figure generation routines have been made permanently open-source at \url{https://github.com/aminur167/cross-site-solar-forecasting} to ensure full reproducibility.
+
+Thank you very much for your time and consideration of our work.
+
+\vspace{1.5em}
+\noindent
+Sincerely,\\
+\textbf{Aminur Rahman}\\
+Hajee Mohammad Danesh Science and Technology University (HSTU)
+\end{document}
