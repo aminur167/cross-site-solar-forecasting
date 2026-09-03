@@ -114,6 +114,13 @@ Table~\ref{tab:uncertainty_robustness} and Figure 3 present the conformal predic
 
 The target-adapted CQR achieves an empirical Prediction Interval Coverage Probability (PICP) of $\mathbf{92.95\%}$ against the nominal $90.0\%$ target, with a narrow Mean Prediction Interval Width (MPIW) of $0.2501$. Under simulated sensor degradation, the model demonstrates remarkable robustness: missing rates of $10\%$ and $30\%$ only cause marginal error increases ($+0.04\%$ and $+0.25\%$ nMAE), and coverage remains securely above $91.7\%$. However, total loss of the pyranometer (GHI) drops coverage to $84.96\%$, underscoring the critical physical value of solar irradiance monitoring.
 
+\subsection{Comparative Evaluation of Deep Sequence Models (LSTM \& TCN) and Statistical Testing}
+To investigate whether deep sequential representations outperform tree-based gradient boosting on tabular solar telemetry, PyTorch implementations of a 2-layer LSTM and a dilated causal Temporal Convolutional Network (TCN) were trained under identical cross-site conditions. Table~\ref{tab:deep_learning_benchmark} presents the empirical results alongside stationary block bootstrap $95\%$ confidence intervals (24-hour blocks) and Diebold-Mariano (DM) hypothesis tests.
+
+\input{tables/table5_deep_learning_benchmark.tex}
+
+While PyTorch LSTM ($\text{nMAE} = 5.26\%$) and TCN ($\text{nMAE} = 5.40\%$) demonstrate strong sequence modeling capability, LightGBM achieves statistically superior forecasting accuracy ($\text{nMAE} = 4.95\%$, $\text{DM} = -3.2852, p = 0.0010$ vs. LSTM; $\text{DM} = -4.8768, p < 0.0001$ vs. TCN). In addition to superior point accuracy, gradient boosted decision trees train over $20\times$ faster on standard computing hardware and exhibit heightened numerical stability when deployed under sudden sensor dropouts.
+
 \subsection{Model Interpretability and SHAP Attribution}
 To elucidate the physical mechanisms governing model predictions under cross-site transfer, Shapley Additive Explanations (SHAP) were computed across the target test set using \texttt{TreeExplainer}. As detailed in Table~\ref{tab:feature_importance} and Figure 4, immediate autoregressive power telemetry ($\texttt{lag\_0}$) accounts for the largest predictive contribution ($51.88\%$), followed by cyclic diurnal solar geometry ($\texttt{hour\_sin}$ at $12.15\%$ and $\texttt{solar\_azimuth\_deg}$ at $6.68\%$) and short-term irradiance dynamics ($\texttt{ghi\_diff\_1h}$ at $8.20\%$). These findings corroborate the physical behavior observed during sensor degradation: while diurnal and autoregressive signals preserve baseline stability under moderate weather dropout, the loss of dynamic irradiance ($\Delta \text{GHI}$) compromises ramp-event responsiveness.
 

@@ -1,0 +1,16 @@
+\begin{table}[htbp]
+\centering
+\caption{Comparative performance of recurrent (LSTM), convolutional (TCN), and gradient boosted decision tree (LightGBM) architectures on unseen Target Site B holdout ($N=1,172$ sequential samples), including stationary block bootstrap 95\% confidence intervals and Diebold-Mariano hypothesis tests.}
+\label{tab:deep_learning_benchmark}
+\begin{tabular}{lccccc}
+\hline
+\textbf{Model Architecture} & \textbf{nMAE (\%)} & \textbf{95\% CI (nMAE)} & \textbf{nRMSE (\%)} & \textbf{DM Statistic vs. GBDT} & \textbf{$p$-value} \\
+\hline
+LightGBM (GBDT) & \textbf{4.95} & $[4.26, 5.61]$ & \textbf{8.99} & --- & Reference \\
+PyTorch LSTM (2-layer) & 5.26 & $[4.55, 5.89]$ & 9.48 & $-3.2852$ & $p = 0.0010^{**}$ \\
+PyTorch TCN (Dilated Causal) & 5.40 & $[4.75, 6.04]$ & 9.43 & $-4.8768$ & $p < 0.0001^{***}$ \\
+\hline
+\multicolumn{6}{l}{\footnotesize $^{**}p < 0.01$, $^{***}p < 0.001$. Negative DM indicates LightGBM is statistically significantly superior.} \\
+\hline
+\end{tabular}
+\end{table}

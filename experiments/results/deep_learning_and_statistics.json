@@ -1,0 +1,71 @@
+{
+    "LightGBM (GBDT)": {
+        "metrics": {
+            "MAE": 0.0495,
+            "RMSE": 0.0899,
+            "nMAE_pct": 4.95,
+            "nRMSE_pct": 8.99,
+            "R2": 0.926
+        },
+        "confidence_intervals": {
+            "nMAE_CI_pct": [
+                4.26,
+                5.61
+            ],
+            "nRMSE_CI_pct": [
+                7.85,
+                10.13
+            ]
+        },
+        "diebold_mariano_vs_gbdt": {
+            "dm_stat": 0.0,
+            "p_val": 1.0
+        }
+    },
+    "PyTorch LSTM": {
+        "metrics": {
+            "MAE": 0.0627,
+            "RMSE": 0.0981,
+            "nMAE_pct": 6.27,
+            "nRMSE_pct": 9.81,
+            "R2": 0.9119
+        },
+        "confidence_intervals": {
+            "nMAE_CI_pct": [
+                5.72,
+                6.84
+            ],
+            "nRMSE_CI_pct": [
+                8.85,
+                10.74
+            ]
+        },
+        "diebold_mariano_vs_gbdt": {
+            "dm_stat": -10.7933,
+            "p_val": 0.0
+        }
+    },
+    "PyTorch TCN": {
+        "metrics": {
+            "MAE": 0.0554,
+            "RMSE": 0.0944,
+            "nMAE_pct": 5.54,
+            "nRMSE_pct": 9.44,
+            "R2": 0.9185
+        },
+        "confidence_intervals": {
+            "nMAE_CI_pct": [
+                4.83,
+                6.21
+            ],
+            "nRMSE_CI_pct": [
+                8.32,
+                10.48
+            ]
+        },
+        "diebold_mariano_vs_gbdt": {
+            "dm_stat": -5.9402,
+            "p_val": 0.0
+        }
+    }
+}
