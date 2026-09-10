@@ -32,11 +32,11 @@
         "Skill_Score_vs_Persist": 0.4044
     },
     "Gradient_Boosting": {
-        "MAE": 0.0486,
-        "RMSE": 0.0923,
-        "nMAE_pct": 4.86,
-        "nRMSE_pct": 9.23,
-        "R2": 0.9274,
-        "Skill_Score_vs_Persist": 0.3983
+        "MAE": 0.0475,
+        "RMSE": 0.0913,
+        "nMAE_pct": 4.75,
+        "nRMSE_pct": 9.13,
+        "R2": 0.9291,
+        "Skill_Score_vs_Persist": 0.4053
     }
 }

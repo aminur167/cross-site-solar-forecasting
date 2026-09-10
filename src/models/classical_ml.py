@@ -34,9 +34,10 @@ class SolarLightGBM:
     """
     LightGBM Regressor optimized for tabular time-series forecasting.
     """
-    def __init__(self, n_estimators: int = 150, learning_rate: float = 0.05, max_depth: int = 6, random_state: int = 42):
+    def __init__(self, n_estimators: int = 150, learning_rate: float = 0.05, max_depth: int = 6, max_iter: Optional[int] = None, random_state: int = 42):
+        actual_n_estimators = max_iter if max_iter is not None else n_estimators
         self.model = lgb.LGBMRegressor(
-            n_estimators=n_estimators,
+            n_estimators=actual_n_estimators,
             learning_rate=learning_rate,
             max_depth=max_depth,
             num_leaves=31,
@@ -52,6 +53,9 @@ class SolarLightGBM:
     def predict(self, X: pd.DataFrame) -> np.ndarray:
         preds = self.model.predict(X)
         return np.clip(preds, 0.0, 1.2)
+
+# Backward-compatible alias for gradient boosting baseline
+SolarGradientBoosting = SolarLightGBM
 
 class SolarXGBoost:
     """
