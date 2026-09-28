@@ -19,17 +19,40 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Custom CSS for modern academic styling
+# Custom CSS for modern academic styling with dark/light mode compatibility
 st.markdown("""
 <style>
-    .main-title { font-size: 26px; font-weight: 700; color: #1e3d59; margin-bottom: 5px; }
-    .sub-title { font-size: 15px; color: #555; margin-bottom: 20px; }
-    .metric-card { background-color: #f8f9fa; border-radius: 8px; padding: 15px; border-left: 5px solid #17b978; }
+    .main-title { 
+        font-size: 30px; 
+        font-weight: 800; 
+        background: linear-gradient(90deg, #ff9900, #ff5e62);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 5px; 
+        letter-spacing: -0.5px;
+    }
+    .sub-title { 
+        font-size: 14.5px; 
+        color: #94a3b8; 
+        margin-bottom: 25px; 
+    }
+    .sub-title a {
+        color: #38bdf8;
+        text-decoration: none;
+        font-weight: 600;
+    }
+    .sub-title a:hover {
+        text-decoration: underline;
+    }
+    div[data-testid="stMetricValue"] {
+        font-size: 26px !important;
+        font-weight: 700;
+    }
 </style>
 """, unsafe_allow_html=True)
 
 st.markdown('<div class="main-title">☀️ Cross-Site Solar PV Power Forecasting & Conformal Uncertainty Dashboard</div>', unsafe_allow_html=True)
-st.markdown('<div class="sub-title"><b>Author:</b> Aminur Rahman (HSTU, Bangladesh) | <b>Journal Manuscript:</b> <i>Energy and AI (Elsevier)</i> | <a href="https://github.com/aminur167/cross-site-solar-forecasting" target="_blank">GitHub Repository</a></div>', unsafe_allow_html=True)
+st.markdown('<div class="sub-title"><b>Author:</b> Aminur Rahman (HSTU, Bangladesh) | <b>Target Journal:</b> <i>Energy and AI (Elsevier)</i> | <a href="https://github.com/aminur167/cross-site-solar-forecasting" target="_blank">🔗 GitHub Repository</a></div>', unsafe_allow_html=True)
 
 # Sidebar
 st.sidebar.image("https://img.shields.io/badge/Status-Submittable%20Manuscript-success?style=for-the-badge", use_container_width=True)
@@ -84,9 +107,9 @@ if page == "1. Executive Summary & Abstract":
 
     col1, col2, col3, col4 = st.columns(4)
     with col1:
-        st.metric(label="Zero-Shot Error (Target B)", value="4.94% nMAE", delta="-55.6% vs Persistence")
+        st.metric(label="Zero-Shot Error (Target B)", value="4.94% nMAE", delta="-55.6% vs Persist")
     with col2:
-        st.metric(label="1-Day Adaptation Gain", value="82.8% Error Reduction", delta="5.05% vs 29.3% Scratch")
+        st.metric(label="1-Day Adaptation Gain", value="82.8% Drop", delta="5.05% vs 29.3% Scratch")
     with col3:
         st.metric(label="Conformal Coverage (PICP)", value="92.95%", delta="+2.95% above 90% Target")
     with col4:
@@ -126,7 +149,14 @@ elif page == "2. Site Telemetry & Data Explorer":
         fig = go.Figure()
         fig.add_trace(go.Scatter(x=subset.index, y=subset['active_power_kw'], mode='lines', name='Active Power (kW)', line=dict(color='#2b5c8f', width=2.5)))
         fig.add_trace(go.Scatter(x=subset.index, y=subset['ghi_wm2'] * 0.05, mode='lines', name='Solar Irradiance (GHI / 20)', line=dict(color='#d95f02', width=1.5, dash='dash')))
-        fig.update_layout(title="Inverter Generation vs. Solar Irradiance Profile", xaxis_title="Timestamp (UTC)", yaxis_title="Magnitude", hovermode="x unified")
+        fig.update_layout(
+            title="Inverter Generation vs. Solar Irradiance Profile",
+            xaxis_title="Timestamp (UTC)",
+            yaxis_title="Magnitude",
+            hovermode="x unified",
+            paper_bgcolor="rgba(0,0,0,0)",
+            plot_bgcolor="rgba(0,0,0,0)"
+        )
         st.plotly_chart(fig, use_container_width=True)
 
 # -------------------------------------------------------------
@@ -170,7 +200,14 @@ elif page == "4. Experiment 2 & 3: Cross-Site Transfer & Adaptation":
     fig.add_hline(y=zero_shot_mae, line_dash="dot", line_color="#7570b3", annotation_text=f"Zero-Shot Transfer ({zero_shot_mae:.2f}%)")
     fig.add_hline(y=oracle_mae, line_dash="dashdot", line_color="#1b9e77", annotation_text=f"Full Target Oracle ({oracle_mae:.2f}%)")
 
-    fig.update_layout(title="Few-Shot Adaptation Frontier: Scratch vs. Transfer Learning", xaxis_title="Target Commissioning Budget (Calendar Days)", yaxis_title="nMAE (%)", hovermode="x unified")
+    fig.update_layout(
+        title="Few-Shot Adaptation Frontier: Scratch vs. Transfer Learning",
+        xaxis_title="Target Commissioning Budget (Calendar Days)",
+        yaxis_title="nMAE (%)",
+        hovermode="x unified",
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)"
+    )
     st.plotly_chart(fig, use_container_width=True)
 
     st.success("🎯 **Key Finding:** Transfer learning cuts forecasting errors by **82.8%** on 1-day commissioning data compared to scratch training!")
