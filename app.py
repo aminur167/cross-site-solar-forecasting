@@ -286,6 +286,21 @@ elif page == "7. Experiment 6: Deep Learning & SHAP Attribution":
 # -------------------------------------------------------------
 elif page == "8. Journal Submission Package Viewer":
     st.header("Journal Submission Package Viewer")
+    st.markdown("Download and inspect the complete, peer-review-ready submission kit for **Energy and AI (Elsevier)**.")
+
+    zip_file = "paper_submission_package.zip"
+    if os.path.exists(zip_file):
+        with open(zip_file, "rb") as fp:
+            st.download_button(
+                label="📥 Download Complete Submission Package (.zip for Overleaf / Editorial Manager)",
+                data=fp,
+                file_name="paper_submission_package.zip",
+                mime="application/zip",
+                use_container_width=True
+            )
+        st.caption("Contains main.tex, references.bib, cover_letter.tex, highlights.txt, author_statements.txt, tables, and figures. Upload directly to Overleaf with 1 click!")
+
+    st.markdown("---")
     doc_choice = st.selectbox("Select Manuscript Document to View:", ["Cover Letter (cover_letter.tex)", "Highlights (highlights.txt)", "Author Statements (author_statements.txt)", "Main LaTeX Article (main.tex)"])
 
     if "Cover Letter" in doc_choice:
