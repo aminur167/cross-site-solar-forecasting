@@ -1,0 +1,32 @@
+# Optuna Hyperparameter Optimization Configuration
+tuning_meta:
+  study_name: "solar_pv_lightgbm_optimization"
+  direction: "minimize"
+  n_trials: 20
+  timeout_seconds: 300
+  metric: "nMAE"
+
+search_space:
+  n_estimators:
+    low: 50
+    high: 250
+    step: 25
+  learning_rate:
+    low: 0.01
+    high: 0.15
+    log: true
+  max_depth:
+    low: 4
+    high: 10
+  num_leaves:
+    low: 15
+    high: 63
+  min_child_samples:
+    low: 10
+    high: 50
+  subsample:
+    low: 0.6
+    high: 1.0
+  colsample_bytree:
+    low: 0.6
+    high: 1.0
