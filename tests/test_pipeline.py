@@ -47,6 +47,30 @@ class TestSolarPipeline(unittest.TestCase):
         self.assertEqual(featured.loc[dates[25], "lag_1"], df.loc[dates[24], "capacity_factor"])
         self.assertEqual(featured.loc[dates[25], "target_1h"], df.loc[dates[26], "capacity_factor"])
 
+    def test_diurnal_cyclic_transformations(self):
+        """Verify diurnal cyclic encodings map smoothly within [-1, 1] and periodicity holds."""
+        engineer = SolarFeatureEngineer(target_col="capacity_factor")
+        dates = pd.date_range("2026-06-01 00:00:00", periods=72, freq="1h")
+        df = pd.DataFrame({"capacity_factor": [0.5] * 72}, index=dates)
+        featured = engineer.build_features(df)
+
+        # Check amplitude bounds [-1, 1]
+        self.assertGreaterEqual(featured["hour_sin"].min(), -1.0)
+        self.assertLessEqual(featured["hour_sin"].max(), 1.0)
+        self.assertGreaterEqual(featured["hour_cos"].min(), -1.0)
+        self.assertLessEqual(featured["hour_cos"].max(), 1.0)
+
+        # Verify trigonometric Pythagorean identity: sin^2 + cos^2 == 1
+        trig_sum = featured["hour_sin"]**2 + featured["hour_cos"]**2
+        self.assertTrue(np.allclose(trig_sum, 1.0, atol=1e-6), "Trigonometric cyclic identity sin^2 + cos^2 must equal 1")
+
+        # Verify 24-hour exact periodicity on retained timestamps
+        t1 = dates[24]
+        t2 = dates[48]
+        if t1 in featured.index and t2 in featured.index:
+            self.assertAlmostEqual(featured.loc[t1, "hour_cos"], featured.loc[t2, "hour_cos"])
+            self.assertAlmostEqual(featured.loc[t1, "hour_sin"], featured.loc[t2, "hour_sin"])
+
     def test_metric_calculations(self):
         """Verify point and uncertainty metrics against known values."""
         y_true = np.array([0.5, 0.8, 0.2, 0.9])
