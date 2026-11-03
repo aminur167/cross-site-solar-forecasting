@@ -15,6 +15,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 
 from src.preprocessing.data_cleaner import SolarDataPreprocessor
 from src.features.solar_features import SolarFeatureEngineer
+from src.adaptation.few_shot_adapter import FewShotDomainAdapter
 from src.evaluation.metrics import calculate_point_metrics, calculate_uncertainty_metrics
 from src.uncertainty.conformal_predictor import ConformalizedQuantileRegressor
 
@@ -70,6 +71,24 @@ class TestSolarPipeline(unittest.TestCase):
         if t1 in featured.index and t2 in featured.index:
             self.assertAlmostEqual(featured.loc[t1, "hour_cos"], featured.loc[t2, "hour_cos"])
             self.assertAlmostEqual(featured.loc[t1, "hour_sin"], featured.loc[t2, "hour_sin"])
+
+    def test_target_budget_chronological_isolation(self):
+        """Verify that few-shot target budget strictly precedes test set with zero chronological leakage."""
+        dates = pd.date_range("2026-07-01 00:00:00", periods=24 * 30, freq="1h")
+        df_target = pd.DataFrame({"capacity_factor": np.random.uniform(0.1, 0.8, len(dates))}, index=dates)
+
+        budget_days = 7
+        budget_subset = FewShotDomainAdapter.extract_budget_subset(df_target, budget_days=budget_days)
+
+        self.assertFalse(budget_subset.empty, "Target budget subset should not be empty")
+        # Ensure budget covers exactly budget_days
+        budget_duration = budget_subset.index.max() - budget_subset.index.min()
+        self.assertAlmostEqual(budget_duration.total_seconds() / 86400.0, budget_days, delta=0.1)
+
+        # Ensure subsequent evaluation data has timestamps strictly greater than budget max
+        test_subset = df_target.loc[df_target.index > budget_subset.index.max()]
+        self.assertTrue((test_subset.index > budget_subset.index.max()).all(), "Test evaluation set must strictly follow adaptation budget")
+        self.assertEqual(len(set(test_subset.index).intersection(set(budget_subset.index))), 0, "Zero index overlap permitted")
 
     def test_metric_calculations(self):
         """Verify point and uncertainty metrics against known values."""
