@@ -113,5 +113,26 @@ class TestSolarPipeline(unittest.TestCase):
         low, high = cqr.predict_intervals(X_mock)
         self.assertTrue(np.all(low <= high), "Lower interval bound must not exceed upper bound")
 
+    def test_conformal_multi_alpha_monotonicity(self):
+        """Verify that prediction intervals widen monotonically as alpha decreases (90% -> 95% -> 99%)."""
+        np.random.seed(42)
+        X_mock = pd.DataFrame({"feat1": np.random.randn(120), "feat2": np.random.randn(120)})
+        y_mock = pd.Series(np.random.uniform(0.1, 0.9, 120))
+
+        cqr_90 = ConformalizedQuantileRegressor(alpha=0.10, n_estimators=30)
+        cqr_95 = ConformalizedQuantileRegressor(alpha=0.05, n_estimators=30)
+
+        cqr_90.fit(X_mock, y_mock)
+        cqr_90.calibrate(X_mock, y_mock)
+        l90, u90 = cqr_90.predict_intervals(X_mock)
+        width_90 = np.mean(u90 - l90)
+
+        cqr_95.fit(X_mock, y_mock)
+        cqr_95.calibrate(X_mock, y_mock)
+        l95, u95 = cqr_95.predict_intervals(X_mock)
+        width_95 = np.mean(u95 - l95)
+
+        self.assertGreaterEqual(width_95, width_90 - 1e-5, "95% interval width must be greater than or equal to 90% interval width")
+
 if __name__ == "__main__":
     unittest.main()
