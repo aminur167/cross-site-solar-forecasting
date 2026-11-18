@@ -38,7 +38,8 @@ This repository provides an open-access, reproducible framework coupling **Gradi
 │   ├── fig1_baseline_benchmark.*
 │   ├── fig2_adaptation_frontier.*
 │   ├── fig3_uncertainty_robustness.*
-│   └── fig4_shap_feature_importance.*
+│   ├── fig4_shap_feature_importance.*
+│   └── fig5_parity_plots.png    # Observed vs. predicted parity & residual marginals
 ├── tables/                      # Journal-formatted LaTeX tables (Tables 1 to 5)
 ├── paper/                       # Complete manuscript submission package
 │   ├── manuscript/main.tex      # Full journal manuscript (Elsevier elsarticle format)
@@ -70,7 +71,11 @@ This repository provides an open-access, reproducible framework coupling **Gradi
 
 ## Quickstart & Reproducibility
 
-### 1. Installation
+### 1. Hardware Requirements & Environment Setup
+- **Minimum:** 4-Core CPU, 8 GB RAM, Python 3.10+ (Runs all GBDT & Conformal experiments in < 30s).
+- **Recommended (Deep Learning):** 8-Core CPU or NVIDIA GPU with CUDA 12.0+ (PyTorch LSTM/TCN training).
+- **Google Colab:** Compatible with free T4 GPU tier. Click the [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/aminur167/cross-site-solar-forecasting/blob/main/notebooks/01_cross_site_solar_forecasting_demo.ipynb) badge above.
+
 Clone the repository and install dependencies:
 ```bash
 git clone https://github.com/aminur167/cross-site-solar-forecasting.git
@@ -79,14 +84,29 @@ pip install -r requirements.txt
 ```
 
 ### 2. Execute Entire Pipeline in One Command
-Run all data cleaning, benchmarks, transfer adaptation, conformal calibration, deep learning, SHAP attribution, and unit tests:
+Run all data cleaning, benchmarks, transfer adaptation, conformal calibration, deep learning, SHAP attribution, parity diagnostics, and unit tests:
 ```bash
+# Full execution (~58 seconds on standard CPU):
 python run_full_pipeline.py
+
+# Fast CPU-only run (skips PyTorch sequence training):
+python run_full_pipeline.py --skip-dl
+
+# Inspect available CLI flags:
+python run_full_pipeline.py --help
 ```
 
-### 3. Run Unit Tests Only
+### 3. Launch Interactive Research Dashboard (Localhost)
+Launch the interactive Streamlit dashboard to explore real-time telemetry, model benchmarks, conformal prediction intervals, and download the 1-click Overleaf publication package:
 ```bash
-python -m unittest tests/test_pipeline.py
+streamlit run app.py
+```
+Open [http://localhost:8501](http://localhost:8501) in your browser.
+
+### 4. Run Unit Tests Only
+Verify physical boundary constraints, non-leaking feature transformations, and conformal coverage bounds:
+```bash
+python -m unittest tests/test_pipeline.py -v
 ```
 
 ---
