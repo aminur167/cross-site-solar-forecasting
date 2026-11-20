@@ -1,71 +1,169 @@
 {
     "LightGBM (GBDT)": {
+        "MAE": 0.0602,
+        "RMSE": 0.0993,
+        "nMAE_pct": 6.02,
+        "nRMSE_pct": 9.93,
+        "R2": 0.9059,
         "metrics": {
-            "MAE": 0.0495,
-            "RMSE": 0.0899,
-            "nMAE_pct": 4.95,
-            "nRMSE_pct": 8.99,
-            "R2": 0.926
+            "MAE": 0.0602,
+            "RMSE": 0.0993,
+            "nMAE_pct": 6.02,
+            "nRMSE_pct": 9.93,
+            "R2": 0.9059
+        },
+        "daytime": {
+            "MAE": 0.0602,
+            "RMSE": 0.0993,
+            "nMAE_pct": 6.02,
+            "nRMSE_pct": 9.93,
+            "R2": 0.9059
+        },
+        "all_hours": {
+            "MAE": 0.0346,
+            "RMSE": 0.0748,
+            "nMAE_pct": 3.46,
+            "nRMSE_pct": 7.48,
+            "R2": 0.9431
         },
         "confidence_intervals": {
             "nMAE_CI_pct": [
-                4.26,
-                5.61
+                5.41,
+                6.68
             ],
             "nRMSE_CI_pct": [
-                7.85,
-                10.13
+                8.89,
+                11.07
+            ]
+        },
+        "confidence_intervals_all": {
+            "nMAE_CI_pct": [
+                3.08,
+                3.85
+            ],
+            "nRMSE_CI_pct": [
+                6.64,
+                8.33
             ]
         },
         "diebold_mariano_vs_gbdt": {
             "dm_stat": 0.0,
-            "p_val": 1.0
+            "raw_p_value": 1.0,
+            "p_value_str": "1.0000"
         }
     },
     "PyTorch LSTM": {
+        "MAE": 0.0673,
+        "RMSE": 0.1051,
+        "nMAE_pct": 6.73,
+        "nRMSE_pct": 10.51,
+        "R2": 0.8946,
         "metrics": {
-            "MAE": 0.0627,
-            "RMSE": 0.0981,
-            "nMAE_pct": 6.27,
-            "nRMSE_pct": 9.81,
-            "R2": 0.9119
+            "MAE": 0.0673,
+            "RMSE": 0.1051,
+            "nMAE_pct": 6.73,
+            "nRMSE_pct": 10.51,
+            "R2": 0.8946
+        },
+        "daytime": {
+            "MAE": 0.0673,
+            "RMSE": 0.1051,
+            "nMAE_pct": 6.73,
+            "nRMSE_pct": 10.51,
+            "R2": 0.8946
+        },
+        "all_hours": {
+            "MAE": 0.0391,
+            "RMSE": 0.0793,
+            "nMAE_pct": 3.91,
+            "nRMSE_pct": 7.93,
+            "R2": 0.936
         },
         "confidence_intervals": {
             "nMAE_CI_pct": [
-                5.72,
-                6.84
+                6.16,
+                7.38
             ],
             "nRMSE_CI_pct": [
-                8.85,
-                10.74
+                9.54,
+                11.59
+            ]
+        },
+        "confidence_intervals_all": {
+            "nMAE_CI_pct": [
+                3.56,
+                4.28
+            ],
+            "nRMSE_CI_pct": [
+                7.18,
+                8.72
             ]
         },
         "diebold_mariano_vs_gbdt": {
-            "dm_stat": -10.7933,
-            "p_val": 0.0
+            "dm_stat": -6.1747,
+            "raw_p_value": 9.45884703895672e-10,
+            "p_value_str": "< 0.0001",
+            "mean_loss_diff": -0.007189,
+            "cohens_d": -0.1976,
+            "is_significant_005": true,
+            "is_significant_001": true
         }
     },
     "PyTorch TCN": {
+        "MAE": 0.0643,
+        "RMSE": 0.1042,
+        "nMAE_pct": 6.43,
+        "nRMSE_pct": 10.42,
+        "R2": 0.8964,
         "metrics": {
-            "MAE": 0.0554,
-            "RMSE": 0.0944,
-            "nMAE_pct": 5.54,
-            "nRMSE_pct": 9.44,
-            "R2": 0.9185
+            "MAE": 0.0643,
+            "RMSE": 0.1042,
+            "nMAE_pct": 6.43,
+            "nRMSE_pct": 10.42,
+            "R2": 0.8964
+        },
+        "daytime": {
+            "MAE": 0.0643,
+            "RMSE": 0.1042,
+            "nMAE_pct": 6.43,
+            "nRMSE_pct": 10.42,
+            "R2": 0.8964
+        },
+        "all_hours": {
+            "MAE": 0.0372,
+            "RMSE": 0.0786,
+            "nMAE_pct": 3.72,
+            "nRMSE_pct": 7.86,
+            "R2": 0.9372
         },
         "confidence_intervals": {
             "nMAE_CI_pct": [
-                4.83,
-                6.21
+                5.82,
+                7.11
             ],
             "nRMSE_CI_pct": [
-                8.32,
-                10.48
+                9.37,
+                11.6
+            ]
+        },
+        "confidence_intervals_all": {
+            "nMAE_CI_pct": [
+                3.32,
+                4.13
+            ],
+            "nRMSE_CI_pct": [
+                7.03,
+                8.69
             ]
         },
         "diebold_mariano_vs_gbdt": {
-            "dm_stat": -5.9402,
-            "p_val": 0.0
+            "dm_stat": -3.5131,
+            "raw_p_value": 0.00046183173773450825,
+            "p_value_str": "0.0005",
+            "mean_loss_diff": -0.00414,
+            "cohens_d": -0.1161,
+            "is_significant_005": true,
+            "is_significant_001": true
         }
     }
 }

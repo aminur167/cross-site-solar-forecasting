@@ -1,31 +1,35 @@
 """
 Scientific Evaluation Metrics Module for Solar PV Power Forecasting
-Calculates point prediction metrics (MAE, RMSE, nMAE, nRMSE, R2, Skill Score)
-and probabilistic/conformal uncertainty metrics (Pinball Loss, PICP, MPIW, Winkler Score).
+===================================================================
+Calculates deterministic point forecast metrics and probabilistic uncertainty metrics:
+- Point Metrics: MAE, RMSE, nMAE (%), nRMSE (%), R2, Skill Score vs. Persistence.
+- Uncertainty Metrics: PICP (%), MPIW, Winkler Score, Pinball Loss.
 """
 
+from typing import Dict, Tuple, Optional
 import numpy as np
 import pandas as pd
-from typing import Dict, Tuple
 
-def calculate_point_metrics(y_true: np.ndarray, y_pred: np.ndarray, y_persistence: np.ndarray = None, capacity: float = 1.0) -> Dict[str, float]:
+
+def calculate_point_metrics(
+    y_true: np.ndarray,
+    y_pred: np.ndarray,
+    y_persistence: Optional[np.ndarray] = None,
+    capacity: float = 1.0
+) -> Dict[str, float]:
     """
-    Computes standard academic solar PV point forecast metrics.
-    y_true, y_pred are given in Capacity Factor units [0, 1] (or kW).
+    Computes standard point forecast metrics normalized relative to rated capacity.
     """
     y_true = np.asarray(y_true, dtype=float)
     y_pred = np.asarray(y_pred, dtype=float)
 
-    # Errors
     errors = y_true - y_pred
     mae = np.mean(np.abs(errors))
     rmse = np.sqrt(np.mean(errors ** 2))
 
-    # Normalized metrics (relative to capacity, expressed in %)
     nmae = (mae / capacity) * 100.0
     nrmse = (rmse / capacity) * 100.0
 
-    # R2 Score
     ss_res = np.sum(errors ** 2)
     ss_tot = np.sum((y_true - np.mean(y_true)) ** 2)
     r2 = 1.0 - (ss_res / ss_tot) if ss_tot > 0 else 0.0
@@ -38,7 +42,6 @@ def calculate_point_metrics(y_true: np.ndarray, y_pred: np.ndarray, y_persistenc
         "R2": round(float(r2), 4)
     }
 
-    # Skill Score relative to persistence: SS = 1 - (RMSE_model / RMSE_persistence)
     if y_persistence is not None:
         y_persist = np.asarray(y_persistence, dtype=float)
         rmse_persist = np.sqrt(np.mean((y_true - y_persist) ** 2))
@@ -47,10 +50,15 @@ def calculate_point_metrics(y_true: np.ndarray, y_pred: np.ndarray, y_persistenc
 
     return metrics
 
-def calculate_uncertainty_metrics(y_true: np.ndarray, lower_bound: np.ndarray, upper_bound: np.ndarray, alpha: float = 0.10) -> Dict[str, float]:
+
+def calculate_uncertainty_metrics(
+    y_true: np.ndarray,
+    lower_bound: np.ndarray,
+    upper_bound: np.ndarray,
+    alpha: float = 0.10
+) -> Dict[str, Any]:
     """
-    Computes rigorous uncertainty and conformal prediction metrics.
-    Nominal coverage is (1 - alpha), e.g. 90% for alpha=0.10.
+    Computes prediction interval metrics at significance level alpha (nominal coverage = 1 - alpha).
     """
     y_true = np.asarray(y_true, dtype=float)
     lower = np.asarray(lower_bound, dtype=float)
@@ -74,17 +82,33 @@ def calculate_uncertainty_metrics(y_true: np.ndarray, lower_bound: np.ndarray, u
     winkler_penalties[over_mask] += penalty_factor * (y_true[over_mask] - upper[over_mask])
     winkler_score = np.mean(winkler_penalties)
 
+    # 4. Pinball Loss at alpha/2 and 1 - alpha/2
+    loss_low = pinball_loss(y_true, lower, alpha / 2.0)
+    loss_high = pinball_loss(y_true, upper, 1.0 - alpha / 2.0)
+    mean_pinball = (loss_low + loss_high) / 2.0
+
+    target_cov = (1.0 - alpha) * 100.0
     return {
         "PICP_pct": round(float(picp), 2),
-        "Target_Coverage_pct": round((1.0 - alpha) * 100.0, 1),
+        "Target_Coverage_pct": round(target_cov, 1),
         "MPIW": round(float(mpiw), 4),
         "Winkler_Score": round(float(winkler_score), 4),
-        "Coverage_Guaranteed": bool(picp >= (1.0 - alpha) * 100.0)
+        "Mean_Pinball_Loss": round(float(mean_pinball), 4),
+        # SCIENTIFIC HONESTY: An empirical metric meeting a nominal target is NOT a mathematical guarantee
+        "Empirical_Coverage_Meets_Nominal_Target": bool(picp >= target_cov),
+        "Coverage_Guaranteed": bool(picp >= target_cov) # Backward compatibility alias
     }
 
+
 def pinball_loss(y_true: np.ndarray, y_pred_q: np.ndarray, quantile: float) -> float:
-    """
-    Computes pinball (quantile) loss for quantile regression evaluation.
-    """
+    """Computes asymmetric pinball loss for quantile regression."""
     error = y_true - y_pred_q
     return float(np.mean(np.maximum(quantile * error, (quantile - 1.0) * error)))
+
+
+if __name__ == "__main__":
+    y = np.array([0.5, 0.8, 0.2])
+    low = np.array([0.4, 0.7, 0.1])
+    high = np.array([0.6, 0.9, 0.3])
+    u = calculate_uncertainty_metrics(y, low, high, alpha=0.10)
+    print("[INFO] calculate_uncertainty_metrics test:", u)

@@ -1,97 +1,97 @@
 [
     {
         "Feature":"lag_0",
-        "Mean_Abs_SHAP":0.2131771029,
-        "Relative_Importance_pct":51.8838273872
+        "Mean_Abs_SHAP":0.1872845408,
+        "Relative_Importance_pct":54.4508332564
     },
     {
         "Feature":"hour_sin",
-        "Mean_Abs_SHAP":0.0499038936,
-        "Relative_Importance_pct":12.1457931808
+        "Mean_Abs_SHAP":0.0371936407,
+        "Relative_Importance_pct":10.8136246571
     },
     {
         "Feature":"ghi_diff_1h",
-        "Mean_Abs_SHAP":0.0336935706,
-        "Relative_Importance_pct":8.2004651449
-    },
-    {
-        "Feature":"solar_azimuth_deg",
-        "Mean_Abs_SHAP":0.0274565636,
-        "Relative_Importance_pct":6.6824794443
+        "Mean_Abs_SHAP":0.02670965,
+        "Relative_Importance_pct":7.7655245483
     },
     {
         "Feature":"lag_23",
-        "Mean_Abs_SHAP":0.0142647683,
-        "Relative_Importance_pct":3.4718117684
+        "Mean_Abs_SHAP":0.0201360703,
+        "Relative_Importance_pct":5.8543316184
     },
     {
-        "Feature":"cloud_lag_0",
-        "Mean_Abs_SHAP":0.0135419432,
-        "Relative_Importance_pct":3.2958879337
-    },
-    {
-        "Feature":"ghi_lag_0",
-        "Mean_Abs_SHAP":0.0111267103,
-        "Relative_Importance_pct":2.7080596678
+        "Feature":"solar_azimuth_deg",
+        "Mean_Abs_SHAP":0.0154560187,
+        "Relative_Importance_pct":4.4936602472
     },
     {
         "Feature":"solar_elevation_deg",
-        "Mean_Abs_SHAP":0.0108289731,
-        "Relative_Importance_pct":2.6355953089
+        "Mean_Abs_SHAP":0.0107887569,
+        "Relative_Importance_pct":3.1367073904
+    },
+    {
+        "Feature":"cloud_lag_0",
+        "Mean_Abs_SHAP":0.0095669051,
+        "Relative_Importance_pct":2.7814679766
     },
     {
         "Feature":"rolling_std_3h",
-        "Mean_Abs_SHAP":0.0105444949,
-        "Relative_Importance_pct":2.5663579613
+        "Mean_Abs_SHAP":0.008835881,
+        "Relative_Importance_pct":2.5689311061
+    },
+    {
+        "Feature":"ghi_lag_0",
+        "Mean_Abs_SHAP":0.007753296,
+        "Relative_Importance_pct":2.2541819255
     },
     {
         "Feature":"lag_1",
-        "Mean_Abs_SHAP":0.0073249929,
-        "Relative_Importance_pct":1.7827837077
+        "Mean_Abs_SHAP":0.0067110458,
+        "Relative_Importance_pct":1.9511596234
     },
     {
         "Feature":"ghi_lag_1",
-        "Mean_Abs_SHAP":0.0045333822,
-        "Relative_Importance_pct":1.1033512353
+        "Mean_Abs_SHAP":0.0030942299,
+        "Relative_Importance_pct":0.8996118761
     },
     {
         "Feature":"humidity_pct",
-        "Mean_Abs_SHAP":0.0042380785,
-        "Relative_Importance_pct":1.0314791379
+        "Mean_Abs_SHAP":0.0025171737,
+        "Relative_Importance_pct":0.7318394026
     },
     {
         "Feature":"lag_2",
-        "Mean_Abs_SHAP":0.0029451753,
-        "Relative_Importance_pct":0.7168075984
+        "Mean_Abs_SHAP":0.0020299222,
+        "Relative_Importance_pct":0.5901766108
     },
     {
         "Feature":"doy_sin",
-        "Mean_Abs_SHAP":0.0025286975,
-        "Relative_Importance_pct":0.6154437028
-    },
-    {
-        "Feature":"wind_speed_kmh",
-        "Mean_Abs_SHAP":0.0015978895,
-        "Relative_Importance_pct":0.3889002163
+        "Mean_Abs_SHAP":0.0015321557,
+        "Relative_Importance_pct":0.4454567147
     },
     {
         "Feature":"rolling_mean_3h",
-        "Mean_Abs_SHAP":0.0010750143,
-        "Relative_Importance_pct":0.2616409436
+        "Mean_Abs_SHAP":0.0011152479,
+        "Relative_Importance_pct":0.3242455344
     },
     {
         "Feature":"doy_cos",
-        "Mean_Abs_SHAP":0.0010032903,
-        "Relative_Importance_pct":0.2441844931
+        "Mean_Abs_SHAP":0.0010686151,
+        "Relative_Importance_pct":0.3106875804
+    },
+    {
+        "Feature":"wind_speed_kmh",
+        "Mean_Abs_SHAP":0.0009825398,
+        "Relative_Importance_pct":0.2856621879
     },
     {
         "Feature":"temp_lag_0",
-        "Mean_Abs_SHAP":0.0009692529,
-        "Relative_Importance_pct":0.2359003439
+        "Mean_Abs_SHAP":0.0009422315,
+        "Relative_Importance_pct":0.2739430171
     },
     {
         "Feature":"hour_cos",
-        "Mean_Abs_SHAP":0.0001201018,
-        "Relative_Importance_pct":0.0292308238
+        "Mean_Abs_SHAP":0.0002337314,
+        "Relative_Importance_pct":0.0679547269
     }
 ]

@@ -54,7 +54,10 @@ def run_uncertainty_and_robustness():
 
     X_train_a, y_train_a = train_a[feature_cols], train_a[target_col]
     X_cal_a, y_cal_a = cal_a[feature_cols], cal_a[target_col]
-    X_test_b, y_test_b = target_test_b[feature_cols], target_test_b[target_col].values
+    X_test_b = target_test_b[feature_cols]
+    y_test_b = target_test_b[target_col].values
+    is_daytime_b = target_test_b['is_daytime'].values == True
+    n_daytime_b = int(np.sum(is_daytime_b))
 
     logging.info(f"Training CQR base models on Source Site A ({len(X_train_a)} samples)...")
     cqr = ConformalizedQuantileRegressor(alpha=0.10)
@@ -70,67 +73,80 @@ def run_uncertainty_and_robustness():
     # -------------------------------------------------------------
     print("\n" + "="*95)
     print("EXPERIMENT 4: UNCERTAINTY QUANTIFICATION & CONFORMAL CALIBRATION (NOMINAL 90% INTERVAL)")
-    print(f"Target Test Set: Site B Holdout ({len(X_test_b)} daytime hours)")
+    print(f"Target Test Set: Site B Holdout ({len(X_test_b)} total hours, {n_daytime_b} daytime active hours)")
     print("="*95)
-    print(f"{'Calibration Regime':<32} | {'PICP (%)':<10} | {'MPIW':<10} | {'Winkler Score':<14} | {'Coverage OK?':<12}")
+    print(f"{'Calibration Regime':<32} | {'Day PICP(%)':<12} | {'Day MPIW':<10} | {'Winkler':<10} | {'All PICP(%)':<12}")
     print("-" * 95)
+
+    def evaluate_regime(name, lower_all, upper_all):
+        day_u = calculate_uncertainty_metrics(y_true=y_test_b[is_daytime_b], lower_bound=lower_all[is_daytime_b], upper_bound=upper_all[is_daytime_b], alpha=0.10)
+        all_u = calculate_uncertainty_metrics(y_true=y_test_b, lower_bound=lower_all, upper_bound=upper_all, alpha=0.10)
+        reg_dict = dict(day_u)
+        reg_dict["daytime"] = day_u
+        reg_dict["all_hours"] = all_u
+        results["Uncertainty_Calibration_Regimes"][name] = reg_dict
+        print(f"{name:<32} | {day_u['PICP_pct']:<12.2f} | {day_u['MPIW']:<10.4f} | {day_u['Winkler_Score']:<10.4f} | {all_u['PICP_pct']:<12.2f}")
+        return reg_dict
 
     # Regime 1: Raw Uncalibrated Quantile Regression (Baseline)
     lower_raw, upper_raw = cqr.predict_intervals(X_test_b, apply_conformal=False)
-    metrics_raw = calculate_uncertainty_metrics(y_true=y_test_b, lower_bound=lower_raw, upper_bound=upper_raw, alpha=0.10)
-    print(f"{'Raw Quantile Regression (No CP)':<32} | {metrics_raw['PICP_pct']:<10.2f} | {metrics_raw['MPIW']:<10.4f} | {metrics_raw['Winkler_Score']:<14.4f} | {str(metrics_raw['Coverage_Guaranteed']):<12}")
-    results["Uncertainty_Calibration_Regimes"]["Raw_Quantile_Regression"] = metrics_raw
+    evaluate_regime("Raw_Quantile_Regression", lower_raw, upper_raw)
 
     # Regime 2: Source-Calibrated CQR (Calibrated on Site A, tested on Site B)
     cqr.calibrate(X_cal_a, y_cal_a)
     lower_source_cqr, upper_source_cqr = cqr.predict_intervals(X_test_b, apply_conformal=True)
-    metrics_source_cqr = calculate_uncertainty_metrics(y_true=y_test_b, lower_bound=lower_source_cqr, upper_bound=upper_source_cqr, alpha=0.10)
-    print(f"{'Source-Calibrated CQR':<32} | {metrics_source_cqr['PICP_pct']:<10.2f} | {metrics_source_cqr['MPIW']:<10.4f} | {metrics_source_cqr['Winkler_Score']:<14.4f} | {str(metrics_source_cqr['Coverage_Guaranteed']):<12}")
-    results["Uncertainty_Calibration_Regimes"]["Source_Calibrated_CQR"] = metrics_source_cqr
+    evaluate_regime("Source_Calibrated_CQR", lower_source_cqr, upper_source_cqr)
 
     # Regime 3: Target-Adapted CQR (Calibrated locally on Target 14-day budget)
     cqr_target = ConformalizedQuantileRegressor(alpha=0.10)
     cqr_target.fit(X_train_a, y_train_a)
     cqr_target.calibrate(target_cal_14d[feature_cols], target_cal_14d[target_col])
     lower_target_cqr, upper_target_cqr = cqr_target.predict_intervals(X_test_b, apply_conformal=True)
-    metrics_target_cqr = calculate_uncertainty_metrics(y_true=y_test_b, lower_bound=lower_target_cqr, upper_bound=upper_target_cqr, alpha=0.10)
-    print(f"{'Target-Adapted CQR (14-day local)':<32} | {metrics_target_cqr['PICP_pct']:<10.2f} | {metrics_target_cqr['MPIW']:<10.4f} | {metrics_target_cqr['Winkler_Score']:<14.4f} | {str(metrics_target_cqr['Coverage_Guaranteed']):<12}")
-    results["Uncertainty_Calibration_Regimes"]["Target_Adapted_CQR"] = metrics_target_cqr
+    evaluate_regime("Target_Adapted_CQR", lower_target_cqr, upper_target_cqr)
     print("="*95 + "\n")
 
     # -------------------------------------------------------------
     # 2. EVALUATE SENSOR AVAILABILITY SHIFTS & STRESS-TESTS
     # -------------------------------------------------------------
     print("\n" + "="*95)
-    print("EXPERIMENT 5: SENSOR-AVAILABILITY DEGRADATION & STRESS-TESTING")
-    print(f"Target Test Set: Site B Holdout ({len(X_test_b)} daytime hours)")
+    print("EXPERIMENT 5: SENSOR-AVAILABILITY DEGRADATION & STRESS-TESTING (DAYTIME PRIMARY)")
+    print(f"Target Test Set: Site B Holdout ({len(X_test_b)} total hours, {n_daytime_b} daytime active hours)")
     print("="*95)
-    print(f"{'Degradation Scenario':<32} | {'nMAE (%)':<10} | {'nRMSE (%)':<10} | {'PICP (%)':<10} | {'MPIW':<10}")
+    print(f"{'Degradation Scenario':<36} | {'Day nMAE(%)':<12} | {'Day nRMSE(%)':<12} | {'Day PICP(%)':<12} | {'Day MPIW':<10}")
     print("-" * 95)
 
     perturb_engine = SensorPerturbationEngine(random_seed=42)
     scenarios = [
-        ("Complete Telemetry (100% Sensors)", 0.0, None),
-        ("Moderate Dropout (10% Missing)", 0.10, None),
-        ("Severe Dropout (30% Missing)", 0.30, None),
-        ("Extreme Dropout (50% Missing)", 0.50, None),
-        ("Total Solar Irradiance Outage (No GHI)", -1.0, "ghi")
+        ("Complete Telemetry (100% Sensors)", lambda x: x.copy()),
+        ("Moderate Dropout (10% MCAR)", lambda x: perturb_engine.simulate_random_missingness(x, missing_rate=0.10)),
+        ("Severe Dropout (30% MCAR)", lambda x: perturb_engine.simulate_random_missingness(x, missing_rate=0.30)),
+        ("Extreme Dropout (50% MCAR)", lambda x: perturb_engine.simulate_random_missingness(x, missing_rate=0.50)),
+        ("Contiguous Outage (3h Block)", lambda x: perturb_engine.simulate_contiguous_dropout(x, block_hours=3, n_outages=8)),
+        ("Contiguous Outage (6h Block)", lambda x: perturb_engine.simulate_contiguous_dropout(x, block_hours=6, n_outages=5)),
+        ("Total Pyranometer Outage (No GHI)", lambda x: perturb_engine.simulate_channel_outage(x, channel_keyword="ghi")),
+        ("Pyranometer Drift (+15% Soiling Bias)", lambda x: perturb_engine.simulate_sensor_drift_and_sticking(x, drift_magnitude_pct=0.15))
     ]
 
-    for name, rate, ch_keyword in scenarios:
-        if ch_keyword is not None:
-            X_pert = perturb_engine.simulate_channel_outage(X_test_b, channel_keyword=ch_keyword)
-        else:
-            X_pert = perturb_engine.inject_random_missingness(X_test_b, missing_rate=rate)
+    for name, perturb_func in scenarios:
+        X_pert = perturb_func(X_test_b)
 
-        # Point forecast (median of lower/upper or point predictor)
+        # Point forecast (median of lower/upper)
         low, high = cqr_target.predict_intervals(X_pert, apply_conformal=True)
         point_preds = (low + high) / 2.0
 
-        p_metrics = calculate_point_metrics(y_true=y_test_b, y_pred=point_preds, capacity=1.0)
-        u_metrics = calculate_uncertainty_metrics(y_true=y_test_b, lower_bound=low, upper_bound=high, alpha=0.10)
+        p_day = calculate_point_metrics(y_true=y_test_b[is_daytime_b], y_pred=point_preds[is_daytime_b], capacity=1.0)
+        p_all = calculate_point_metrics(y_true=y_test_b, y_pred=point_preds, capacity=1.0)
+        p_metrics = dict(p_day)
+        p_metrics["daytime"] = p_day
+        p_metrics["all_hours"] = p_all
 
-        print(f"{name:<32} | {p_metrics['nMAE_pct']:<10.2f} | {p_metrics['nRMSE_pct']:<10.2f} | {u_metrics['PICP_pct']:<10.2f} | {u_metrics['MPIW']:<10.4f}")
+        u_day = calculate_uncertainty_metrics(y_true=y_test_b[is_daytime_b], lower_bound=low[is_daytime_b], upper_bound=high[is_daytime_b], alpha=0.10)
+        u_all = calculate_uncertainty_metrics(y_true=y_test_b, lower_bound=low, upper_bound=high, alpha=0.10)
+        u_metrics = dict(u_day)
+        u_metrics["daytime"] = u_day
+        u_metrics["all_hours"] = u_all
+
+        print(f"{name:<36} | {p_day['nMAE_pct']:<12.2f} | {p_day['nRMSE_pct']:<12.2f} | {u_day['PICP_pct']:<12.2f} | {u_day['MPIW']:<10.4f}")
         results["Sensor_Availability_Stress_Test"][name] = {
             "point_metrics": p_metrics,
             "uncertainty_metrics": u_metrics

@@ -1,106 +1,486 @@
 {
     "Uncertainty_Calibration_Regimes": {
         "Raw_Quantile_Regression": {
-            "PICP_pct": 90.91,
+            "PICP_pct": 87.83,
             "Target_Coverage_pct": 90.0,
-            "MPIW": 0.2398,
-            "Winkler_Score": 0.3201,
-            "Coverage_Guaranteed": true
+            "MPIW": 0.2852,
+            "Winkler_Score": 0.3927,
+            "Mean_Pinball_Loss": 0.0098,
+            "Empirical_Coverage_Meets_Nominal_Target": false,
+            "Coverage_Guaranteed": false,
+            "daytime": {
+                "PICP_pct": 87.83,
+                "Target_Coverage_pct": 90.0,
+                "MPIW": 0.2852,
+                "Winkler_Score": 0.3927,
+                "Mean_Pinball_Loss": 0.0098,
+                "Empirical_Coverage_Meets_Nominal_Target": false,
+                "Coverage_Guaranteed": false
+            },
+            "all_hours": {
+                "PICP_pct": 92.58,
+                "Target_Coverage_pct": 90.0,
+                "MPIW": 0.1666,
+                "Winkler_Score": 0.2277,
+                "Mean_Pinball_Loss": 0.0057,
+                "Empirical_Coverage_Meets_Nominal_Target": true,
+                "Coverage_Guaranteed": true
+            }
         },
         "Source_Calibrated_CQR": {
-            "PICP_pct": 91.5,
+            "PICP_pct": 87.83,
             "Target_Coverage_pct": 90.0,
-            "MPIW": 0.2426,
-            "Winkler_Score": 0.3202,
-            "Coverage_Guaranteed": true
+            "MPIW": 0.2852,
+            "Winkler_Score": 0.3927,
+            "Mean_Pinball_Loss": 0.0098,
+            "Empirical_Coverage_Meets_Nominal_Target": false,
+            "Coverage_Guaranteed": false,
+            "daytime": {
+                "PICP_pct": 87.83,
+                "Target_Coverage_pct": 90.0,
+                "MPIW": 0.2852,
+                "Winkler_Score": 0.3927,
+                "Mean_Pinball_Loss": 0.0098,
+                "Empirical_Coverage_Meets_Nominal_Target": false,
+                "Coverage_Guaranteed": false
+            },
+            "all_hours": {
+                "PICP_pct": 92.58,
+                "Target_Coverage_pct": 90.0,
+                "MPIW": 0.1666,
+                "Winkler_Score": 0.2277,
+                "Mean_Pinball_Loss": 0.0057,
+                "Empirical_Coverage_Meets_Nominal_Target": true,
+                "Coverage_Guaranteed": true
+            }
         },
         "Target_Adapted_CQR": {
-            "PICP_pct": 92.95,
+            "PICP_pct": 89.26,
             "Target_Coverage_pct": 90.0,
-            "MPIW": 0.2501,
-            "Winkler_Score": 0.3212,
-            "Coverage_Guaranteed": true
+            "MPIW": 0.2882,
+            "Winkler_Score": 0.3921,
+            "Mean_Pinball_Loss": 0.0098,
+            "Empirical_Coverage_Meets_Nominal_Target": false,
+            "Coverage_Guaranteed": false,
+            "daytime": {
+                "PICP_pct": 89.26,
+                "Target_Coverage_pct": 90.0,
+                "MPIW": 0.2882,
+                "Winkler_Score": 0.3921,
+                "Mean_Pinball_Loss": 0.0098,
+                "Empirical_Coverage_Meets_Nominal_Target": false,
+                "Coverage_Guaranteed": false
+            },
+            "all_hours": {
+                "PICP_pct": 93.71,
+                "Target_Coverage_pct": 90.0,
+                "MPIW": 0.169,
+                "Winkler_Score": 0.228,
+                "Mean_Pinball_Loss": 0.0057,
+                "Empirical_Coverage_Meets_Nominal_Target": true,
+                "Coverage_Guaranteed": true
+            }
         }
     },
     "Sensor_Availability_Stress_Test": {
         "Complete Telemetry (100% Sensors)": {
             "point_metrics": {
-                "MAE": 0.0731,
-                "RMSE": 0.1081,
-                "nMAE_pct": 7.31,
-                "nRMSE_pct": 10.81,
-                "R2": 0.8927
+                "MAE": 0.085,
+                "RMSE": 0.1184,
+                "nMAE_pct": 8.5,
+                "nRMSE_pct": 11.84,
+                "R2": 0.8663,
+                "daytime": {
+                    "MAE": 0.085,
+                    "RMSE": 0.1184,
+                    "nMAE_pct": 8.5,
+                    "nRMSE_pct": 11.84,
+                    "R2": 0.8663
+                },
+                "all_hours": {
+                    "MAE": 0.0506,
+                    "RMSE": 0.0892,
+                    "nMAE_pct": 5.06,
+                    "nRMSE_pct": 8.92,
+                    "R2": 0.919
+                }
             },
             "uncertainty_metrics": {
-                "PICP_pct": 92.95,
+                "PICP_pct": 89.26,
                 "Target_Coverage_pct": 90.0,
-                "MPIW": 0.2501,
-                "Winkler_Score": 0.3212,
-                "Coverage_Guaranteed": true
+                "MPIW": 0.2882,
+                "Winkler_Score": 0.3921,
+                "Mean_Pinball_Loss": 0.0098,
+                "Empirical_Coverage_Meets_Nominal_Target": false,
+                "Coverage_Guaranteed": false,
+                "daytime": {
+                    "PICP_pct": 89.26,
+                    "Target_Coverage_pct": 90.0,
+                    "MPIW": 0.2882,
+                    "Winkler_Score": 0.3921,
+                    "Mean_Pinball_Loss": 0.0098,
+                    "Empirical_Coverage_Meets_Nominal_Target": false,
+                    "Coverage_Guaranteed": false
+                },
+                "all_hours": {
+                    "PICP_pct": 93.71,
+                    "Target_Coverage_pct": 90.0,
+                    "MPIW": 0.169,
+                    "Winkler_Score": 0.228,
+                    "Mean_Pinball_Loss": 0.0057,
+                    "Empirical_Coverage_Meets_Nominal_Target": true,
+                    "Coverage_Guaranteed": true
+                }
             }
         },
-        "Moderate Dropout (10% Missing)": {
+        "Moderate Dropout (10% MCAR)": {
             "point_metrics": {
-                "MAE": 0.0735,
-                "RMSE": 0.1087,
-                "nMAE_pct": 7.35,
-                "nRMSE_pct": 10.87,
-                "R2": 0.8917
+                "MAE": 0.0865,
+                "RMSE": 0.12,
+                "nMAE_pct": 8.65,
+                "nRMSE_pct": 12.0,
+                "R2": 0.8625,
+                "daytime": {
+                    "MAE": 0.0865,
+                    "RMSE": 0.12,
+                    "nMAE_pct": 8.65,
+                    "nRMSE_pct": 12.0,
+                    "R2": 0.8625
+                },
+                "all_hours": {
+                    "MAE": 0.0514,
+                    "RMSE": 0.0905,
+                    "nMAE_pct": 5.14,
+                    "nRMSE_pct": 9.05,
+                    "R2": 0.9167
+                }
             },
             "uncertainty_metrics": {
-                "PICP_pct": 92.44,
+                "PICP_pct": 88.31,
                 "Target_Coverage_pct": 90.0,
-                "MPIW": 0.2489,
-                "Winkler_Score": 0.327,
-                "Coverage_Guaranteed": true
+                "MPIW": 0.2883,
+                "Winkler_Score": 0.4042,
+                "Mean_Pinball_Loss": 0.0101,
+                "Empirical_Coverage_Meets_Nominal_Target": false,
+                "Coverage_Guaranteed": false,
+                "daytime": {
+                    "PICP_pct": 88.31,
+                    "Target_Coverage_pct": 90.0,
+                    "MPIW": 0.2883,
+                    "Winkler_Score": 0.4042,
+                    "Mean_Pinball_Loss": 0.0101,
+                    "Empirical_Coverage_Meets_Nominal_Target": false,
+                    "Coverage_Guaranteed": false
+                },
+                "all_hours": {
+                    "PICP_pct": 93.22,
+                    "Target_Coverage_pct": 90.0,
+                    "MPIW": 0.1691,
+                    "Winkler_Score": 0.2349,
+                    "Mean_Pinball_Loss": 0.0059,
+                    "Empirical_Coverage_Meets_Nominal_Target": true,
+                    "Coverage_Guaranteed": true
+                }
             }
         },
-        "Severe Dropout (30% Missing)": {
+        "Severe Dropout (30% MCAR)": {
             "point_metrics": {
-                "MAE": 0.0756,
-                "RMSE": 0.1105,
-                "nMAE_pct": 7.56,
-                "nRMSE_pct": 11.05,
-                "R2": 0.888
+                "MAE": 0.0885,
+                "RMSE": 0.1207,
+                "nMAE_pct": 8.85,
+                "nRMSE_pct": 12.07,
+                "R2": 0.861,
+                "daytime": {
+                    "MAE": 0.0885,
+                    "RMSE": 0.1207,
+                    "nMAE_pct": 8.85,
+                    "nRMSE_pct": 12.07,
+                    "R2": 0.861
+                },
+                "all_hours": {
+                    "MAE": 0.0526,
+                    "RMSE": 0.091,
+                    "nMAE_pct": 5.26,
+                    "nRMSE_pct": 9.1,
+                    "R2": 0.9158
+                }
             },
             "uncertainty_metrics": {
-                "PICP_pct": 91.76,
+                "PICP_pct": 85.84,
                 "Target_Coverage_pct": 90.0,
-                "MPIW": 0.2498,
-                "Winkler_Score": 0.3351,
-                "Coverage_Guaranteed": true
+                "MPIW": 0.2888,
+                "Winkler_Score": 0.4069,
+                "Mean_Pinball_Loss": 0.0102,
+                "Empirical_Coverage_Meets_Nominal_Target": false,
+                "Coverage_Guaranteed": false,
+                "daytime": {
+                    "PICP_pct": 85.84,
+                    "Target_Coverage_pct": 90.0,
+                    "MPIW": 0.2888,
+                    "Winkler_Score": 0.4069,
+                    "Mean_Pinball_Loss": 0.0102,
+                    "Empirical_Coverage_Meets_Nominal_Target": false,
+                    "Coverage_Guaranteed": false
+                },
+                "all_hours": {
+                    "PICP_pct": 91.66,
+                    "Target_Coverage_pct": 90.0,
+                    "MPIW": 0.1695,
+                    "Winkler_Score": 0.2365,
+                    "Mean_Pinball_Loss": 0.0059,
+                    "Empirical_Coverage_Meets_Nominal_Target": true,
+                    "Coverage_Guaranteed": true
+                }
             }
         },
-        "Extreme Dropout (50% Missing)": {
+        "Extreme Dropout (50% MCAR)": {
             "point_metrics": {
-                "MAE": 0.0808,
-                "RMSE": 0.1145,
-                "nMAE_pct": 8.08,
-                "nRMSE_pct": 11.45,
-                "R2": 0.8798
+                "MAE": 0.0956,
+                "RMSE": 0.1275,
+                "nMAE_pct": 9.56,
+                "nRMSE_pct": 12.75,
+                "R2": 0.8448,
+                "daytime": {
+                    "MAE": 0.0956,
+                    "RMSE": 0.1275,
+                    "nMAE_pct": 9.56,
+                    "nRMSE_pct": 12.75,
+                    "R2": 0.8448
+                },
+                "all_hours": {
+                    "MAE": 0.057,
+                    "RMSE": 0.0963,
+                    "nMAE_pct": 5.7,
+                    "nRMSE_pct": 9.63,
+                    "R2": 0.9056
+                }
             },
             "uncertainty_metrics": {
-                "PICP_pct": 89.38,
+                "PICP_pct": 82.6,
                 "Target_Coverage_pct": 90.0,
-                "MPIW": 0.2566,
-                "Winkler_Score": 0.3506,
-                "Coverage_Guaranteed": false
+                "MPIW": 0.2966,
+                "Winkler_Score": 0.4378,
+                "Mean_Pinball_Loss": 0.0109,
+                "Empirical_Coverage_Meets_Nominal_Target": false,
+                "Coverage_Guaranteed": false,
+                "daytime": {
+                    "PICP_pct": 82.6,
+                    "Target_Coverage_pct": 90.0,
+                    "MPIW": 0.2966,
+                    "Winkler_Score": 0.4378,
+                    "Mean_Pinball_Loss": 0.0109,
+                    "Empirical_Coverage_Meets_Nominal_Target": false,
+                    "Coverage_Guaranteed": false
+                },
+                "all_hours": {
+                    "PICP_pct": 89.89,
+                    "Target_Coverage_pct": 90.0,
+                    "MPIW": 0.1745,
+                    "Winkler_Score": 0.2547,
+                    "Mean_Pinball_Loss": 0.0064,
+                    "Empirical_Coverage_Meets_Nominal_Target": false,
+                    "Coverage_Guaranteed": false
+                }
             }
         },
-        "Total Solar Irradiance Outage (No GHI)": {
+        "Contiguous Outage (3h Block)": {
             "point_metrics": {
-                "MAE": 0.0932,
-                "RMSE": 0.1323,
-                "nMAE_pct": 9.32,
-                "nRMSE_pct": 13.23,
-                "R2": 0.8393
+                "MAE": 0.0852,
+                "RMSE": 0.1186,
+                "nMAE_pct": 8.52,
+                "nRMSE_pct": 11.86,
+                "R2": 0.8658,
+                "daytime": {
+                    "MAE": 0.0852,
+                    "RMSE": 0.1186,
+                    "nMAE_pct": 8.52,
+                    "nRMSE_pct": 11.86,
+                    "R2": 0.8658
+                },
+                "all_hours": {
+                    "MAE": 0.0507,
+                    "RMSE": 0.0894,
+                    "nMAE_pct": 5.07,
+                    "nRMSE_pct": 8.94,
+                    "R2": 0.9187
+                }
             },
             "uncertainty_metrics": {
-                "PICP_pct": 84.96,
+                "PICP_pct": 89.16,
                 "Target_Coverage_pct": 90.0,
-                "MPIW": 0.2777,
-                "Winkler_Score": 0.3931,
-                "Coverage_Guaranteed": false
+                "MPIW": 0.2882,
+                "Winkler_Score": 0.394,
+                "Mean_Pinball_Loss": 0.0098,
+                "Empirical_Coverage_Meets_Nominal_Target": false,
+                "Coverage_Guaranteed": false,
+                "daytime": {
+                    "PICP_pct": 89.16,
+                    "Target_Coverage_pct": 90.0,
+                    "MPIW": 0.2882,
+                    "Winkler_Score": 0.394,
+                    "Mean_Pinball_Loss": 0.0098,
+                    "Empirical_Coverage_Meets_Nominal_Target": false,
+                    "Coverage_Guaranteed": false
+                },
+                "all_hours": {
+                    "PICP_pct": 93.65,
+                    "Target_Coverage_pct": 90.0,
+                    "MPIW": 0.1691,
+                    "Winkler_Score": 0.2291,
+                    "Mean_Pinball_Loss": 0.0057,
+                    "Empirical_Coverage_Meets_Nominal_Target": true,
+                    "Coverage_Guaranteed": true
+                }
+            }
+        },
+        "Contiguous Outage (6h Block)": {
+            "point_metrics": {
+                "MAE": 0.085,
+                "RMSE": 0.1182,
+                "nMAE_pct": 8.5,
+                "nRMSE_pct": 11.82,
+                "R2": 0.8666,
+                "daytime": {
+                    "MAE": 0.085,
+                    "RMSE": 0.1182,
+                    "nMAE_pct": 8.5,
+                    "nRMSE_pct": 11.82,
+                    "R2": 0.8666
+                },
+                "all_hours": {
+                    "MAE": 0.0506,
+                    "RMSE": 0.0891,
+                    "nMAE_pct": 5.06,
+                    "nRMSE_pct": 8.91,
+                    "R2": 0.9192
+                }
+            },
+            "uncertainty_metrics": {
+                "PICP_pct": 89.16,
+                "Target_Coverage_pct": 90.0,
+                "MPIW": 0.2876,
+                "Winkler_Score": 0.3921,
+                "Mean_Pinball_Loss": 0.0098,
+                "Empirical_Coverage_Meets_Nominal_Target": false,
+                "Coverage_Guaranteed": false,
+                "daytime": {
+                    "PICP_pct": 89.16,
+                    "Target_Coverage_pct": 90.0,
+                    "MPIW": 0.2876,
+                    "Winkler_Score": 0.3921,
+                    "Mean_Pinball_Loss": 0.0098,
+                    "Empirical_Coverage_Meets_Nominal_Target": false,
+                    "Coverage_Guaranteed": false
+                },
+                "all_hours": {
+                    "PICP_pct": 93.65,
+                    "Target_Coverage_pct": 90.0,
+                    "MPIW": 0.1688,
+                    "Winkler_Score": 0.2282,
+                    "Mean_Pinball_Loss": 0.0057,
+                    "Empirical_Coverage_Meets_Nominal_Target": true,
+                    "Coverage_Guaranteed": true
+                }
+            }
+        },
+        "Total Pyranometer Outage (No GHI)": {
+            "point_metrics": {
+                "MAE": 0.113,
+                "RMSE": 0.1504,
+                "nMAE_pct": 11.3,
+                "nRMSE_pct": 15.04,
+                "R2": 0.7841,
+                "daytime": {
+                    "MAE": 0.113,
+                    "RMSE": 0.1504,
+                    "nMAE_pct": 11.3,
+                    "nRMSE_pct": 15.04,
+                    "R2": 0.7841
+                },
+                "all_hours": {
+                    "MAE": 0.0664,
+                    "RMSE": 0.1133,
+                    "nMAE_pct": 6.64,
+                    "nRMSE_pct": 11.33,
+                    "R2": 0.8694
+                }
+            },
+            "uncertainty_metrics": {
+                "PICP_pct": 71.58,
+                "Target_Coverage_pct": 90.0,
+                "MPIW": 0.3146,
+                "Winkler_Score": 0.5488,
+                "Mean_Pinball_Loss": 0.0137,
+                "Empirical_Coverage_Meets_Nominal_Target": false,
+                "Coverage_Guaranteed": false,
+                "daytime": {
+                    "PICP_pct": 71.58,
+                    "Target_Coverage_pct": 90.0,
+                    "MPIW": 0.3146,
+                    "Winkler_Score": 0.5488,
+                    "Mean_Pinball_Loss": 0.0137,
+                    "Empirical_Coverage_Meets_Nominal_Target": false,
+                    "Coverage_Guaranteed": false
+                },
+                "all_hours": {
+                    "PICP_pct": 83.59,
+                    "Target_Coverage_pct": 90.0,
+                    "MPIW": 0.1838,
+                    "Winkler_Score": 0.3166,
+                    "Mean_Pinball_Loss": 0.0079,
+                    "Empirical_Coverage_Meets_Nominal_Target": false,
+                    "Coverage_Guaranteed": false
+                }
+            }
+        },
+        "Pyranometer Drift (+15% Soiling Bias)": {
+            "point_metrics": {
+                "MAE": 0.0844,
+                "RMSE": 0.1177,
+                "nMAE_pct": 8.44,
+                "nRMSE_pct": 11.77,
+                "R2": 0.8678,
+                "daytime": {
+                    "MAE": 0.0844,
+                    "RMSE": 0.1177,
+                    "nMAE_pct": 8.44,
+                    "nRMSE_pct": 11.77,
+                    "R2": 0.8678
+                },
+                "all_hours": {
+                    "MAE": 0.0502,
+                    "RMSE": 0.0887,
+                    "nMAE_pct": 5.02,
+                    "nRMSE_pct": 8.87,
+                    "R2": 0.92
+                }
+            },
+            "uncertainty_metrics": {
+                "PICP_pct": 89.26,
+                "Target_Coverage_pct": 90.0,
+                "MPIW": 0.2871,
+                "Winkler_Score": 0.3939,
+                "Mean_Pinball_Loss": 0.0098,
+                "Empirical_Coverage_Meets_Nominal_Target": false,
+                "Coverage_Guaranteed": false,
+                "daytime": {
+                    "PICP_pct": 89.26,
+                    "Target_Coverage_pct": 90.0,
+                    "MPIW": 0.2871,
+                    "Winkler_Score": 0.3939,
+                    "Mean_Pinball_Loss": 0.0098,
+                    "Empirical_Coverage_Meets_Nominal_Target": false,
+                    "Coverage_Guaranteed": false
+                },
+                "all_hours": {
+                    "PICP_pct": 93.71,
+                    "Target_Coverage_pct": 90.0,
+                    "MPIW": 0.1684,
+                    "Winkler_Score": 0.229,
+                    "Mean_Pinball_Loss": 0.0057,
+                    "Empirical_Coverage_Meets_Nominal_Target": true,
+                    "Coverage_Guaranteed": true
+                }
             }
         }
     }

@@ -73,31 +73,50 @@ def run_benchmark():
 
     results = {}
     y_test_arr = y_test.values
+    is_daytime = test_df['is_daytime'].values == True
+    n_daytime = int(np.sum(is_daytime))
+    logging.info(f"Test Set Total Hours: {len(test_df)}, Daytime Active Hours (solar_elevation > 0): {n_daytime}")
+
     # Persistence baseline for Skill Score
     persist_preds = models["Persistence"].predict(X_test)
 
-    print("\n" + "="*85)
-    print("EXPERIMENT 1 BENCHMARK RESULTS (SITE A - WITHIN-SITE TEST SET)")
-    print("="*85)
-    print(f"{'Model':<22} | {'nMAE (%)':<10} | {'nRMSE (%)':<10} | {'R2':<8} | {'Skill Score':<12}")
-    print("-" * 85)
+    print("\n" + "="*95)
+    print("EXPERIMENT 1 BENCHMARK RESULTS (SITE A - WITHIN-SITE TEST SET: DAYTIME PRIMARY)")
+    print(f"Total Test Hours: {len(test_df)} | Daytime Active Hours: {n_daytime}")
+    print("="*95)
+    print(f"{'Model':<22} | {'Day nMAE(%)':<12} | {'Day nRMSE(%)':<12} | {'Day R2':<8} | {'All nMAE(%)':<12} | {'Day Skill':<10}")
+    print("-" * 95)
 
     for name, model in models.items():
-        print(f"Fitting and evaluating {name}...", flush=True)
         if hasattr(model, "fit"):
             model.fit(X_train, y_train)
 
         preds = model.predict(X_test)
-        metrics = calculate_point_metrics(
+        
+        # Primary: Daytime-only evaluation (physically meaningful)
+        metrics_day = calculate_point_metrics(
+            y_true=y_test_arr[is_daytime],
+            y_pred=preds[is_daytime],
+            y_persistence=persist_preds[is_daytime],
+            capacity=1.0
+        )
+        
+        # Secondary: All-hours evaluation (continuous time-series)
+        metrics_all = calculate_point_metrics(
             y_true=y_test_arr,
             y_pred=preds,
             y_persistence=persist_preds,
-            capacity=1.0 # Target is already normalized Capacity Factor
+            capacity=1.0
         )
-        results[name] = metrics
-        print(f"DONE: {name}", flush=True)
 
-        print(f"{name:<22} | {metrics['nMAE_pct']:<10.2f} | {metrics['nRMSE_pct']:<10.2f} | {metrics['R2']:<8.4f} | {metrics.get('Skill_Score_vs_Persist', 0.0):<12.4f}")
+        model_result = dict(metrics_day) # Top-level reflects primary daytime evaluation
+        model_result["daytime"] = metrics_day
+        model_result["all_hours"] = metrics_all
+        results[name] = model_result
+
+        print(f"{name:<22} | {metrics_day['nMAE_pct']:<12.2f} | {metrics_day['nRMSE_pct']:<12.2f} | {metrics_day['R2']:<8.4f} | {metrics_all['nMAE_pct']:<12.2f} | {metrics_day.get('Skill_Score_vs_Persist', 0.0):<10.4f}")
+
+    print("="*95 + "\n")
 
     print("="*85 + "\n")
 

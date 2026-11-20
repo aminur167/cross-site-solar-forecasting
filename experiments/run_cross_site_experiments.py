@@ -54,22 +54,34 @@ def run_cross_site_adaptation_experiment():
 
     X_test_b = target_test_df[feature_cols]
     y_test_b = target_test_df[target_col].values
+    is_daytime_b = target_test_df['is_daytime'].values == True
+    n_daytime_b = int(np.sum(is_daytime_b))
 
     logging.info(f"Source Training Samples: {len(X_source)}")
-    logging.info(f"Target Adaptation Pool: {len(target_pool_df)}, Target Test Samples: {len(X_test_b)}")
+    logging.info(f"Target Adaptation Pool: {len(target_pool_df)}, Target Test Samples: {len(X_test_b)} (Daytime: {n_daytime_b})")
     logging.info(f"Target Test Horizon: {target_test_df.index.min()} to {target_test_df.index.max()}")
 
     # Baseline persistence on Target Test set
     persist_model = PersistenceModel(target_lag_col='lag_0')
     persist_preds = persist_model.predict(X_test_b)
-    persist_metrics = calculate_point_metrics(y_true=y_test_b, y_pred=persist_preds, capacity=1.0)
+    
+    persist_metrics_day = calculate_point_metrics(y_true=y_test_b[is_daytime_b], y_pred=persist_preds[is_daytime_b], capacity=1.0)
+    persist_metrics_all = calculate_point_metrics(y_true=y_test_b, y_pred=persist_preds, capacity=1.0)
+    persist_metrics = dict(persist_metrics_day)
+    persist_metrics["daytime"] = persist_metrics_day
+    persist_metrics["all_hours"] = persist_metrics_all
 
     # Oracle Benchmark: Model trained on FULL target adaptation pool
     logging.info("Training Target-Site Oracle (Full Target Data)...")
     oracle_model = SolarLightGBM(n_estimators=150, learning_rate=0.05, max_depth=6)
     oracle_model.fit(target_pool_df[feature_cols], target_pool_df[target_col])
     oracle_preds = oracle_model.predict(X_test_b)
-    oracle_metrics = calculate_point_metrics(y_true=y_test_b, y_pred=oracle_preds, y_persistence=persist_preds, capacity=1.0)
+    
+    oracle_metrics_day = calculate_point_metrics(y_true=y_test_b[is_daytime_b], y_pred=oracle_preds[is_daytime_b], y_persistence=persist_preds[is_daytime_b], capacity=1.0)
+    oracle_metrics_all = calculate_point_metrics(y_true=y_test_b, y_pred=oracle_preds, y_persistence=persist_preds, capacity=1.0)
+    oracle_metrics = dict(oracle_metrics_day)
+    oracle_metrics["daytime"] = oracle_metrics_day
+    oracle_metrics["all_hours"] = oracle_metrics_all
 
     # 3. Adaptation Budgets to Evaluate: k in [0, 1, 3, 7, 14] days
     budgets = [0, 1, 3, 7, 14]
@@ -81,12 +93,12 @@ def run_cross_site_adaptation_experiment():
 
     print("\n" + "="*95)
     print("EXPERIMENT 2 & 3: CROSS-SITE GENERALIZATION & FEW-SHOT ADAPTATION FRONTIER")
-    print(f"Target Test Set: Site B Holdout ({len(target_test_df)} daytime hours)")
+    print(f"Target Test Set: Site B Holdout ({len(target_test_df)} total hours, {n_daytime_b} daytime active hours)")
     print("="*95)
-    print(f"{'Regime':<28} | {'Target Days':<11} | {'nMAE (%)':<10} | {'nRMSE (%)':<10} | {'R2':<8} | {'Skill Score':<11}")
+    print(f"{'Regime':<28} | {'Target Days':<11} | {'Day nMAE(%)':<12} | {'Day nRMSE(%)':<12} | {'Day R2':<8} | {'Skill Score':<11}")
     print("-" * 95)
-    print(f"{'Persistence (Target Ref)':<28} | {'-':<11} | {persist_metrics['nMAE_pct']:<10.2f} | {persist_metrics['nRMSE_pct']:<10.2f} | {persist_metrics['R2']:<8.4f} | {0.0:<11.4f}")
-    print(f"{'Oracle (Full Target)':<28} | {'Full (~315d)':<11} | {oracle_metrics['nMAE_pct']:<10.2f} | {oracle_metrics['nRMSE_pct']:<10.2f} | {oracle_metrics['R2']:<8.4f} | {oracle_metrics['Skill_Score_vs_Persist']:<11.4f}")
+    print(f"{'Persistence (Target Ref)':<28} | {'-':<11} | {persist_metrics['nMAE_pct']:<12.2f} | {persist_metrics['nRMSE_pct']:<12.2f} | {persist_metrics['R2']:<8.4f} | {0.0:<11.4f}")
+    print(f"{'Oracle (Full Target)':<28} | {'Full (~315d)':<11} | {oracle_metrics['nMAE_pct']:<12.2f} | {oracle_metrics['nRMSE_pct']:<12.2f} | {oracle_metrics['R2']:<8.4f} | {oracle_metrics['Skill_Score_vs_Persist']:<11.4f}")
     print("-" * 95)
 
     adapter = FewShotDomainAdapter(target_weight=2.5)
@@ -103,8 +115,12 @@ def run_cross_site_adaptation_experiment():
             target_only_model = SolarLightGBM(n_estimators=max(30, k*15), learning_rate=0.08, max_depth=4)
             target_only_model.fit(X_target_k, y_target_k)
             to_preds = target_only_model.predict(X_test_b)
-            target_only_metrics = calculate_point_metrics(y_true=y_test_b, y_pred=to_preds, y_persistence=persist_preds, capacity=1.0)
-            print(f"{'Target-Only (No Transfer)':<28} | {f'{k} days':<11} | {target_only_metrics['nMAE_pct']:<10.2f} | {target_only_metrics['nRMSE_pct']:<10.2f} | {target_only_metrics['R2']:<8.4f} | {target_only_metrics['Skill_Score_vs_Persist']:<11.4f}")
+            to_day = calculate_point_metrics(y_true=y_test_b[is_daytime_b], y_pred=to_preds[is_daytime_b], y_persistence=persist_preds[is_daytime_b], capacity=1.0)
+            to_all = calculate_point_metrics(y_true=y_test_b, y_pred=to_preds, y_persistence=persist_preds, capacity=1.0)
+            target_only_metrics = dict(to_day)
+            target_only_metrics["daytime"] = to_day
+            target_only_metrics["all_hours"] = to_all
+            print(f"{'Target-Only (No Transfer)':<28} | {f'{k} days':<11} | {to_day['nMAE_pct']:<12.2f} | {to_day['nRMSE_pct']:<12.2f} | {to_day['R2']:<8.4f} | {to_day['Skill_Score_vs_Persist']:<11.4f}")
 
         # B. Transfer Learning (Source + Target k days adaptation)
         X_adapted, y_adapted, sample_weights = adapter.prepare_adaptation_dataset(
@@ -113,10 +129,15 @@ def run_cross_site_adaptation_experiment():
         adapted_model = SolarLightGBM(n_estimators=150, learning_rate=0.05, max_depth=6)
         adapted_model.model.fit(X_adapted, y_adapted, sample_weight=sample_weights)
         tl_preds = adapted_model.predict(X_test_b)
-        tl_metrics = calculate_point_metrics(y_true=y_test_b, y_pred=tl_preds, y_persistence=persist_preds, capacity=1.0)
+        
+        tl_day = calculate_point_metrics(y_true=y_test_b[is_daytime_b], y_pred=tl_preds[is_daytime_b], y_persistence=persist_preds[is_daytime_b], capacity=1.0)
+        tl_all = calculate_point_metrics(y_true=y_test_b, y_pred=tl_preds, y_persistence=persist_preds, capacity=1.0)
+        tl_metrics = dict(tl_day)
+        tl_metrics["daytime"] = tl_day
+        tl_metrics["all_hours"] = tl_all
 
         label = "Zero-Shot Transfer" if k == 0 else f"Adapted ({k} days)"
-        print(f"{label:<28} | {f'{k} days':<11} | {tl_metrics['nMAE_pct']:<10.2f} | {tl_metrics['nRMSE_pct']:<10.2f} | {tl_metrics['R2']:<8.4f} | {tl_metrics['Skill_Score_vs_Persist']:<11.4f}")
+        print(f"{label:<28} | {f'{k} days':<11} | {tl_day['nMAE_pct']:<12.2f} | {tl_day['nRMSE_pct']:<12.2f} | {tl_day['R2']:<8.4f} | {tl_day['Skill_Score_vs_Persist']:<11.4f}")
 
         results["Zero_Shot_and_Adaptation"][f"k_{k}_days"] = {
             "budget_days": k,

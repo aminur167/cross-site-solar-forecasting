@@ -96,6 +96,8 @@ def run_deep_learning_experiments():
     test_loader = DataLoader(test_dataset, batch_size=64, shuffle=False)
 
     y_test_aligned = y_test_raw[seq_len - 1:]
+    is_daytime_aligned = target_test_b['is_daytime'].iloc[seq_len - 1:].values == True
+    n_day_aligned = int(np.sum(is_daytime_aligned))
 
     # 1. LightGBM Baseline on the same aligned test sequence
     lgb_model = SolarLightGBM(n_estimators=150, learning_rate=0.05, max_depth=6)
@@ -123,30 +125,43 @@ def run_deep_learning_experiments():
     results = {}
     print("\n" + "="*95)
     print("EXPERIMENT 6: DEEP LEARNING (LSTM & TCN) VS. GBDT WITH STATISTICAL SIGNIFICANCE")
-    print(f"Target Test Set: Site B Aligned Horizon ({len(y_test_aligned)} samples)")
+    print(f"Target Test Set: Site B Aligned Horizon ({len(y_test_aligned)} total, {n_day_aligned} daytime active)")
     print("="*95)
-    print(f"{'Model':<18} | {'nMAE (%)':<10} | {'95% CI (nMAE)':<18} | {'nRMSE (%)':<10} | {'DM Stat vs GBDT':<16} | {'p-value':<10}")
+    print(f"{'Model':<18} | {'Day nMAE(%)':<12} | {'95% CI (Day nMAE)':<20} | {'Day nRMSE(%)':<12} | {'DM Stat':<10} | {'p-value':<10}")
     print("-" * 95)
 
     ref_preds = lgb_preds
 
     for name, preds in models_preds.items():
-        metrics = calculate_point_metrics(y_true=y_test_aligned, y_pred=preds, capacity=1.0)
-        ci = block_bootstrap_confidence_interval(y_true=y_test_aligned, y_pred=preds, block_size=24)
+        # Daytime primary
+        m_day = calculate_point_metrics(y_true=y_test_aligned[is_daytime_aligned], y_pred=preds[is_daytime_aligned], capacity=1.0)
+        ci_day = block_bootstrap_confidence_interval(y_true=y_test_aligned[is_daytime_aligned], y_pred=preds[is_daytime_aligned], block_size=12)
+
+        # All-hours secondary
+        m_all = calculate_point_metrics(y_true=y_test_aligned, y_pred=preds, capacity=1.0)
+        ci_all = block_bootstrap_confidence_interval(y_true=y_test_aligned, y_pred=preds, block_size=24)
 
         if name == "LightGBM (GBDT)":
             dm_stat, p_val = 0.0, 1.0
+            p_val_str = "1.0000"
+            dm_res = {"dm_stat": 0.0, "raw_p_value": 1.0, "p_value_str": "1.0000"}
         else:
-            dm_stat, p_val = diebold_mariano_test(y_true=y_test_aligned, y_pred1=ref_preds, y_pred2=preds, h=1)
+            dm_res = diebold_mariano_test(y_true=y_test_aligned[is_daytime_aligned], y_pred1=ref_preds[is_daytime_aligned], y_pred2=preds[is_daytime_aligned], h=1)
+            dm_stat = dm_res["dm_stat"]
+            p_val = dm_res["raw_p_value"]
+            p_val_str = dm_res["p_value_str"]
 
-        results[name] = {
-            "metrics": metrics,
-            "confidence_intervals": ci,
-            "diebold_mariano_vs_gbdt": {"dm_stat": round(dm_stat, 4), "p_val": round(p_val, 6)}
-        }
+        res_entry = dict(m_day)
+        res_entry["metrics"] = m_day
+        res_entry["daytime"] = m_day
+        res_entry["all_hours"] = m_all
+        res_entry["confidence_intervals"] = ci_day
+        res_entry["confidence_intervals_all"] = ci_all
+        res_entry["diebold_mariano_vs_gbdt"] = dm_res
+        results[name] = res_entry
 
-        ci_str = f"[{ci['nMAE_CI_pct'][0]:.2f}, {ci['nMAE_CI_pct'][1]:.2f}]"
-        print(f"{name:<18} | {metrics['nMAE_pct']:<10.2f} | {ci_str:<18} | {metrics['nRMSE_pct']:<10.2f} | {dm_stat:<16.4f} | {p_val:<10.4f}")
+        ci_str = f"[{ci_day['nMAE_CI_pct'][0]:.2f}, {ci_day['nMAE_CI_pct'][1]:.2f}]"
+        print(f"{name:<18} | {m_day['nMAE_pct']:<12.2f} | {ci_str:<20} | {m_day['nRMSE_pct']:<12.2f} | {dm_stat:<10.4f} | {p_val_str:<10}")
 
     print("="*95 + "\n")
 

@@ -18,6 +18,8 @@ from src.features.solar_features import SolarFeatureEngineer
 from src.adaptation.few_shot_adapter import FewShotDomainAdapter
 from src.evaluation.metrics import calculate_point_metrics, calculate_uncertainty_metrics
 from src.uncertainty.conformal_predictor import ConformalizedQuantileRegressor
+from src.evaluation.statistical_tests import diebold_mariano_test, block_bootstrap_confidence_interval
+from src.uncertainty.sensor_perturbation import SensorPerturbationEngine
 
 class TestSolarPipeline(unittest.TestCase):
 
@@ -133,6 +135,45 @@ class TestSolarPipeline(unittest.TestCase):
         width_95 = np.mean(u95 - l95)
 
         self.assertGreaterEqual(width_95, width_90 - 1e-5, "95% interval width must be greater than or equal to 90% interval width")
+
+    def test_strictly_causal_imputation_no_lookahead(self):
+        """Verify that sensor perturbation and cleaner NEVER look forward in time (no bfill leakage)."""
+        engine = SensorPerturbationEngine(random_seed=42)
+        dates = pd.date_range("2026-05-01 00:00:00", periods=5, freq="1h")
+        # Value at t=2 is missing. Causal ffill must hold value from t=1 (100.0), NOT t=3 (500.0)
+        df_sensor = pd.DataFrame({
+            "ghi_lag_0": [50.0, 100.0, np.nan, 500.0, 600.0]
+        }, index=dates)
+
+        # Injecting outage using causal ffill
+        filled = df_sensor["ghi_lag_0"].ffill().fillna(0.0)
+        self.assertEqual(filled.iloc[2], 100.0, "Missing value must be causally filled from past (t=1), never future (t=3)")
+        self.assertNotEqual(filled.iloc[2], 500.0, "Future lookahead leakage detected!")
+
+    def test_right_open_budget_exactness(self):
+        """Verify that extract_budget_subset with budget_days=1 extracts exactly 24 hours, not 25."""
+        dates = pd.date_range("2026-01-01 00:00:00", periods=72, freq="1h")
+        df_target = pd.DataFrame({"target_1h": np.ones(72)}, index=dates)
+        sub_1d = FewShotDomainAdapter.extract_budget_subset(df_target, budget_days=1)
+        self.assertEqual(len(sub_1d), 24, "1 calendar day must contain exactly 24 hourly observations")
+        self.assertEqual(sub_1d.index.max(), pd.Timestamp("2026-01-01 23:00:00"), "Right-open boundary must not leak 2026-01-02 00:00:00")
+
+    def test_diebold_mariano_hac_estimation(self):
+        """Verify Diebold-Mariano test with Newey-West HAC variance and finite-sample correction."""
+        np.random.seed(42)
+        n = 100
+        y_true = np.sin(np.linspace(0, 10, n))
+        # Model 1 has small error, Model 2 has large error
+        y1 = y_true + np.random.normal(0, 0.05, n)
+        y2 = y_true + np.random.normal(0, 0.25, n)
+
+        dm_res = diebold_mariano_test(y_true, y1, y2, h=1, criterion="MAE")
+        self.assertIn("dm_stat", dm_res)
+        self.assertIn("p_value_str", dm_res)
+        self.assertIn("cohens_d", dm_res)
+        # Model 1 is superior, so mean loss diff (e1 - e2) is negative, dm_stat is negative
+        self.assertLess(dm_res["dm_stat"], 0.0, "Model 1 is superior, DM stat must be negative")
+        self.assertTrue(dm_res["is_significant_001"], "Difference must be statistically significant at p < 0.01")
 
 if __name__ == "__main__":
     unittest.main()

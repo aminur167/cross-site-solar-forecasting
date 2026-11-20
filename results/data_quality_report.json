@@ -1,0 +1,100 @@
+{
+  "Site_A_Source": {
+    "site_name": "Site_A_Source",
+    "file_path": "data/raw/romanian_pv/site_a/site_a_hourly_weather.csv",
+    "total_raw_records": 13031,
+    "start_time": "2025-01-03 22:00:00",
+    "end_time": "2026-06-30 20:00:00",
+    "sampling_frequency": "1-hour",
+    "is_monotonic_increasing": true,
+    "duplicate_timestamps": 0,
+    "unparseable_timestamps": 0,
+    "nighttime_records": 6412,
+    "daytime_records": 6619,
+    "power_metrics": {
+      "rated_capacity_kw": 50.0,
+      "max_active_power_kw": 55.0,
+      "min_active_power_kw": 0.0,
+      "negative_power_records": 0,
+      "over_rated_records": 98,
+      "over_120pct_records": 0,
+      "nighttime_generation_anomalies": 243,
+      "stuck_daytime_measurements": 0
+    },
+    "solar_radiation_metrics": {
+      "max_ghi_wm2": 945.0,
+      "negative_ghi_records": 0,
+      "exceeding_solar_constant_records": 0
+    },
+    "missing_telemetry": {
+      "active_power_kw": 260,
+      "dc_input_power_kw": 4927,
+      "daily_energy_kwh": 4927,
+      "cumulative_energy_kwh": 4927,
+      "inverter_temp_c": 4927,
+      "grid_freq_hz": 4927,
+      "power_factor": 4927,
+      "efficiency_pct": 4927,
+      "inverter_status": 4927,
+      "is_generating": 260,
+      "temp_c": 262,
+      "humidity_pct": 262,
+      "cloud_cover_pct": 262,
+      "wind_speed_kmh": 262,
+      "ghi_wm2": 262,
+      "dni_wm2": 262,
+      "dhi_wm2": 262,
+      "precip_mm": 262,
+      "capacity_factor": 260
+    }
+  },
+  "Site_B_Target": {
+    "site_name": "Site_B_Target",
+    "file_path": "data/raw/romanian_pv/site_b/site_b_hourly_weather.csv",
+    "total_raw_records": 9504,
+    "start_time": "2025-04-30 21:00:00",
+    "end_time": "2026-05-31 20:00:00",
+    "sampling_frequency": "1-hour",
+    "is_monotonic_increasing": true,
+    "duplicate_timestamps": 0,
+    "unparseable_timestamps": 0,
+    "nighttime_records": 4638,
+    "daytime_records": 4866,
+    "power_metrics": {
+      "rated_capacity_kw": 50.0,
+      "max_active_power_kw": 53.07,
+      "min_active_power_kw": 0.0,
+      "negative_power_records": 0,
+      "over_rated_records": 17,
+      "over_120pct_records": 0,
+      "nighttime_generation_anomalies": 130,
+      "stuck_daytime_measurements": 2
+    },
+    "solar_radiation_metrics": {
+      "max_ghi_wm2": 945.0,
+      "negative_ghi_records": 0,
+      "exceeding_solar_constant_records": 0
+    },
+    "missing_telemetry": {
+      "active_power_kw": 170,
+      "dc_input_power_kw": 3581,
+      "daily_energy_kwh": 3581,
+      "cumulative_energy_kwh": 3581,
+      "inverter_temp_c": 3581,
+      "grid_freq_hz": 3581,
+      "power_factor": 3581,
+      "efficiency_pct": 3581,
+      "inverter_status": 3581,
+      "is_generating": 170,
+      "temp_c": 170,
+      "humidity_pct": 170,
+      "cloud_cover_pct": 170,
+      "wind_speed_kmh": 170,
+      "ghi_wm2": 170,
+      "dni_wm2": 170,
+      "dhi_wm2": 170,
+      "precip_mm": 170,
+      "capacity_factor": 170
+    }
+  }
+}

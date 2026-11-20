@@ -60,7 +60,19 @@ def generate_uncertainty_robustness_figure():
     # 2. Sensor-Availability Degradation Curves
     stress_data = data["Sensor_Availability_Stress_Test"]
     scenarios = list(stress_data.keys())
-    scenario_labels = ['Complete\n(0% Miss)', '10% Drop', '30% Drop', '50% Drop', 'Total GHI\nOutage']
+    
+    # Clean shortened display labels for all scenarios
+    label_map = {
+        "Complete Telemetry (100% Sensors)": "Complete\n(0% Miss)",
+        "Moderate Dropout (10% MCAR)": "10% Drop",
+        "Severe Dropout (30% MCAR)": "30% Drop",
+        "Extreme Dropout (50% MCAR)": "50% Drop",
+        "Contiguous Outage (3h Block)": "3h Outage",
+        "Contiguous Outage (6h Block)": "6h Outage",
+        "Total Pyranometer Outage (No GHI)": "No GHI\nOutage",
+        "Pyranometer Drift (+15% Soiling Bias)": "+15% Drift"
+    }
+    scenario_labels = [label_map.get(s, s[:10]) for s in scenarios]
     nmae_vals = [stress_data[s]["point_metrics"]["nMAE_pct"] for s in scenarios]
     picp_stress = [stress_data[s]["uncertainty_metrics"]["PICP_pct"] for s in scenarios]
 
@@ -68,18 +80,18 @@ def generate_uncertainty_robustness_figure():
     ax2.plot(x2, nmae_vals, 'o-', color='#d95f02', linewidth=2.4, markersize=8, label='Forecasting Error (nMAE %)')
     ax2.set_ylabel('Forecasting Error (nMAE %)', color='#d95f02')
     ax2.tick_params(axis='y', labelcolor='#d95f02')
-    ax2.set_ylim(6.0, 11.0)
+    ax2.set_ylim(min(nmae_vals) * 0.9, max(nmae_vals) * 1.15)
 
     # Twin axis for PICP coverage
     ax2_twin = ax2.twinx()
     ax2_twin.plot(x2, picp_stress, 's--', color='#1b9e77', linewidth=2.4, markersize=8, label='Empirical Coverage (PICP %)')
-    ax2_twin.axhline(90.0, color='red', linestyle=':', linewidth=1.2, label='Nominal 90% Bound')
+    ax2_twin.axhline(90.0, color='red', linestyle=':', linewidth=1.2, label='Nominal 90% Target')
     ax2_twin.set_ylabel('Prediction Interval Coverage (PICP %)', color='#1b9e77')
     ax2_twin.tick_params(axis='y', labelcolor='#1b9e77')
-    ax2_twin.set_ylim(80.0, 96.0)
+    ax2_twin.set_ylim(min(picp_stress) * 0.95, 100.0)
 
     ax2.set_xticks(x2)
-    ax2.set_xticklabels(scenario_labels)
+    ax2.set_xticklabels(scenario_labels, rotation=20, ha='right', fontsize=9)
     ax2.set_title('(b) Resilience Under Sensor Failures & Telemetry Dropout')
 
     # Combined legend
