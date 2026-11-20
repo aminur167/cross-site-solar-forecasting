@@ -29,14 +29,43 @@ def generate_parity_plot(
 ):
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
 
-    # If data not provided, generate realistic synthetic evaluation sample
+    # If data not provided directly, compute from REAL target holdout test set!
     if y_true is None or y_pred is None:
-        np.random.seed(42)
-        n = 1500
-        # Realistic daytime solar distribution (beta-like)
-        y_true = np.random.beta(a=1.5, b=2.2, size=n)
-        noise = np.random.normal(0, 0.045, size=n)
-        y_pred = np.clip(y_true + noise, 0.0, 1.0)
+        path_a = "data/processed/site_a_features.csv"
+        path_b = "data/processed/site_b_features.csv"
+        if os.path.exists(path_a) and os.path.exists(path_b):
+            import sys
+            sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
+            from src.models.classical_ml import SolarLightGBM
+            
+            df_a = pd.read_csv(path_a, index_col=0, parse_dates=True)
+            df_b = pd.read_csv(path_b, index_col=0, parse_dates=True)
+            
+            feature_cols = [
+                'hour_sin', 'hour_cos', 'doy_sin', 'doy_cos',
+                'lag_0', 'lag_1', 'lag_2', 'lag_23',
+                'rolling_mean_3h', 'rolling_std_3h',
+                'ghi_lag_0', 'ghi_lag_1', 'ghi_diff_1h',
+                'temp_lag_0', 'cloud_lag_0',
+                'humidity_pct', 'wind_speed_kmh',
+                'solar_elevation_deg', 'solar_azimuth_deg'
+            ]
+            feature_cols = [c for c in feature_cols if c in df_a.columns and c in df_b.columns]
+            target_col = 'target_1h'
+            
+            # Train LightGBM on Source Site A
+            model = SolarLightGBM(n_estimators=150, learning_rate=0.05, max_depth=6)
+            model.fit(df_a[feature_cols], df_a[target_col])
+            
+            # Evaluate on Target Site B holdout test set (daytime active hours)
+            n_b = len(df_b)
+            target_test_b = df_b.iloc[int(n_b * 0.80):]
+            daytime_mask = target_test_b['is_daytime'].values == True
+            
+            y_true = target_test_b[target_col].values[daytime_mask]
+            y_pred = model.predict(target_test_b[feature_cols])[daytime_mask]
+        else:
+            raise FileNotFoundError("Processed datasets not found. Run prepare_datasets.py first.")
 
     # Compute goodness-of-fit metrics
     r2 = r2_score(y_true, y_pred)
