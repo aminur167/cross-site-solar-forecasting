@@ -85,19 +85,31 @@ class SolarFeatureEngineer:
             data['cloud_lag_0'] = 0.0
 
         # Ensure solar geometry presence
-        if 'solar_elevation_deg' not in data.columns:
-            data['solar_elevation_deg'] = 45.0
-        if 'solar_azimuth_deg' not in data.columns:
-            data['solar_azimuth_deg'] = 180.0
+        if 'solar_elevation_deg' not in data.columns or 'solar_azimuth_deg' not in data.columns:
+            raise ValueError('Solar geometry is missing; provide verified geometry from the source data.')
         if 'is_daytime' not in data.columns:
             data['is_daytime'] = True
 
         # 5. Target Construction: Predict Capacity Factor at t+1
         data['target_1h'] = data[self.target_col].shift(-1)
+        data['target_timestamp'] = pd.Series(data.index, index=data.index).shift(-1)
+        data['target_is_daytime'] = data.get('is_daytime', False).shift(-1).fillna(False).astype(bool)
+        if 'solar_elevation_deg' in data.columns:
+            data['target_solar_elevation_deg'] = data['solar_elevation_deg'].shift(-1)
 
         # 6. Filter candidate features
         active_features = [c for c in self.CORE_FEATURE_COLS if c in data.columns]
-        required_subset = [c for c in active_features + ['target_1h', 'is_daytime', self.target_col] if c in data.columns]
+        # Missingness flags are useful model inputs: forward-filled values alone
+        # conceal whether a sensor value is stale. Geometry must be present in
+        # the source data; it is never silently replaced with fabricated values.
+        missingness_features = [c for c in data.columns if c.endswith('_was_missing')]
+        active_features = active_features + missingness_features
+        required_subset = [c for c in active_features + ['target_1h', 'target_timestamp', self.target_col] if c in data.columns]
+        # Reject rows whose feature or target timestamps cross a missing hour.
+        next_index = pd.Series(data.index, index=data.index).shift(-1)
+        contiguous_next = (next_index - pd.Series(data.index, index=data.index)) == pd.Timedelta(hours=1)
+        data['_contiguous_next_hour'] = contiguous_next
+        required_subset.append('_contiguous_next_hour')
 
         # Drop only rows where REQUIRED model inputs or forward target are missing
         # (Preserves rows where raw diagnostic columns had NaNs!)

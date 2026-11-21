@@ -16,6 +16,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 from src.uncertainty.conformal_predictor import ConformalizedQuantileRegressor
 from src.uncertainty.sensor_perturbation import SensorPerturbationEngine
 from src.evaluation.metrics import calculate_point_metrics, calculate_uncertainty_metrics
+from src.models.classical_ml import SolarLightGBM
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 
@@ -26,6 +27,8 @@ def run_uncertainty_and_robustness():
     logging.info("Loading feature matrices...")
     df_a = pd.read_csv(path_a, index_col=0, parse_dates=True)
     df_b = pd.read_csv(path_b, index_col=0, parse_dates=True)
+    df_a['target_timestamp'] = pd.to_datetime(df_a['target_timestamp'])
+    df_b['target_timestamp'] = pd.to_datetime(df_b['target_timestamp'])
 
     feature_cols = [
         'hour_sin', 'hour_cos', 'doy_sin', 'doy_cos',
@@ -37,26 +40,36 @@ def run_uncertainty_and_robustness():
         'solar_elevation_deg', 'solar_azimuth_deg'
     ]
     feature_cols = [c for c in feature_cols if c in df_a.columns and c in df_b.columns]
+    feature_cols += [c for c in df_a.columns if c.endswith('_was_missing') and c in df_b.columns]
     target_col = 'target_1h'
-
-    # Split Site A (Source) into Train (70%) and Calibration (30%)
-    n_a = len(df_a)
-    train_a = df_a.iloc[:int(n_a * 0.70)]
-    cal_a = df_a.iloc[int(n_a * 0.70):]
 
     # Site B (Target) holdout test set (final 20%)
     n_b = len(df_b)
     target_pool_b = df_b.iloc[:int(n_b * 0.80)]
     target_test_b = df_b.iloc[int(n_b * 0.80):]
 
+    # Calibration/training must precede target test. Historical Open-Meteo
+    # weather is retrospective, so this experiment is not an operational
+    # forecast evaluation.
+    test_start = target_test_b.index.min()
+    source = df_a.loc[df_a['target_timestamp'] < test_start]
+    split_a = int(len(source) * 0.70)
+    train_a = source.iloc[:split_a]
+    cal_a = source.iloc[split_a:]
+
     # Target 14-day adaptation calibration subset
-    target_cal_14d = target_pool_b.iloc[:14 * 24] # ~14 days
+    cal_start = target_pool_b.index.min()
+    target_cal_14d = target_pool_b.loc[(target_pool_b.index >= cal_start) & (target_pool_b.index < cal_start + pd.Timedelta(days=14))]
+    transfer_source = source.iloc[:int(len(source) * 0.85)]
+    point_model = SolarLightGBM(n_estimators=150, learning_rate=0.05, max_depth=6)
+    point_model.fit(transfer_source[feature_cols], transfer_source[target_col])
 
     X_train_a, y_train_a = train_a[feature_cols], train_a[target_col]
-    X_cal_a, y_cal_a = cal_a[feature_cols], cal_a[target_col]
+    cal_a_day = cal_a.loc[cal_a['target_is_daytime'].astype(bool)]
+    X_cal_a, y_cal_a = cal_a_day[feature_cols], cal_a_day[target_col]
     X_test_b = target_test_b[feature_cols]
     y_test_b = target_test_b[target_col].values
-    is_daytime_b = target_test_b['is_daytime'].values == True
+    is_daytime_b = target_test_b['target_is_daytime'].values.astype(bool)
     n_daytime_b = int(np.sum(is_daytime_b))
 
     logging.info(f"Training CQR base models on Source Site A ({len(X_train_a)} samples)...")
@@ -100,7 +113,8 @@ def run_uncertainty_and_robustness():
     # Regime 3: Target-Adapted CQR (Calibrated locally on Target 14-day budget)
     cqr_target = ConformalizedQuantileRegressor(alpha=0.10)
     cqr_target.fit(X_train_a, y_train_a)
-    cqr_target.calibrate(target_cal_14d[feature_cols], target_cal_14d[target_col])
+    target_cal_day = target_cal_14d.loc[target_cal_14d['target_is_daytime'].astype(bool)]
+    cqr_target.calibrate(target_cal_day[feature_cols], target_cal_day[target_col])
     lower_target_cqr, upper_target_cqr = cqr_target.predict_intervals(X_test_b, apply_conformal=True)
     evaluate_regime("Target_Adapted_CQR", lower_target_cqr, upper_target_cqr)
     print("="*95 + "\n")
@@ -119,33 +133,42 @@ def run_uncertainty_and_robustness():
     scenarios = [
         ("Complete Telemetry (100% Sensors)", lambda x: x.copy()),
         ("Moderate Dropout (10% MCAR)", lambda x: perturb_engine.simulate_random_missingness(x, missing_rate=0.10)),
+        ("Synchronized Packet Loss (30%)", lambda x: perturb_engine.simulate_synchronized_packet_loss(x, missing_rate=0.30)),
         ("Severe Dropout (30% MCAR)", lambda x: perturb_engine.simulate_random_missingness(x, missing_rate=0.30)),
         ("Extreme Dropout (50% MCAR)", lambda x: perturb_engine.simulate_random_missingness(x, missing_rate=0.50)),
         ("Contiguous Outage (3h Block)", lambda x: perturb_engine.simulate_contiguous_dropout(x, block_hours=3, n_outages=8)),
         ("Contiguous Outage (6h Block)", lambda x: perturb_engine.simulate_contiguous_dropout(x, block_hours=6, n_outages=5)),
         ("Total Pyranometer Outage (No GHI)", lambda x: perturb_engine.simulate_channel_outage(x, channel_keyword="ghi")),
         ("Pyranometer Drift (+15% Soiling Bias)", lambda x: perturb_engine.simulate_sensor_drift_and_sticking(x, drift_magnitude_pct=0.15))
+        ,("GHI Stuck-at-Value (24h)", lambda x: perturb_engine.simulate_stuck_at_value(x, duration_hours=24))
     ]
 
     for name, perturb_func in scenarios:
-        X_pert = perturb_func(X_test_b)
+        p_runs, u_runs = [], []
+        for seed in range(42, 47):
+            perturb_engine.set_seed(seed)
+            X_pert = perturb_func(X_test_b)
+            low, high = cqr_target.predict_intervals(X_pert, apply_conformal=True)
+            point_preds = point_model.predict(X_pert)
+            p_day = calculate_point_metrics(y_true=y_test_b[is_daytime_b], y_pred=point_preds[is_daytime_b], capacity=1.0)
+            p_all = calculate_point_metrics(y_true=y_test_b, y_pred=point_preds, capacity=1.0)
+            u_day = calculate_uncertainty_metrics(y_true=y_test_b[is_daytime_b], lower_bound=low[is_daytime_b], upper_bound=high[is_daytime_b], alpha=0.10)
+            u_all = calculate_uncertainty_metrics(y_true=y_test_b, lower_bound=low, upper_bound=high, alpha=0.10)
+            p_runs.append({"daytime": p_day, "all_hours": p_all})
+            u_runs.append({"daytime": u_day, "all_hours": u_all})
 
-        # Point forecast (median of lower/upper)
-        low, high = cqr_target.predict_intervals(X_pert, apply_conformal=True)
-        point_preds = (low + high) / 2.0
+        def summarize(runs):
+            summary = {}
+            for scope in ("daytime", "all_hours"):
+                keys = [k for k, v in runs[0][scope].items() if isinstance(v, (int, float)) and not isinstance(v, bool)]
+                summary[scope] = {k: round(float(np.mean([r[scope][k] for r in runs])), 4) for k in keys}
+                summary[scope]["std"] = {k: round(float(np.std([r[scope][k] for r in runs], ddof=1)), 4) for k in keys}
+                summary[scope]["seeds"] = [42, 43, 44, 45, 46]
+            return summary
 
-        p_day = calculate_point_metrics(y_true=y_test_b[is_daytime_b], y_pred=point_preds[is_daytime_b], capacity=1.0)
-        p_all = calculate_point_metrics(y_true=y_test_b, y_pred=point_preds, capacity=1.0)
-        p_metrics = dict(p_day)
-        p_metrics["daytime"] = p_day
-        p_metrics["all_hours"] = p_all
-
-        u_day = calculate_uncertainty_metrics(y_true=y_test_b[is_daytime_b], lower_bound=low[is_daytime_b], upper_bound=high[is_daytime_b], alpha=0.10)
-        u_all = calculate_uncertainty_metrics(y_true=y_test_b, lower_bound=low, upper_bound=high, alpha=0.10)
-        u_metrics = dict(u_day)
-        u_metrics["daytime"] = u_day
-        u_metrics["all_hours"] = u_all
-
+        p_metrics = summarize(p_runs)
+        u_metrics = summarize(u_runs)
+        p_day, u_day = p_metrics["daytime"], u_metrics["daytime"]
         print(f"{name:<36} | {p_day['nMAE_pct']:<12.2f} | {p_day['nRMSE_pct']:<12.2f} | {u_day['PICP_pct']:<12.2f} | {u_day['MPIW']:<10.4f}")
         results["Sensor_Availability_Stress_Test"][name] = {
             "point_metrics": p_metrics,

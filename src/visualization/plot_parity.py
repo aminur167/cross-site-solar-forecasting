@@ -40,6 +40,8 @@ def generate_parity_plot(
             
             df_a = pd.read_csv(path_a, index_col=0, parse_dates=True)
             df_b = pd.read_csv(path_b, index_col=0, parse_dates=True)
+            df_a['target_timestamp'] = pd.to_datetime(df_a['target_timestamp'])
+            df_b['target_timestamp'] = pd.to_datetime(df_b['target_timestamp'])
             
             feature_cols = [
                 'hour_sin', 'hour_cos', 'doy_sin', 'doy_cos',
@@ -51,16 +53,20 @@ def generate_parity_plot(
                 'solar_elevation_deg', 'solar_azimuth_deg'
             ]
             feature_cols = [c for c in feature_cols if c in df_a.columns and c in df_b.columns]
+            feature_cols += [c for c in df_a.columns if c.endswith('_was_missing') and c in df_b.columns]
             target_col = 'target_1h'
             
             # Train LightGBM on Source Site A
             model = SolarLightGBM(n_estimators=150, learning_rate=0.05, max_depth=6)
-            model.fit(df_a[feature_cols], df_a[target_col])
+            test_start = df_b.index[int(len(df_b) * 0.80)]
+            source = df_a.loc[df_a['target_timestamp'] < test_start]
+            source = source.iloc[:int(len(source) * 0.85)]
+            model.fit(source[feature_cols], source[target_col])
             
             # Evaluate on Target Site B holdout test set (daytime active hours)
             n_b = len(df_b)
             target_test_b = df_b.iloc[int(n_b * 0.80):]
-            daytime_mask = target_test_b['is_daytime'].values == True
+            daytime_mask = target_test_b['target_is_daytime'].values.astype(bool)
             
             y_true = target_test_b[target_col].values[daytime_mask]
             y_pred = model.predict(target_test_b[feature_cols])[daytime_mask]
@@ -93,7 +99,7 @@ def generate_parity_plot(
     cb.set_label("Sample Density", fontsize=9)
 
     # 1:1 Identity Line
-    lims = [0.0, 1.05]
+    lims = [0.0, 1.15]
     ax_main.plot(lims, lims, color="#D9534F", linestyle="--", linewidth=1.8, label="1:1 Perfect Forecast", zorder=4)
 
     # +/- 10% Error Boundary Band
@@ -102,8 +108,8 @@ def generate_parity_plot(
 
     ax_main.set_xlim(lims)
     ax_main.set_ylim(lims)
-    ax_main.set_xlabel("Ground-Truth Capacity Factor $y_t$", fontweight="bold")
-    ax_main.set_ylabel(r"Adapted LightGBM Prediction $\hat{y}_t$", fontweight="bold")
+    ax_main.set_xlabel("Observed next-hour Capacity Factor", fontweight="bold")
+    ax_main.set_ylabel(r"Zero-shot LightGBM Prediction", fontweight="bold")
     ax_main.set_title("Parity Diagnostic: Observed vs Predicted Solar Generation", fontsize=11, fontweight="bold", pad=8)
     ax_main.grid(True)
     ax_main.legend(loc="upper left", framealpha=0.9, fontsize=8.5)

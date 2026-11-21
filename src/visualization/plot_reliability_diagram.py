@@ -41,6 +41,8 @@ def generate_reliability_diagram(output_path: str = "figures/fig6_reliability_di
 
     df_a = pd.read_csv(path_a, index_col=0, parse_dates=True)
     df_b = pd.read_csv(path_b, index_col=0, parse_dates=True)
+    df_a['target_timestamp'] = pd.to_datetime(df_a['target_timestamp'])
+    df_b['target_timestamp'] = pd.to_datetime(df_b['target_timestamp'])
 
     feature_cols = [
         'hour_sin', 'hour_cos', 'doy_sin', 'doy_cos',
@@ -52,22 +54,26 @@ def generate_reliability_diagram(output_path: str = "figures/fig6_reliability_di
         'solar_elevation_deg', 'solar_azimuth_deg'
     ]
     feature_cols = [c for c in feature_cols if c in df_a.columns and c in df_b.columns]
+    feature_cols += [c for c in df_a.columns if c.endswith('_was_missing') and c in df_b.columns]
     target_col = 'target_1h'
 
     n_a = len(df_a)
-    X_train_a = df_a[feature_cols].iloc[:int(n_a * 0.70)]
-    y_train_a = df_a[target_col].iloc[:int(n_a * 0.70)]
-
     n_b = len(df_b)
     target_pool_b = df_b.iloc[:int(n_b * 0.80)]
-    target_cal_14d = target_pool_b.iloc[:14 * 24] # 14-day calibration budget
     target_test_b = df_b.iloc[int(n_b * 0.80):]
+    test_start = target_test_b.index.min()
+    source = df_a.loc[df_a['target_timestamp'] < test_start]
+    split = int(len(source) * 0.70)
+    X_train_a, y_train_a = source[feature_cols].iloc[:split], source[target_col].iloc[:split]
+    cal_source = source.iloc[split:]
+    cal_start = target_pool_b.index.min()
+    target_cal_14d = target_pool_b.loc[(target_pool_b.index >= cal_start) & (target_pool_b.index < cal_start + pd.Timedelta(days=14))]
 
-    daytime_mask = target_test_b['is_daytime'].values == True
+    daytime_mask = target_test_b['target_is_daytime'].values.astype(bool)
     X_test_b = target_test_b[feature_cols]
     y_test_b = target_test_b[target_col].values
 
-    nominal_levels = np.array([0.50, 0.60, 0.70, 0.80, 0.85, 0.90, 0.95])
+    nominal_levels = np.array([0.80, 0.90, 0.95])
     empirical_cqr = []
     uncalibrated = []
     interval_widths = []
@@ -83,7 +89,8 @@ def generate_reliability_diagram(output_path: str = "figures/fig6_reliability_di
         uncalibrated.append(cov_raw)
 
         # Calibrated CQR intervals (using target 14-day calibration)
-        cqr.calibrate(target_cal_14d[feature_cols], target_cal_14d[target_col])
+        target_cal_day = target_cal_14d.loc[target_cal_14d['target_is_daytime'].astype(bool)]
+        cqr.calibrate(target_cal_day[feature_cols], target_cal_day[target_col])
         l_cqr, u_cqr = cqr.predict_intervals(X_test_b, apply_conformal=True)
         cov_cqr = np.mean((y_test_b[daytime_mask] >= l_cqr[daytime_mask]) & (y_test_b[daytime_mask] <= u_cqr[daytime_mask]))
         empirical_cqr.append(cov_cqr)
@@ -100,7 +107,7 @@ def generate_reliability_diagram(output_path: str = "figures/fig6_reliability_di
     ax1.plot(nominal_levels, empirical_cqr, marker="o", color="#0284C7", linewidth=2.0, markersize=6, label="Proposed CQR (Calibrated)")
     ax1.plot(nominal_levels, uncalibrated, marker="s", color="#EF4444", linestyle=":", linewidth=1.5, markersize=5, label="Raw Quantile Reg (Shifted)")
 
-    ax1.fill_between(nominal_levels, nominal_levels, empirical_cqr, color="#0284C7", alpha=0.15, label="Coverage Bound")
+    ax1.fill_between(nominal_levels, nominal_levels, empirical_cqr, color="#0284C7", alpha=0.15, label="Empirical gap")
     ax1.set_xlim([0.45, 1.01])
     ax1.set_ylim([0.40, 1.02])
     ax1.set_xlabel("Nominal Coverage Level $(1 - \\alpha)$", fontweight="bold")

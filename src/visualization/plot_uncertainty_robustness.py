@@ -65,16 +65,18 @@ def generate_uncertainty_robustness_figure():
     label_map = {
         "Complete Telemetry (100% Sensors)": "Complete\n(0% Miss)",
         "Moderate Dropout (10% MCAR)": "10% Drop",
+        "Synchronized Packet Loss (30%)": "Sync 30%",
         "Severe Dropout (30% MCAR)": "30% Drop",
         "Extreme Dropout (50% MCAR)": "50% Drop",
         "Contiguous Outage (3h Block)": "3h Outage",
         "Contiguous Outage (6h Block)": "6h Outage",
         "Total Pyranometer Outage (No GHI)": "No GHI\nOutage",
-        "Pyranometer Drift (+15% Soiling Bias)": "+15% Drift"
+        "Pyranometer Drift (+15% Soiling Bias)": "+15% Drift",
+        "GHI Stuck-at-Value (24h)": "GHI stuck"
     }
     scenario_labels = [label_map.get(s, s[:10]) for s in scenarios]
-    nmae_vals = [stress_data[s]["point_metrics"]["nMAE_pct"] for s in scenarios]
-    picp_stress = [stress_data[s]["uncertainty_metrics"]["PICP_pct"] for s in scenarios]
+    nmae_vals = [stress_data[s]["point_metrics"]["daytime"]["nMAE_pct"] for s in scenarios]
+    picp_stress = [stress_data[s]["uncertainty_metrics"]["daytime"]["PICP_pct"] for s in scenarios]
 
     x2 = np.arange(len(scenarios))
     ax2.plot(x2, nmae_vals, 'o-', color='#d95f02', linewidth=2.4, markersize=8, label='Forecasting Error (nMAE %)')

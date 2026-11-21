@@ -119,10 +119,9 @@ class ConformalizedQuantileRegressor:
             lower_bound = q_low
             upper_bound = q_high
 
-        # Physical capacity factor clipping [0.0, 1.15]
-        lower_bound = np.clip(lower_bound, 0.0, 1.15)
-        upper_bound = np.clip(upper_bound, 0.0, 1.15)
-        upper_bound = np.maximum(upper_bound, lower_bound)
+        # Do not clip conformal intervals: clipping can remove covered outcomes
+        # and invalidate the stated empirical coverage calculation. The point
+        # prediction may be physically bounded separately by its caller.
 
         return lower_bound, upper_bound
 

@@ -1,9 +1,4 @@
-"""
-World-Class Interactive AI Research Dashboard: Solar PV Transfer Forecasting & Conformal Uncertainty
-Principal Investigator: Aminur Rahman (HSTU, Bangladesh)
-Target Publication: Energy and AI (Elsevier)
-Architecture: Glassmorphic Dark UI / Plotly High-Resolution Engine / Real-Time Inference Simulator
-"""
+"""Dashboard for the retrospective two-site PV forecasting study."""
 
 import os
 import sys
@@ -19,7 +14,7 @@ from plotly.subplots import make_subplots
 # PAGE CONFIGURATION
 # -------------------------------------------------------------
 st.set_page_config(
-    page_title="SolarAI Lab | Cross-Site PV Forecasting",
+    page_title="Two-Site PV Forecasting",
     page_icon="⚡",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -31,11 +26,11 @@ st.set_page_config(
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
-    
+
     html, body, [class*="css"] {
         font-family: 'Plus Jakarta Sans', sans-serif;
     }
-    
+
     code, pre {
         font-family: 'JetBrains Mono', monospace !important;
     }
@@ -58,7 +53,7 @@ st.markdown("""
         position: relative;
         overflow: hidden;
     }
-    
+
     .hero-badge {
         display: inline-flex;
         align-items: center;
@@ -183,13 +178,13 @@ st.markdown("""
 # -------------------------------------------------------------
 st.markdown("""
 <div class="hero-container">
-    <div class="hero-badge">⚡ SolarAI Research Lab • Energy & AI (Elsevier)</div>
-    <div class="hero-title">Data-Efficient & Uncertainty-Calibrated Cross-Site Solar PV Forecasting</div>
+    <div class="hero-badge">Retrospective PV forecasting</div>
+    <div class="hero-title">Cross-site solar PV forecasting</div>
     <div class="hero-meta">
-        <span>👨‍🔬 <b>Lead Researcher:</b> Aminur Rahman (HSTU, Bangladesh)</span>
-        <span>🌐 <b>Target Journal:</b> <i>Energy and AI</i> (Q1, IF ~12.5)</span>
+
+        <span>📄 <b>Status:</b> Research draft</span>
         <span>📦 <b>Open Science:</b> <a href="https://github.com/aminur167/cross-site-solar-forecasting" target="_blank">aminur167/cross-site-solar-forecasting</a></span>
-        <span>🛡️ <b>License:</b> MIT Open Source</span>
+
     </div>
 </div>
 """, unsafe_allow_html=True)
@@ -236,54 +231,54 @@ COLOR_PALETTE = {
 # INTERACTIVE RESEARCH TABS
 # -------------------------------------------------------------
 tab_exec, tab_data, tab_base, tab_adapt, tab_uncert, tab_stress, tab_deep, tab_diag, tab_paper = st.tabs([
-    "📊 Executive Summary",
-    "📡 Multi-Site Telemetry",
+    "📊 Summary",
+    "📡 Two-Site Dataset",
     "🏆 Baseline Benchmark",
-    "🚀 Few-Shot Adaptation Frontier",
+    "🚀 Adaptation Results",
     "🛡️ Conformal Prediction (CQR)",
-    "⚠️ Sensor Outage Stress-Test",
+    "⚠️ Synthetic Input Tests",
     "🧠 Deep Learning & SHAP",
-    "📈 Parity & Seasonal Diagnostics",
-    "📄 Journal Paper & Overleaf Kit"
+    "📈 Parity Diagnostics",
+    "📄 Research Files"
 ])
 
 # =============================================================
 # TAB 1: EXECUTIVE SUMMARY
 # =============================================================
 with tab_exec:
-    st.markdown("### 🎯 Core Breakthroughs & Key Performance Indicators")
-    
+    st.markdown("### Corrected Experimental Summary")
+
     col1, col2, col3, col4 = st.columns(4)
     with col1:
         st.markdown("""
         <div class="metric-card">
-            <div class="metric-label">1-Day Adaptation Gain</div>
-            <div class="metric-value">82.8% Drop</div>
-            <div class="metric-delta delta-green">▲ 5.05% vs 29.33% Scratch</div>
+            <div class="metric-label">Target-Only vs Pooled, 1 Day</div>
+            <div class="metric-value">75.1% Lower nMAE</div>
+            <div class="metric-delta delta-green">6.97% pooled vs 28.06% target-only</div>
         </div>
         """, unsafe_allow_html=True)
     with col2:
         st.markdown("""
         <div class="metric-card">
             <div class="metric-label">Zero-Shot Transfer Error</div>
-            <div class="metric-value">4.94% nMAE</div>
-            <div class="metric-delta delta-blue">▲ +42.43% Skill Score</div>
+            <div class="metric-value">6.93% nMAE</div>
+            <div class="metric-delta delta-blue">Retrospective; weather is hindsight data</div>
         </div>
         """, unsafe_allow_html=True)
     with col3:
         st.markdown("""
         <div class="metric-card">
-            <div class="metric-label">Conformal Coverage (PICP)</div>
-            <div class="metric-value">92.95%</div>
-            <div class="metric-delta delta-green">▲ Above Nominal 90% Bound</div>
+            <div class="metric-label">Interval Coverage (PICP)</div>
+            <div class="metric-value">94.51%</div>
+            <div class="metric-delta delta-gold">Empirical; not a guarantee</div>
         </div>
         """, unsafe_allow_html=True)
     with col4:
         st.markdown("""
         <div class="metric-card">
-            <div class="metric-label">Telemetry Fault Tolerance</div>
-            <div class="metric-value">Up to 30%</div>
-            <div class="metric-delta delta-gold">▲ nMAE remains ≤ 7.56%</div>
+            <div class="metric-label">Synthetic Perturbation Result</div>
+            <div class="metric-value">30% feature-wise MCAR</div>
+            <div class="metric-delta delta-gold">7.46% nMAE · 92.78% PICP</div>
         </div>
         """, unsafe_allow_html=True)
 
@@ -295,28 +290,28 @@ with tab_exec:
         <div class="content-box">
             <h4 style="color: #ffb300; margin-top: 0;">📖 Abstract & Problem Statement</h4>
             <p style="color: #cbd5e1; line-height: 1.6; font-size: 14px;">
-            Accurate short-term photovoltaic (PV) power forecasting is essential for dynamic reserve allocation and secure grid dispatch. However, real-world deployment faces three critical bottlenecks:
+            This retrospective study compares transfer and target-only models and reports empirical interval results.
             </p>
             <ol style="color: #cbd5e1; font-size: 13.5px; line-height: 1.6;">
-                <li><b>Newly Commissioned PV Scarcity:</b> New plants possess only days of historical data; training from scratch causes severe overfitting (nMAE 29.33%).</li>
-                <li><b>Lack of Distribution-Free Uncertainty:</b> Point forecasts provide no confidence guarantees against solar ramps.</li>
-                <li><b>Sensor-Availability Shifts:</b> Pyranometers and weather telemetry frequently fail or drift in remote installations.</li>
+                <li><b>Limited target data:</b> In this split, one-day target-only training had 28.06% nMAE.</li>
+                <li><b>Uncertainty:</b> Empirical prediction intervals are evaluated; temporal dependence limits theoretical guarantees.</li>
+                <li><b>Input perturbations:</b> Simulated historical weather-feature corruption is not field sensor-fault evidence.</li>
             </ol>
             <p style="color: #cbd5e1; font-size: 14px;">
-            This research presents a unified transfer learning framework coupling <b>Gradient Boosted Decision Trees</b> with <b>Conformalized Quantile Regression (CQR)</b>, evaluated on multi-year 50 kWp commercial solar installations.
+            This dashboard summarizes a retrospective two-site study. Weather inputs are historical estimates unavailable at forecast issue time; synthetic perturbations do not demonstrate field sensor resilience.
             </p>
         </div>
         """, unsafe_allow_html=True)
     with c_right:
         st.markdown("""
         <div class="content-box">
-            <h4 style="color: #38bdf8; margin-top: 0;">🔬 Scientific Contributions</h4>
+            <h4 style="color: #38bdf8; margin-top: 0;">Study results</h4>
             <ul style="color: #cbd5e1; font-size: 13px; line-height: 1.7; padding-left: 20px;">
-                <li><b>RQ1:</b> Proven zero-shot transfer capability reducing persistence error by 55.6%.</li>
-                <li><b>RQ2:</b> Minimal adaptation budget frontier showing 1 to 3 days of target telemetry bridges the domain gap.</li>
-                <li><b>RQ3:</b> Conformalized Quantile Regression providing 92.95% empirical coverage.</li>
-                <li><b>Robustness:</b> System withstands 30% missing telemetry while identifying GHI pyranometer as the critical failure modality.</li>
-                <li><b>Stat. Testing:</b> Diebold-Mariano test confirms GBDT superiority over LSTM & TCN (p &lt; 0.001).</li>
+                <li><b>RQ1:</b> Source-only transfer: 6.93% nMAE vs 14.14% persistence on this holdout.</li>
+                <li><b>RQ2:</b> One-day pooled adaptation (6.97%) did not improve on zero-shot (6.93%).</li>
+                <li><b>RQ3:</b> Target-calibrated intervals had 94.51% empirical daytime coverage on this holdout.</li>
+                <li><b>Input stress:</b> 30% feature-wise MCAR had mean 7.46% nMAE and 92.78% empirical PICP across five perturbation seeds.</li>
+                <li><b>Scope:</b> Historical reanalysis weather is not available at forecast issue time.</li>
             </ul>
         </div>
         """, unsafe_allow_html=True)
@@ -326,12 +321,12 @@ with tab_exec:
 # =============================================================
 with tab_data:
     st.markdown("### 📡 Commercial 50 kWp Inverter & Meteorological Data Lake")
-    
+
     col_sel1, col_sel2 = st.columns([1, 2])
     with col_sel1:
         site_select = st.radio("Select Solar PV Installation:", ["Site A (50 kWp Reference)", "Site B (50 kWp Target)"], horizontal=True)
         active_df = df_a if "Site A" in site_select else df_b
-        
+
         st.markdown(f"""
         - **Nominal AC Capacity:** `50.0 kWp`
         - **Total Active Samples:** `{len(active_df):,}` daytime hours
@@ -339,13 +334,13 @@ with tab_data:
         - **Max Observed AC Power:** `{active_df['active_power_kw'].max():.2f} kW`
         - **Mean Capacity Factor:** `{active_df['capacity_factor'].mean():.4f}`
         """)
-        
+
     with col_sel2:
         date_range = st.date_input("Zoom Time Window:", [active_df.index.min().date() + pd.Timedelta(days=60), active_df.index.min().date() + pd.Timedelta(days=67)])
 
     if len(date_range) == 2:
         sub_df = active_df.loc[str(date_range[0]):str(date_range[1])]
-        
+
         fig = make_subplots(specs=[[{"secondary_y": True}]])
         fig.add_trace(
             go.Scatter(x=sub_df.index, y=sub_df['active_power_kw'], name="Inverter Generation (kW)", line=dict(color="#ff9900", width=2.5)),
@@ -388,9 +383,9 @@ with tab_data:
 with tab_base:
     st.markdown("### 🏆 Experiment 1: Within-Site Baseline & Machine Learning Benchmark")
     st.markdown("Rigorous chronological holdout validation on Site A (April–June 2026).")
-    
+
     base_df = pd.DataFrame(res_base).T
-    
+
     col_t1, col_t2 = st.columns([1.2, 0.8])
     with col_t1:
         # Error comparison bar chart
@@ -399,24 +394,24 @@ with tab_base:
             x="index",
             y=["nMAE_pct", "nRMSE_pct"],
             barmode="group",
-            labels={"value": "Normalized Error (%)", "index": "Model Architecture", "variable": "Metric"},
+            labels={"value": "Normalized Error (%)", "index": "Model", "variable": "Metric"},
             title="Within-Site Forecasting Accuracy: Baseline vs. ML Models",
             color_discrete_map={"nMAE_pct": "#ff9900", "nRMSE_pct": "#38bdf8"}
         )
         fig_bar.update_layout(template=PLOTLY_TEMPLATE, paper_bgcolor=COLOR_PALETTE["dark_bg"], plot_bgcolor="rgba(0,0,0,0)")
         st.plotly_chart(fig_bar, use_container_width=True)
     with col_t2:
-        st.markdown("#### 📋 Performance Matrix")
+        st.markdown("#### 📋 Baseline Metrics")
         st.dataframe(base_df[["nMAE_pct", "nRMSE_pct", "R2", "Skill_Score_vs_Persist"]].style.format("{:.2f}").highlight_min(subset=["nMAE_pct", "nRMSE_pct"], color="#064e3b").highlight_max(subset=["R2", "Skill_Score_vs_Persist"], color="#064e3b"), use_container_width=True)
-        st.info("💡 **Finding:** Random Forest & GBDT reduce error by **>40%** relative to the operational persistence baseline!")
+        st.info("💡 **Finding:** Site A holdout results are listed below; the analysis uses historical weather estimates.")
 
 # =============================================================
 # TAB 4: FEW-SHOT ADAPTATION FRONTIER
 # =============================================================
 with tab_adapt:
     st.markdown("### 🚀 Experiment 2 & 3: Cross-Site Transfer & Few-Shot Adaptation Frontier")
-    st.markdown("**Core Scientific Inquiry:** How much historical data does a new solar farm need to achieve high-accuracy forecasting?")
-    
+    st.markdown("**Study question:** How do source-only transfer, pooled adaptation, and target-only fits compare over this dataset’s target-data budgets?")
+
     budgets = [1, 3, 7, 14]
     to_mae = [res_cs["Zero_Shot_and_Adaptation"][f"k_{k}_days"]["target_only_metrics"]["nMAE_pct"] for k in budgets]
     tl_mae = [res_cs["Zero_Shot_and_Adaptation"][f"k_{k}_days"]["transfer_adapted_metrics"]["nMAE_pct"] for k in budgets]
@@ -444,29 +439,29 @@ with tab_adapt:
         paper_bgcolor=COLOR_PALETTE["dark_bg"],
         plot_bgcolor="rgba(0,0,0,0)",
         title="The Data-Efficiency Frontier: Target Data Budget vs. Normalized MAE (%)",
-        xaxis_title="Commissioning Target Data Budget (Calendar Days)",
+        xaxis_title="Target Data Budget (Calendar Days)",
         yaxis_title="Normalized Error nMAE (%)",
         hovermode="x unified",
         legend=dict(yanchor="top", y=0.95, xanchor="right", x=0.98)
     )
     st.plotly_chart(fig_frontier, use_container_width=True)
 
-    st.success("🌟 **Key Scientific Discovery:** At Day 1 of plant commissioning, scratch models suffer catastrophic failure (**29.33% nMAE**). Our transfer adaptation achieves **5.05% nMAE**—an immediate **82.8% error reduction**!")
+    st.info("One-day target-only nMAE was 28.06%; pooled adaptation was 6.97%. Zero-shot was 6.93%, so adaptation did not improve on zero-shot in this rerun.")
 
 # =============================================================
 # TAB 5: CONFORMAL UNCERTAINTY (CQR)
 # =============================================================
 with tab_uncert:
     st.markdown("### 🛡️ Experiment 4: Conformalized Quantile Regression (CQR)")
-    st.markdown("Guarantees finite-sample distribution-free coverage without assuming Gaussianity of errors.")
+    st.markdown("Empirical split-CQR coverage; no guarantee is claimed under temporal dependence or site shift.")
 
     c1, c2 = st.columns([1, 1.5])
     with c1:
         u_df = pd.DataFrame(res_u["Uncertainty_Calibration_Regimes"]).T
         st.markdown("#### 📊 Calibration Regimes on Target Site B")
-        st.dataframe(u_df[["PICP_pct", "Target_Coverage_pct", "MPIW", "Winkler_Score", "Coverage_Guaranteed"]], use_container_width=True)
-        st.info("🎯 **Target CQR** delivers **92.95% empirical coverage** exceeding the nominal 90.0% safety bound with sharp interval width (0.25).")
-    
+        st.dataframe(u_df[["PICP_pct", "Target_Coverage_pct", "MPIW", "Winkler_Score", "Empirical_Coverage_Meets_Nominal_Target"]], use_container_width=True)
+        st.info("Target calibration achieved 94.51% empirical daytime coverage on this holdout. This is an observed result, not a distribution-free guarantee under temporal or site shift.")
+
     with c2:
         # Reliability gauge
         fig_gauge = go.Figure(go.Indicator(
@@ -493,39 +488,23 @@ with tab_uncert:
     st.markdown("#### 📈 Multi-Level Conformal Reliability & Sharpness Diagnostics")
     fig6_path = "figures/fig6_reliability_diagram.png"
     if os.path.exists(fig6_path):
-        st.image(fig6_path, caption="Figure 6: Empirical vs. Nominal Coverage Reliability curve & Interval Sharpness Frontier (Elsevier standard format)", use_container_width=True)
+        st.image(fig6_path, caption="Figure 6: empirical coverage at the nominal levels evaluated and interval width.", use_container_width=True)
 
-    # Time series simulation of Prediction Intervals
-    st.markdown("#### 📈 Interactive Prediction Interval Time-Series")
-    sim_days = st.slider("Select Sample Inspection Window (Hours):", min_value=24, max_value=120, value=72)
-    sample_b = df_b.iloc[-sim_days:]
-    y_true_s = sample_b['target_1h'].values
-    y_pred_s = sample_b['capacity_factor'].values
-    cqr_w = res_u["Uncertainty_Calibration_Regimes"]["Target_Adapted_CQR"]["MPIW"] / 2.0
-    low_b = np.clip(y_pred_s - cqr_w, 0.0, 1.2)
-    high_b = np.clip(y_pred_s + cqr_w, 0.0, 1.2)
-
-    fig_band = go.Figure()
-    fig_band.add_trace(go.Scatter(x=sample_b.index, y=high_b, mode="lines", line=dict(width=0), showlegend=False))
-    fig_band.add_trace(go.Scatter(x=sample_b.index, y=low_b, mode="lines", fill="tonexty", fillcolor="rgba(255, 153, 0, 0.22)", line=dict(width=0), name="90% Conformal Interval"))
-    fig_band.add_trace(go.Scatter(x=sample_b.index, y=y_pred_s, mode="lines", line=dict(color="#ff9900", width=2.5), name="Forecast Point"))
-    fig_band.add_trace(go.Scatter(x=sample_b.index, y=y_true_s, mode="markers", marker=dict(color="#38bdf8", size=6), name="Observed Actual"))
-    fig_band.update_layout(template=PLOTLY_TEMPLATE, paper_bgcolor=COLOR_PALETTE["dark_bg"], plot_bgcolor="rgba(0,0,0,0)", title="90% Conformal Prediction Band vs. Ground Truth Solar Telemetry", hovermode="x unified")
-    st.plotly_chart(fig_band, use_container_width=True)
+    st.info("A timestamp-level interval forecast series is not currently serialized. This dashboard shows holdout aggregate calibration only.")
 
 # =============================================================
 # TAB 6: SENSOR OUTAGE STRESS-TEST
 # =============================================================
 with tab_stress:
-    st.markdown("### ⚠️ Experiment 5: Operational Sensor Degradation & Hardware Outage Simulator")
-    st.markdown("Stress-tests the forecaster against real-world pyranometer failure, communications dropouts, and telemetry loss.")
+    st.markdown("### ⚠️ Experiment 5: Synthetic Weather-Feature Perturbation")
+    st.markdown("These simulations perturb retrospective weather model inputs; they are not measurements of real hardware failures.")
 
     deg_dict = res_u["Sensor_Availability_Stress_Test"]
     deg_plot_df = pd.DataFrame({
         "Scenario": list(deg_dict.keys()),
-        "nMAE_pct": [deg_dict[k]["point_metrics"]["nMAE_pct"] for k in deg_dict],
-        "PICP_pct": [deg_dict[k]["uncertainty_metrics"]["PICP_pct"] for k in deg_dict],
-        "MPIW": [deg_dict[k]["uncertainty_metrics"]["MPIW"] for k in deg_dict]
+        "nMAE_pct": [deg_dict[k]["point_metrics"]["daytime"]["nMAE_pct"] for k in deg_dict],
+        "PICP_pct": [deg_dict[k]["uncertainty_metrics"]["daytime"]["PICP_pct"] for k in deg_dict],
+        "MPIW": [deg_dict[k]["uncertainty_metrics"]["daytime"]["MPIW"] for k in deg_dict]
     })
 
     fig_stress = make_subplots(specs=[[{"secondary_y": True}]])
@@ -543,14 +522,14 @@ with tab_stress:
     fig_stress.update_yaxes(title_text="Coverage PICP (%)", range=[80, 100], secondary_y=True)
     st.plotly_chart(fig_stress, use_container_width=True)
 
-    st.warning("⚠️ **Vulnerability Insight:** Up to 30% random sensor dropout introduces minimal penalty (+0.25% nMAE). However, loss of the solar irradiance sensor (GHI) drops interval coverage to 84.96%, proving that local pyranometer telemetry is the primary physical anchor.")
+    st.warning("30% feature-wise MCAR produced 7.46% mean nMAE and 92.78% mean PICP across five perturbation seeds. Complete GHI input removal yielded 10.84% nMAE and 86.02% PICP. These are synthetic feature experiments, not field fault evidence.")
 
 # =============================================================
 # TAB 7: DEEP LEARNING & SHAP
 # =============================================================
 with tab_deep:
     st.markdown("### 🧠 Experiment 6: Deep Learning Architectures & SHAP Attribution")
-    
+
     col_d1, col_d2 = st.columns([1, 1])
     with col_d1:
         st.markdown("#### A. PyTorch Deep Sequence Networks vs. GBDT")
@@ -559,10 +538,10 @@ with tab_deep:
             "nMAE (%)": [res_dl[k]["metrics"]["nMAE_pct"] for k in res_dl],
             "95% CI (Bootstrap)": [f"[{res_dl[k]['confidence_intervals']['nMAE_CI_pct'][0]:.2f}, {res_dl[k]['confidence_intervals']['nMAE_CI_pct'][1]:.2f}]" for k in res_dl],
             "DM Stat": [res_dl[k]["diebold_mariano_vs_gbdt"]["dm_stat"] for k in res_dl],
-            "p-value": [res_dl[k]["diebold_mariano_vs_gbdt"]["p_val"] for k in res_dl]
+            "p-value": [res_dl[k]["diebold_mariano_vs_gbdt"]["p_value_str"] for k in res_dl]
         })
         st.dataframe(dl_table, use_container_width=True)
-        st.caption("Diebold-Mariano test with p < 0.001 proves LightGBM is statistically significantly superior to PyTorch LSTM and TCN on tabular solar telemetry.")
+        st.caption("Single-seed exploratory comparison; DM tests use the longest contiguous all-hours segment and do not establish broad architectural superiority.")
 
     with col_d2:
         st.markdown("#### B. Global SHAP Feature Attribution (%)")
@@ -587,8 +566,8 @@ with tab_deep:
 with tab_diag:
     st.markdown("### 📈 Prediction Parity Diagnostics & Seasonal Error Breakdown")
     st.markdown("""
-    This section validates the model across physical operational ranges and temporal seasonality.
-    A reliable PV forecaster must not only minimize aggregate annual error, but also avoid systematic bias across high-irradiance vs low-irradiance regimes and seasonal transitions (monsoon, fog, clear-sky).
+    This section shows parity diagnostics for the retrospective holdout.
+    These plots are descriptive; no operational tolerance or seasonal subgroup claim has been established.
     """)
 
     col_p1, col_p2 = st.columns([1.1, 0.9])
@@ -596,50 +575,18 @@ with tab_diag:
         st.markdown("#### A. High-Contrast Parity Plot & Residual Distribution")
         fig5_path = "figures/fig5_parity_plots.png"
         if os.path.exists(fig5_path):
-            st.image(fig5_path, caption="Figure 5: 1:1 Parity scatter with 10% error band and residual marginals (Elsevier format)", use_container_width=True)
+            st.image(fig5_path, caption="Figure 5: parity diagnostic and residual marginals.", use_container_width=True)
         else:
             st.info("Run `python src/visualization/plot_parity.py` to render Figure 5.")
 
     with col_p2:
         st.markdown("#### B. Seasonal & Monthly Performance Decomposition")
-        # Precomputed monthly metrics table
-        monthly_data = [
-            {"Month": "Jan", "Season": "Winter", "nMAE (%)": 5.42, "nRMSE (%)": 8.11, "R²": 0.961, "PICP (%)": 92.4, "MPIW": 0.248},
-            {"Month": "Feb", "Season": "Winter", "nMAE (%)": 4.88, "nRMSE (%)": 7.42, "R²": 0.972, "PICP (%)": 93.1, "MPIW": 0.239},
-            {"Month": "Mar", "Season": "Pre-Monsoon", "nMAE (%)": 4.65, "nRMSE (%)": 6.95, "R²": 0.978, "PICP (%)": 93.5, "MPIW": 0.235},
-            {"Month": "Apr", "Season": "Pre-Monsoon", "nMAE (%)": 5.12, "nRMSE (%)": 7.60, "R²": 0.969, "PICP (%)": 92.8, "MPIW": 0.244},
-            {"Month": "May", "Season": "Pre-Monsoon", "nMAE (%)": 5.34, "nRMSE (%)": 7.89, "R²": 0.964, "PICP (%)": 92.5, "MPIW": 0.252},
-            {"Month": "Jun", "Season": "Monsoon", "nMAE (%)": 5.85, "nRMSE (%)": 8.74, "R²": 0.948, "PICP (%)": 91.9, "MPIW": 0.268},
-            {"Month": "Jul", "Season": "Monsoon", "nMAE (%)": 6.10, "nRMSE (%)": 9.02, "R²": 0.942, "PICP (%)": 91.5, "MPIW": 0.274},
-            {"Month": "Aug", "Season": "Monsoon", "nMAE (%)": 5.92, "nRMSE (%)": 8.81, "R²": 0.946, "PICP (%)": 91.8, "MPIW": 0.270},
-            {"Month": "Sep", "Season": "Post-Monsoon", "nMAE (%)": 4.78, "nRMSE (%)": 7.20, "R²": 0.973, "PICP (%)": 93.2, "MPIW": 0.241},
-            {"Month": "Oct", "Season": "Post-Monsoon", "nMAE (%)": 4.51, "nRMSE (%)": 6.82, "R²": 0.979, "PICP (%)": 93.8, "MPIW": 0.232},
-            {"Month": "Nov", "Season": "Post-Monsoon", "nMAE (%)": 4.70, "nRMSE (%)": 7.15, "R²": 0.974, "PICP (%)": 93.4, "MPIW": 0.238},
-            {"Month": "Dec", "Season": "Winter", "nMAE (%)": 5.31, "nRMSE (%)": 7.98, "R²": 0.963, "PICP (%)": 92.6, "MPIW": 0.247},
-        ]
-        df_monthly = pd.DataFrame(monthly_data)
-        st.dataframe(df_monthly, use_container_width=True, hide_index=True)
-
-        fig_mon = px.bar(
-            df_monthly,
-            x="Month",
-            y="nMAE (%)",
-            color="Season",
-            title="Monthly Normalized Forecast Error (nMAE %)",
-            color_discrete_map={
-                "Winter": "#38bdf8",
-                "Pre-Monsoon": "#10b981",
-                "Monsoon": "#f59e0b",
-                "Post-Monsoon": "#a855f7"
-            }
-        )
-        fig_mon.update_layout(template=PLOTLY_TEMPLATE, paper_bgcolor=COLOR_PALETTE["dark_bg"], plot_bgcolor="rgba(0,0,0,0)")
-        st.plotly_chart(fig_mon, use_container_width=True)
+        st.info("No verified monthly/seasonal metrics were generated in this rerun; seasonal comparisons are not reported.")
 
     st.markdown("---")
     st.markdown("#### C. Solar Ramp Event Sensitivity & Grid Reserve Evaluation")
     st.markdown("Grid reserve scheduling is critically vulnerable to abrupt ramp-up and ramp-down transients (|$\\Delta P / \\Delta t| \\ge 20\\%$ Capacity/hour).")
-    
+
     r_col1, r_col2, r_col3, r_col4 = st.columns(4)
     with r_col1:
         st.metric("Total Observed Ramps", "142 events", "Daytime Test Set")
@@ -654,31 +601,31 @@ with tab_diag:
 # TAB 9: JOURNAL SUBMISSION PACKAGE
 # =============================================================
 with tab_paper:
-    st.markdown("### 📄 Publication Package & Overleaf Submission Kit")
-    
-    zip_path = "paper_submission_package.zip"
+    st.markdown("### Research files")
+
+    zip_path = "paper_subanalysis_package.zip"
     if os.path.exists(zip_path):
         with open(zip_path, "rb") as fp:
             st.download_button(
-                label="📥 Download Complete Submission Package (.zip for Overleaf / Editorial Manager)",
+                label="Download research review package (.zip)",
                 data=fp,
-                file_name="paper_submission_package.zip",
+                file_name="paper_subanalysis_package.zip",
                 mime="application/zip",
                 use_container_width=True
             )
-        st.success("✅ **Ready for Overleaf:** Contains `main.tex` (full-length journal article), `references.bib`, `cover_letter.tex`, `highlights.txt`, `author_statements.txt`, all 5 LaTeX tables, and all 6 publication figures!")
+        st.info("This ZIP is a review draft. The manuscript has not been compiled, and author statements still need confirmation.")
 
-    doc_view = st.selectbox("Document Reader:", ["Main Article (main.tex)", "Cover Letter to Editor (cover_letter.tex)", "Highlights (highlights.txt)", "Author Declarations (author_statements.txt)"])
-    
-    if "Main Article" in doc_view:
+    doc_view = st.selectbox("Document:", ["Manuscript (main.tex)", "Cover-letter draft", "Research highlights", "Author statements (verify before use)"])
+
+    if "Manuscript" in doc_view:
         with open("paper/manuscript/main.tex") as f:
             st.code(f.read(), language="latex")
-    elif "Cover Letter" in doc_view:
+    elif "Cover-letter" in doc_view:
         with open("paper/cover_letter.tex") as f:
             st.code(f.read(), language="latex")
-    elif "Highlights" in doc_view:
+    elif "Research highlights" in doc_view:
         with open("paper/highlights.txt") as f:
             st.text(f.read())
-    elif "Author Declarations" in doc_view:
+    elif "Author statements" in doc_view:
         with open("paper/author_statements.txt") as f:
             st.markdown(f.read())

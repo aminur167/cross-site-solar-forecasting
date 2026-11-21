@@ -23,7 +23,8 @@ def run_step(step_name: str, script_path: str):
     print(f"Executing: {script_path}")
     print("#" * 80)
     start = time.time()
-    subprocess.run([sys.executable, script_path], check=True)
+    repo_root = os.path.dirname(os.path.abspath(__file__))
+    subprocess.run([sys.executable, script_path], check=True, cwd=repo_root)
     elapsed = time.time() - start
     print(f">> SUCCESS: {step_name} completed in {elapsed:.1f}s.")
 
@@ -44,7 +45,7 @@ def parse_args():
     )
     parser.add_argument(
         "--generate-parity",
-        action="store_true",
+        action=argparse.BooleanOptionalAction,
         default=True,
         help="Generate Figure 5 parity and residual diagnostic plot.",
     )
@@ -61,9 +62,11 @@ def main():
     print("=" * 80)
 
     total_start = time.time()
+    os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
     steps = [
         ("Data Engineering & Preprocessing", "src/data/prepare_datasets.py"),
+        ("Raw Data Quality Audit", "src/data/data_quality_auditor.py"),
         ("Baseline Benchmark Evaluation", "experiments/run_baseline_benchmark.py"),
         ("Cross-Site Transfer & Few-Shot Adaptation", "experiments/run_cross_site_experiments.py"),
         ("Conformal Uncertainty & Sensor Robustness", "experiments/run_uncertainty_and_robustness.py"),
@@ -77,6 +80,8 @@ def main():
         ("Figure 1 Generation", "src/visualization/plot_benchmark.py"),
         ("Figure 2 Generation", "src/visualization/plot_cross_site_adaptation.py"),
         ("Figure 3 Generation", "src/visualization/plot_uncertainty_robustness.py"),
+        ("Figure 6 Reliability Diagram", "src/visualization/plot_reliability_diagram.py"),
+        ("LaTeX Table Export", "src/evaluation/export_latex_tables.py"),
     ])
 
     if args.generate_parity:

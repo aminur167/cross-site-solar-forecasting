@@ -8,7 +8,7 @@ Implements rigorous time-series hypothesis testing:
 4. Strictly scientific p-value formatting (never reports exact p = 0.0000).
 """
 
-from typing import Dict, Tuple, Optional
+from typing import Any, Dict, Tuple, Optional
 import numpy as np
 import pandas as pd
 from scipy import stats
@@ -74,7 +74,7 @@ def diebold_mariano_test(
     dm_stat_corrected = dm_stat * k_h
 
     # Two-sided p-value from Student-t with T-1 degrees of freedom
-    raw_p_value = 2.0 * (1.0 - stats.t.cdf(np.abs(dm_stat_corrected), df=T - 1))
+    raw_p_value = float(2.0 * stats.t.sf(np.abs(dm_stat_corrected), df=T - 1))
 
     # Scientific p-value formatting: never report absolute zero
     if raw_p_value < 1e-4:
@@ -87,7 +87,7 @@ def diebold_mariano_test(
 
     return {
         "dm_stat": round(float(dm_stat_corrected), 4),
-        "raw_p_value": float(max(raw_p_value, 1e-15)),
+        "raw_p_value": float(max(raw_p_value, np.finfo(float).tiny)),
         "p_value_str": p_str,
         "mean_loss_diff": round(float(mean_d), 6),
         "cohens_d": round(float(cohens_d), 4),
@@ -105,8 +105,9 @@ def block_bootstrap_confidence_interval(
     seed: int = 42
 ) -> Dict[str, Tuple[float, float]]:
     """
-    Computes stationary block bootstrap confidence intervals for nMAE (%) and nRMSE (%).
-    Block size = 24 preserves diurnal autocorrelation structure.
+    Computes moving-block bootstrap confidence intervals for nMAE (%) and nRMSE (%).
+    Fixed-length contiguous blocks preserve some local dependence; this is not a
+    stationary bootstrap and does not resolve irregular sample timestamps.
     """
     rng = np.random.RandomState(seed)
     n = len(y_true)

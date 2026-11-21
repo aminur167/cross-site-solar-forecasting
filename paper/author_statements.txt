@@ -1,28 +1,15 @@
-# AUTHOR DECLARATIONS & STATEMENTS
-Target Journal: Energy and AI (Elsevier)
-Manuscript: "Data-Efficient and Uncertainty-Calibrated Cross-Site Solar PV Power Forecasting Under Temporal and Sensor-Availability Shifts"
+# AUTHOR STATEMENTS — DRAFT FOR AUTHOR VERIFICATION
 
----
+This file is not a verified declaration and must be reviewed by the author before use.
 
-## 1. CRediT Authorship Contribution Statement
-Aminur Rahman: Conceptualization, Methodology, Software, Validation, Formal Analysis, Investigation, Data Curation, Writing - Original Draft, Writing - Review & Editing, Visualization, Project Administration.
+## Authorship and CRediT
+Confirm all contributors and their roles. The prior single-author contribution list is retained only as an unverified draft; no author statement is independently confirmed by this audit.
 
----
+## Competing interests, funding, affiliation
+Author confirmation required. Do not submit the prior assertions until verified.
 
-## 2. Declaration of Competing Interest
-The author declares that he has no known competing financial interests or personal relationships that could have appeared to influence the work reported in this paper.
+## Data availability
+The bundled Romanian two-site dataset identifies the UPB NLP repository and CC BY 4.0 license in its local README/CITATION.cff. Confirm the exact version and attribution requirements before publication.
 
----
-
-## 3. Data Availability Statement
-The raw multi-site PV generation and meteorological dataset analyzed during the current study is publicly available under the Creative Commons Attribution 4.0 International License (CC BY 4.0) via the UPB NLP repository at https://github.com/upb-nlp/PV-Generation-Dataset. Cleaned, preprocessed feature matrices and experimental logs generated in this research are open-access in the project repository at https://github.com/aminur167/cross-site-solar-forecasting.
-
----
-
-## 4. Code and Reproducibility Statement
-All source code, preprocessing scripts, adaptation modules, conformal calibration routines, and visualization scripts are publicly hosted on GitHub at https://github.com/aminur167/cross-site-solar-forecasting under the MIT Open Source License. All experiments can be reproduced end-to-end using the documented configurations.
-
----
-
-## 5. Funding Statement
-This research did not receive any specific grant from funding agencies in the public, commercial, or not-for-profit sectors. It was conducted as an independent research investigation at Hajee Mohammad Danesh Science and Technology University (HSTU), Bangladesh.
+## Code availability
+This workspace contains the code and artifacts. Confirm any public repository URL, license, access status, and reproducibility claims before publication.

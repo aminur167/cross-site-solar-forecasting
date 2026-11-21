@@ -10,6 +10,7 @@ import logging
 import numpy as np
 import pandas as pd
 import torch
+import random
 import torch.nn as nn
 from torch.utils.data import DataLoader
 
@@ -49,12 +50,18 @@ def predict_torch_model(model: nn.Module, test_loader: DataLoader) -> np.ndarray
     return np.array(all_preds)
 
 def run_deep_learning_experiments():
+    seed = 42
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
     path_a = "data/processed/site_a_features.csv"
     path_b = "data/processed/site_b_features.csv"
 
     logging.info("Loading feature matrices for Deep Learning benchmark...")
     df_a = pd.read_csv(path_a, index_col=0, parse_dates=True)
     df_b = pd.read_csv(path_b, index_col=0, parse_dates=True)
+    df_a['target_timestamp'] = pd.to_datetime(df_a['target_timestamp'])
+    df_b['target_timestamp'] = pd.to_datetime(df_b['target_timestamp'])
 
     feature_cols = [
         'hour_sin', 'hour_cos', 'doy_sin', 'doy_cos',
@@ -66,14 +73,16 @@ def run_deep_learning_experiments():
         'solar_elevation_deg', 'solar_azimuth_deg'
     ]
     feature_cols = [c for c in feature_cols if c in df_a.columns and c in df_b.columns]
+    feature_cols += [c for c in df_a.columns if c.endswith('_was_missing') and c in df_b.columns]
     target_col = 'target_1h'
 
     seq_len = 6 # 6 hours lookback window
     n_a = len(df_a)
-    train_a = df_a.iloc[:int(n_a * 0.85)]
-
     n_b = len(df_b)
     target_test_b = df_b.iloc[int(n_b * 0.80):]
+    test_start = target_test_b.index.min()
+    source = df_a.loc[df_a['target_timestamp'] < test_start]
+    train_a = source.iloc[:int(len(source) * 0.85)]
 
     # Normalize tabular features for neural networks
     X_train_raw = train_a[feature_cols].values
@@ -89,20 +98,21 @@ def run_deep_learning_experiments():
     X_test_norm = (X_test_raw - mean_vec) / std_vec
 
     # Datasets
-    train_dataset = TimeSeriesSequenceDataset(X_train_norm, y_train_raw, seq_len=seq_len)
-    test_dataset = TimeSeriesSequenceDataset(X_test_norm, y_test_raw, seq_len=seq_len)
+    train_dataset = TimeSeriesSequenceDataset(X_train_norm, y_train_raw, seq_len=seq_len, timestamps=train_a.index)
+    test_dataset = TimeSeriesSequenceDataset(X_test_norm, y_test_raw, seq_len=seq_len, timestamps=target_test_b.index)
 
     train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True)
     test_loader = DataLoader(test_dataset, batch_size=64, shuffle=False)
 
-    y_test_aligned = y_test_raw[seq_len - 1:]
-    is_daytime_aligned = target_test_b['is_daytime'].iloc[seq_len - 1:].values == True
+    aligned_ends = test_dataset.end_indices
+    y_test_aligned = y_test_raw[aligned_ends]
+    is_daytime_aligned = target_test_b['target_is_daytime'].iloc[aligned_ends].values.astype(bool)
     n_day_aligned = int(np.sum(is_daytime_aligned))
 
     # 1. LightGBM Baseline on the same aligned test sequence
     lgb_model = SolarLightGBM(n_estimators=150, learning_rate=0.05, max_depth=6)
     lgb_model.fit(train_a[feature_cols], train_a[target_col])
-    lgb_preds = lgb_model.predict(target_test_b[feature_cols].iloc[seq_len - 1:])
+    lgb_preds = lgb_model.predict(target_test_b[feature_cols].iloc[aligned_ends])
 
     # 2. PyTorch LSTM
     logging.info("Training PyTorch LSTM...")
@@ -131,6 +141,8 @@ def run_deep_learning_experiments():
     print("-" * 95)
 
     ref_preds = lgb_preds
+    contiguous_positions = np.split(np.arange(len(aligned_ends)), np.where(np.diff(aligned_ends) != 1)[0] + 1)
+    dm_positions = max(contiguous_positions, key=len)
 
     for name, preds in models_preds.items():
         # Daytime primary
@@ -146,10 +158,15 @@ def run_deep_learning_experiments():
             p_val_str = "1.0000"
             dm_res = {"dm_stat": 0.0, "raw_p_value": 1.0, "p_value_str": "1.0000"}
         else:
-            dm_res = diebold_mariano_test(y_true=y_test_aligned[is_daytime_aligned], y_pred1=ref_preds[is_daytime_aligned], y_pred2=preds[is_daytime_aligned], h=1)
-            dm_stat = dm_res["dm_stat"]
-            p_val = dm_res["raw_p_value"]
-            p_val_str = dm_res["p_value_str"]
+            if len(dm_positions) < 10:
+                dm_res = {"status": "not_computed", "reason": "No contiguous hourly test segment of at least 10 samples."}
+                dm_stat, p_val, p_val_str = float("nan"), float("nan"), "N/A"
+            else:
+                dm_res = diebold_mariano_test(y_true=y_test_aligned[dm_positions], y_pred1=ref_preds[dm_positions], y_pred2=preds[dm_positions], h=1)
+                dm_res["evaluation_scope"] = "longest_contiguous_all_hours_test_segment"
+                dm_stat = dm_res["dm_stat"]
+                p_val = dm_res["raw_p_value"]
+                p_val_str = dm_res["p_value_str"]
 
         res_entry = dict(m_day)
         res_entry["metrics"] = m_day

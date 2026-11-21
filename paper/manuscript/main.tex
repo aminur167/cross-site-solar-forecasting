@@ -30,7 +30,7 @@
             country={Bangladesh}}
 
 \begin{abstract}
-Accurate and reliable short-term solar photovoltaic (PV) power forecasting is essential for secure power grid integration, dynamic reserve allocation, and renewable market trading. However, conventional supervised machine learning and deep learning forecasters face three critical operational vulnerabilities when deployed across real-world utility networks: (i) severe data scarcity at newly commissioned target plants where years of historical telemetry do not exist; (ii) the absence of distribution-free uncertainty intervals to safeguard grid dispatch against catastrophic forecast errors; and (iii) telemetry degradation caused by intermittent sensor dropouts, transmission latency, and pyranometer degradation in remote solar farms. To overcome these persistent challenges, this research develops a unified, data-efficient, and uncertainty-calibrated transfer learning framework. By coupling Gradient Boosted Decision Trees (LightGBM/XGBoost) with Conformalized Quantile Regression (CQR), the proposed architecture enables robust cross-site knowledge transfer from data-rich source plants to unseen target installations. Evaluated on multi-year, 50~kWp grid-connected commercial PV systems across distinct geographical horizons (comprising 22,535 verified physical hourly telemetry observations with rigorous causal temporal handling and explicit daytime separation), our extensive empirical findings demonstrate that: (1) training models from scratch on newly commissioned plants with minimal target data ($k=1$ day) causes catastrophic model collapse ($\text{nMAE} = 28.17\%$, Skill Score $=-1.01$), whereas our transfer adaptation framework achieves an immediate $78.5\%$ error reduction ($\text{nMAE} = 6.05\%$, Skill Score $=+0.4163$); (2) zero-shot transfer without any local training achieves an impressive $6.02\%$ daytime nMAE ($R^2 = 0.9059$, Skill Score $=+0.4219$), confirming strong physical domain invariance under dimensionless capacity factor normalization; (3) Conformalized Quantile Regression yields calibrated finite-sample intervals, delivering $89.26\%$ empirical coverage on unseen target sites against a nominal $90.0\%$ target with a mean prediction interval width of $0.2882$; (4) the forecaster exhibits remarkable resilience against remote communication failure, tolerating up to $30\%$ random telemetry dropout with minimal degradation ($+0.35\%$ nMAE penalty), while identifying total loss of pyranometer irradiance as the primary physical failure mode ($71.58\%$ coverage); and (5) Diebold-Mariano hypothesis testing with Newey-West HAC spectral estimation confirms that gradient boosted trees statistically outperform deep sequence architectures (PyTorch LSTM and causal dilated TCN, $p \le 0.0005$) while training over $20\times$ faster on standard computing hardware. Game-theoretic Shapley Additive Explanations (SHAP) further corroborate that short-term autoregressive generation ($54.45\%$) and cyclic diurnal solar geometry ($18.44\%$) provide essential operational stability during severe sensor dropouts. The complete pipeline, models, and submission package are fully open-sourced for community reproducibility.
+We evaluated next-hour PV capacity factor at two 50 kW-class sites in southwestern Romania. Each row pairs the preceding hour’s average AC power with historical Open-Meteo weather estimates. Those estimates were not available at forecast issue time, so this is an offline evaluation. Using causal features, a target-aligned daytime mask ($>5^\circ$ solar elevation), and a source cutoff before the test period, source-only LightGBM achieved 6.93\% daytime nMAE on Site B. Sample-weighted pooled adaptation using one calendar day achieved 6.97\%, compared with 28.06\% for target-only training; so it did not improve on zero-shot. Nominal 90\% split conformal adjusted intervals achieved 88.20\% raw, 90.27\% source-calibrated, and 94.51\% target-calibrated empirical daytime coverage, with target-calibrated MPIW 0.3609. Because the data are temporally dependent and come from shifted sites, these results do not establish a coverage guarantee. Five-seed synthetic feature corruption produced 7.46\% mean nMAE and 92.78\% mean PICP at 30\% feature-wise MCAR; this is not evidence of field-sensor robustness. The study covers two sites in one region and uses historical weather estimates.
 \end{abstract}
 
 \begin{keyword}
@@ -41,104 +41,98 @@ Solar PV power forecasting \sep Cross-site transfer learning \sep Few-shot domai
 
 \section{Introduction}
 \label{sec:introduction}
-Photovoltaic (PV) power generation has experienced unprecedented exponential expansion over the past decade, emerging as a foundational pillar of the global clean energy transition \citep{yang2020history}. However, the intrinsic stochastic variability of solar irradiance—governed by complex atmospheric cloud dynamics, diurnal cycles, aerosol fluctuations, and localized meteorological shifts—presents formidable operational challenges to modern electrical grid management \citep{zhang2022cross}. Grid operators must continuously maintain instantaneous generation-load equilibrium. Overestimating solar generation can trigger reserve shortages and grid instability, whereas underestimating output necessitates the costly commitment of high-emission spinning reserves or leads to curtailment of clean solar energy \citep{huang2024conformalized}. Consequently, accurate short-term (1-hour to day-ahead) solar generation forecasting is paramount for dynamic reserve allocation, ramp-rate management, and competitive wholesale electricity market clearing.
+PV output changes with sunlight, cloud cover, and time of day. We measure forecast accuracy here, not effects on grid operations.
 
-Over the past decade, statistical learning, gradient boosted decision trees (GBDTs), and deep neural networks (e.g., Long Short-Term Memory networks, Convolutional Neural Networks, and Transformers) have achieved notable accuracy in solar power forecasting \citep{yang2020history, mihaescu2023dataset}. Nevertheless, existing forecasting paradigms rely heavily on three critical, often unrealistic operational assumptions:
+Over the past decade, statistical learning, gradient boosted decision trees (GBDTs), and deep neural networks (e.g., Long Short-Term Memory networks, Convolutional Neural Networks, and Transformers) have achieved notable accuracy in solar power forecasting \citep{yang2018history}. This retrospective evaluation examines three questions:
 \begin{enumerate}
-    \item \textbf{Identical Distribution and Abundant Historical Telemetry:} Conventional supervised algorithms presuppose that training and testing data are identically distributed ($\mathcal{D}_{\text{train}} \equiv \mathcal{D}_{\text{test}}$) and that multi-year historical logs are readily accessible. In real-world renewable deployment, newly commissioned or upgraded solar plants have zero to minimal historical telemetry. A newly installed commercial plant cannot wait two years to accumulate sufficient data before deploying an intelligent dispatch model. When state-of-the-art deep networks are trained from scratch on minimal data (e.g., days or weeks), they fail catastrophically due to severe empirical overfitting and unrepresentative diurnal sampling.
-    \item \textbf{Absence of Calibrated Uncertainty Guarantees:} The vast majority of deployed industrial forecasters generate deterministic point predictions ($\hat{y}_{t+1}$). Point forecasts inherently provide zero indication of operational confidence, leaving transmission system operators (TSOs) blind to forecast failure during rapid cloud ramp events. While parametric quantile regression and Gaussian processes can generate predictive intervals, their validity relies on strict distributional assumptions that regularly collapse under geographic and temporal covariate shifts, resulting in dangerous empirical undercoverage \citep{romano2019conformalized, angelopoulos2023gentle}.
-    \item \textbf{Vulnerability to Remote Sensor-Availability Shifts:} Remote solar installations routinely face field communication outages, sensor soiling, pyranometer drift, and weather station dropouts. Existing models trained on complete multi-modal telemetry suffer catastrophic prediction degradation when key meteorological features suddenly become missing or corrupted in real time.
+    \item \textbf{Cross-Site Distribution Shift:} A model trained at one site may encounter a shifted feature and target distribution at another site. We compare source-only transfer, pooled adaptation, and target-only models over limited target observation windows; the present data do not establish broad deployment performance.
+    \item \textbf{Empirical Prediction Interval Evaluation:} Point predictions do not summarize uncertainty. We evaluate quantile-based intervals empirically on a chronological holdout, while recognizing that time dependence and site shift limit standard conformal coverage assumptions.
+    \item \textbf{Synthetic Input Availability Perturbations:} Weather-feature availability can vary. We probe synthetic feature corruption, which does not reproduce field communication outages, sensor soiling, or measured instrument drift.
 \end{enumerate}
 
-To bridge these critical industry and scientific gaps, this research develops a comprehensive, data-efficient, and uncertainty-calibrated transfer forecasting framework. We combine Gradient Boosted Decision Trees with Conformalized Quantile Regression (CQR), evaluated across independent multi-year commercial PV installations. Specifically, we investigate four fundamental research questions:
+We evaluate LightGBM transfer, empirical quantile intervals, and synthetic input perturbations between two same-region PV sites using retrospective historical weather estimates. The analysis addresses four questions:
 \begin{itemize}
-    \item \textbf{RQ1 (Cross-Site Transfer Generalization):} How effectively can a forecasting model trained exclusively on a mature source solar plant generalize zero-shot to an unseen target installation located in a distinct microclimate under dimensionless capacity factor normalization?
-    \item \textbf{RQ2 (Adaptation Budget Frontier):} What is the minimal observation window ($k \in \{1, 3, 7, 14\}$ days) required for domain adaptation to match or surpass a plant trained on extensive local history, and how does transfer adaptation compare to training from scratch?
-    \item \textbf{RQ3 (Distribution-Free Uncertainty Calibration):} Can Conformalized Quantile Regression guarantee rigorous finite-sample coverage ($1 - \alpha = 90\%$) on an unseen target plant under domain shift and severe missing telemetry?
-    \item \textbf{RQ4 (Sequence Architectures vs. Tree Ensembles):} Do modern deep sequential architectures (PyTorch LSTM and causal dilated TCN) outperform tabular gradient boosting when transferred cross-site, and what are the game-theoretic physical drivers (via SHAP) governing transfer robustness?
+    \item \textbf{RQ1 (Cross-Site Transfer Generalization):} How effectively can a forecasting model trained exclusively on a mature source solar plant generalize zero-shot to an unseen target installation located in the same broad climate region under capacity-factor normalization?
+    \item \textbf{RQ2 (Adaptation Budget Frontier):} How do pooled adaptation and target-only training compare with source-only transfer over 1, 3, 7, and 14 calendar-day budgets?
+    \item \textbf{RQ3 (Empirical Interval Evaluation):} How do split conformal intervals perform empirically under temporal dependence and cross-site shift?
+    \item \textbf{RQ4 (Sequence Architectures vs. Tree Ensembles):} How do two deep sequence baselines compare with gradient boosting on this holdout, and which input features receive the highest SHAP attribution?
 \end{itemize}
 
-The remainder of this manuscript is structured as follows: Section~\ref{sec:data_problem} presents the multi-site solar telemetry datasets and mathematical problem formulation. Section~\ref{sec:methodology} details the feature engineering, few-shot domain adaptation protocol, Conformalized Quantile Regression framework, and Bayesian hyperparameter tuning. Section~\ref{sec:results} provides extensive empirical benchmarks, cross-site transfer frontiers, deep sequence comparisons with Diebold-Mariano tests, conformal calibration diagnostics, sensor degradation stress-testing, and SHAP explainability. Section~\ref{sec:discussion} analyzes grid operational impacts, and Section~\ref{sec:conclusion} concludes with future directions.
+Section~\ref{sec:data_problem} presents the dataset and problem formulation. Section~\ref{sec:methodology} describes feature engineering, adaptation, and empirical interval evaluation. Section~\ref{sec:results} provides empirical benchmarks, cross-site transfer frontiers, deep sequence comparisons with Diebold-Mariano tests, empirical interval diagnostics, synthetic feature perturbation, and SHAP explainability. Section~\ref{sec:discussion} analyzes grid operational impacts, and Section~\ref{sec:conclusion} concludes with future directions.
 
 \section{Dataset and Problem Formulation}
 \label{sec:data_problem}
 
 \subsection{Multi-Site Commercial PV Telemetry}
-The experimental validation is conducted using continuous multi-year operational telemetry collected from two independent, grid-connected commercial photovoltaic installations located in distinct microclimatic zones of Romania \citep{mihaescu2023dataset}:
+The experiments use hourly data from two grid-connected photovoltaic sites in the same southwestern Romanian region \citep{linca2026dataset}:
 \begin{itemize}
-    \item \textbf{Site A (Source Plant $\mathcal{D}_S$):} A 50~kWp commercial solar PV plant comprising multi-string inverters, on-site pyranometers, and weather stations. The source dataset covers 18 continuous months from January 2025 through June 2026, totaling 13,031 hourly telemetry observations.
-    \item \textbf{Site B (Target Plant $\mathcal{D}_T$):} An independent 50~kWp commercial PV plant situated in a separate geographical region featuring distinct local terrain, tilt angles, inverter conversion characteristics, and cloud patterns. The target dataset covers 13 continuous months from May 2025 through May 2026, totaling 9,504 hourly telemetry observations.
+    \item \textbf{Site A (Source Plant $\mathcal{D}_S$):} A roughly 50~kW-class Huawei SUN2000 system. Weather fields are matched Open-Meteo historical estimates, not on-site sensor observations. The source file contains 13,031 hourly rows from January 2025 through June 2026.
+    \item \textbf{Site B (Target Plant $\mathcal{D}_T$):} A second roughly 50~kW-class Huawei SUN2000 system in the same broad region. The target file contains 9,504 hourly rows from May 2025 through May 2026.
 \end{itemize}
 
-Each site records 23 physical telemetry channels, encompassing AC active power ($P_{\text{ac}}$, kW), DC array power ($P_{\text{dc}}$, kW), global horizontal irradiance ($\text{GHI}$, $\text{W/m}^2$), direct normal irradiance ($\text{DNI}$, $\text{W/m}^2$), diffuse horizontal irradiance ($\text{DHI}$, $\text{W/m}^2$), ambient temperature ($T_{\text{amb}}$, $^\circ\text{C}$), relative humidity ($RH$, $\%$), cloud fraction ($\%$, ERA5 reanalysis matched), anemometer wind speed ($v_{\text{wind}}$, km/h), inverter temperature ($^\circ\text{C}$), and grid coupling frequency ($\text{Hz}$).
+The input rows combine AC power with matched historical weather estimates and solar-position variables. The full raw schema and temporal semantics are documented in the bundled dataset README and the project data provenance note.
 
 \subsection{Physical Quality Control and Leakage Prevention}
-Raw solar telemetry frequently contains measurement anomalies stemming from inverter self-consumption, communication loss, and sensor zero-drift. A rigorous, non-leaking pre-processing pipeline is enforced:
+We apply causal feature processing and retain quality flags for anomalous values:
 \begin{enumerate}
-    \item \textbf{Dimensionless Capacity Factor Normalization:} To enable cross-site transfer across installations with disparate nameplate ratings, electrical power is normalized by the nominal rated capacity:
+    \item \textbf{Capacity-Factor Normalization:} Electrical power is normalized using the documented 50~kW-class capacity:
     \begin{equation}
         \text{CF}_t = \frac{P_{\text{active}}(t)}{P_{\text{rated}}} \in [0.0, 1.2]
     \end{equation}
-    Negative generation records (nighttime parasitic inverter consumption) are strictly clipped to zero. Upper bounds are clipped at $1.2$ to permit realistic high-irradiance edge-of-cloud inverter over-generation while filtering spurious electrical transients.
-    \item \textbf{Astronomical Nighttime Segregation:} Solar forecasting models trained indiscriminately on nocturnal samples achieve deceptively low aggregate errors by repeatedly predicting zero power when the sun is below the horizon. To eliminate this distortion, the local solar elevation angle $\theta_{\text{elev}}$ is computed analytically using solar position algorithms (\texttt{pvlib}). All observations where $\theta_{\text{elev}} \le 0^\circ$ are assigned an exact physical output of $0.0$, and model training is focused exclusively on daytime operational hours ($\theta_{\text{elev}} > 0^\circ$).
-    \item \textbf{Strict Chronological Split:} To eliminate future lookahead bias, random cross-validation is strictly avoided. For each site, the earliest $70\%$ chronologically consecutive samples constitute the training set, the subsequent $10\%$ form the validation/calibration set, and the final $20\%$ are reserved strictly as an unseen holdout test partition.
+    Raw power is preserved, while the analysis target is separately bounded.
+    \item \textbf{Astronomical Nighttime Segregation:} Daytime evaluation uses target-aligned solar elevation $>5^\circ$; source nighttime/twilight outputs are preserved with quality flags.
+    \item \textbf{Chronological Evaluation:} To eliminate future lookahead bias, random cross-validation is strictly avoided. Experiment-specific chronological cutoffs are used; the shared source cutoff precedes the Site B test interval. Calibration windows and adaptation budgets precede the corresponding holdout. Exact sample counts are in the experiment outputs.
 \end{enumerate}
 
 \section{Methodological Framework}
 \label{sec:methodology}
 
 \subsection{Feature Engineering and Astronomical Invariants}
-At forecast origin $t$, the forecaster issues a prediction for 1-hour ahead normalized power $\hat{y}_{t+1}$. The input feature vector $\mathbf{x}_t \in \mathbb{R}^d$ is constructed without lookahead bias:
+The experiments associate row-$t$ features with next-hour normalized power $\hat{y}_{t+1}$. The feature vector $\mathbf{x}_t \in \mathbb{R}^d$ includes retrospective weather estimates; it is not an operational issue-time feature vector:
 \begin{equation}
     \mathbf{x}_t = \left[ \mathbf{p}_{\text{lag}}(t), \mathbf{w}_{\text{met}}(t), \mathbf{s}_{\text{cyclic}}(t), \mathbf{g}_{\text{solar}}(t) \right]
 \end{equation}
 where:
 \begin{itemize}
     \item $\mathbf{p}_{\text{lag}}(t) = [\text{CF}_t, \text{CF}_{t-1}, \text{CF}_{t-2}, \text{CF}_{t-23}, \mu_{3h}(t), \sigma_{3h}(t)]$ encapsulates immediate autoregressive persistence, intra-day trend, and non-leaking 3-hour rolling statistics.
-    \item $\mathbf{w}_{\text{met}}(t) = [\text{GHI}_t, \text{DNI}_t, \Delta \text{GHI}_{1h}, T_{\text{amb}}, RH, v_{\text{wind}}, \text{CloudCover}]$ captures local atmospheric radiative conditions and cooling dynamics.
-    \item $\mathbf{s}_{\text{cyclic}}(t) = [\sin(2\pi h/24), \cos(2\pi h/24), \sin(2\pi d/365.25), \cos(2\pi d/365.25)]$ provides smooth, continuous harmonic encodings for diurnal hour $h \in [0, 23]$ and seasonal day-of-year $d \in [1, 365]$.
-    \item $\mathbf{g}_{\text{solar}}(t) = [\theta_{\text{elev}}, \theta_{\text{azimuth}}]$ provides exact topocentric solar geometry.
+    \item $\mathbf{w}_{\text{met}}(t) = [\text{GHI}_t, \text{DNI}_t, \Delta \text{GHI}_{1h}, T_{\text{amb}}, RH, v_{\text{wind}}, \text{CloudCover}]$ contains weather fields available in the source rows.
+    \item $\mathbf{s}_{\text{cyclic}}(t) = [\sin(2\pi h/24), \cos(2\pi h/24), \sin(2\pi d/365.25), \cos(2\pi d/365.25)]$ encodes the hour of day and day of year cyclically, using $h \in [0, 23]$ and seasonal day-of-year $d \in [1, 365]$.
+    \item $\mathbf{g}_{\text{solar}}(t) = [\theta_{\text{elev}}, \theta_{\text{azimuth}}]$ contains the supplied solar elevation and azimuth.
 \end{itemize}
 
 \subsection{Few-Shot Domain Adaptation Protocol}
-Let $\mathcal{D}_S = \{(\mathbf{x}_i^S, y_i^S)\}_{i=1}^{N_S}$ denote the abundant source dataset from Site A ($N_S > 10,000$). At target Site B, we simulate a newly commissioned solar plant by restricting available local telemetry to a budget of $k$ calendar days:
+Let $\mathcal{D}_S$ be the Site A source data. For Site B, we test target-data budgets of $k$ calendar days:
 \begin{equation}
     \mathcal{D}_T(k) = \{(\mathbf{x}_j^T, y_j^T)\}_{j=1}^{N_T(k)}, \quad k \in \{0, 1, 3, 7, 14\} \text{ days}
 \end{equation}
-where $k=0$ corresponds to pure zero-shot transfer (no target data used during training). 
+where $k=0$ corresponds to source-only transfer (no target data used during training).
 
-To adapt the base model to local target inverter curves and orientation dynamics without catastrophic forgetting, we optimize a domain-weighted transfer objective:
+For pooled adaptation, source and target rows are fitted together with higher weights on target rows:
 \begin{equation}
     \mathcal{L}_{\text{adapt}}(\theta) = \sum_{i=1}^{N_S} \ell(f_\theta(\mathbf{x}_i^S), y_i^S) + \gamma \sum_{j=1}^{N_T(k)} \ell(f_\theta(\mathbf{x}_j^T), y_j^T)
 \end{equation}
-where $\gamma = 2.5$ applies importance weighting to target samples, prioritizing local inverter efficiency and tilt characteristics. All test evaluations are performed exclusively on the subsequent unseen target test partition $\mathcal{D}_T^{\text{test}}$ ($t > \text{end of } k\text{-day budget}$).
+where $\gamma$ sets the target-row weight. Evaluation uses the later Site B holdout.
 
 \subsection{Conformalized Quantile Regression (CQR)}
-To provide distribution-free prediction intervals with mathematically guaranteed coverage under cross-site domain shifts, we employ Conformalized Quantile Regression \citep{romano2019conformalized, angelopoulos2023gentle}. 
-
-Unlike standard quantile regression—which routinely suffers empirical undercoverage when test distributions shift—CQR guarantees finite-sample coverage at nominal significance level $\alpha \in (0, 1)$. Two base quantile regressors $\hat{q}_{\alpha/2}(\mathbf{x})$ and $\hat{q}_{1 - \alpha/2}(\mathbf{x})$ are first trained by minimizing the asymmetric pinball loss:
+We fit quantile regressors on Site A and report raw, source-calibrated, and target-calibrated coverage on Site B. Since the data are dependent over time and differ by site, we treat these as empirical results and make no coverage guarantee.
 \begin{equation}
     \rho_\tau(u) = u \left( \tau - \mathbb{I}(u < 0) \right)
 \end{equation}
 at lower quantile $\tau = \alpha/2 = 0.05$ and upper quantile $\tau = 1 - \alpha/2 = 0.95$ for nominal $90\%$ coverage ($1 - \alpha = 0.90$).
 
-Next, on a distinct calibration set with $n_{\text{cal}}$ samples drawn from the adaptation domain, we compute non-conformity scores representing the signed interval violation:
+For a calibration set with $n_{\text{cal}}$ samples, we compute non-conformity scores representing interval violations:
 \begin{equation}
     E_i = \max\left( \hat{q}_{\alpha/2}(\mathbf{x}_i) - y_i, \, y_i - \hat{q}_{1 - \alpha/2}(\mathbf{x}_i) \right), \quad i = 1, \dots, n_{\text{cal}}
 \end{equation}
-If $y_i$ falls inside the uncalibrated interval, $E_i \le 0$; if $y_i$ falls outside, $E_i > 0$. The conformal adjustment quantile $Q_{1-\alpha}(E)$ is computed at level:
+If $y_i$ falls inside the uncalibrated interval, $E_i \le 0$; if $y_i$ falls outside, $E_i > 0$. Under exchangeability, the finite-sample adjustment level is:
 \begin{equation}
     p = \frac{\lceil (n_{\text{cal}} + 1)(1 - \alpha) \rceil}{n_{\text{cal}}}
 \end{equation}
-The resulting conformalized prediction interval for any unseen target observation $\mathbf{x}_{\text{test}}$ is:
+The adjusted interval for a test observation $\mathbf{x}_{\text{test}}$ is:
 \begin{equation}
     \hat{C}(\mathbf{x}_{\text{test}}) = \left[ \hat{q}_{\alpha/2}(\mathbf{x}_{\text{test}}) - Q_{1-\alpha}(E), \; \hat{q}_{1 - \alpha/2}(\mathbf{x}_{\text{test}}) + Q_{1-\alpha}(E) \right]
 \end{equation}
-By the exchangeability theorem \citep{romano2019conformalized}, the interval satisfies:
-\begin{equation}
-    \mathbb{P}\left( y_{\text{test}} \in \hat{C}(\mathbf{x}_{\text{test}}) \right) \ge 1 - \alpha
-\end{equation}
-regardless of the underlying probability distribution, sample size, or non-linear model family.
+The usual split-conformal coverage result assumes exchangeable calibration and test observations (Romano et al., 2019). We do not assume exchangeability here and report observed holdout coverage.
 
 \subsection{Evaluation Metrics}
 Deterministic point forecast accuracy is quantified via Mean Absolute Error (MAE), Root Mean Squared Error (RMSE), normalized MAE (nMAE, $\%$ of rated capacity), normalized RMSE (nRMSE, $\%$), Coefficient of Determination ($R^2$), and Skill Score ($SS$) relative to persistence:
@@ -165,120 +159,115 @@ Probabilistic uncertainty forecasts are evaluated via:
 \label{sec:results}
 
 \subsection{Benchmark Within-Site Results}
-We establish baseline within-site performance on Site A using walk-forward evaluation. Table~\ref{tab:baseline_benchmark} and Figure~1 present comparative results across classical baselines (Persistence, 24-hour Seasonal Naive, Ridge Regression) and non-linear ensembles (Random Forest, Gradient Boosting). To prevent the artificial deflation of error metrics caused by numerous zero-generation nocturnal hours, metrics are reported primarily for daytime operational hours ($\theta_{\text{elev}} > 0^\circ$, $N=1,159$ test hours), while secondary all-hours evaluations are also tracked for completeness.
+We first compare standard baselines on a chronological Site A holdout. Table~\ref{tab:baseline_benchmark} and Figure~1 present comparative results across classical baselines (Persistence, 24-hour Seasonal Naive, Ridge Regression) and non-linear ensembles (Random Forest, Gradient Boosting). Metrics are reported primarily for target-aligned daytime hours ($\theta_{\text{elev}} > 5^\circ$), while secondary all-hours evaluations are also reported.
 
 \input{tables/table1_baseline_benchmark.tex}
 
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.92\linewidth]{figures/fig1_baseline_benchmark.png}
-    \caption{Within-site 1-hour ahead forecasting benchmark on Site A. (A) Error metrics across baseline and ensemble models on unseen daytime test horizon; (B) Forecast skill score relative to persistence.}
+    \caption{Within-site next-hour forecasting benchmark on Site A. (A) Error metrics across baseline and ensemble models on unseen daytime test horizon; (B) Forecast skill score relative to persistence.}
     \label{fig:baseline_benchmark}
 \end{figure}
 
-Classical Persistence yields a daytime nMAE of $13.53\%$ ($\text{nRMSE} = 17.00\%$, $R^2 = 0.7411$). In contrast, an all-hours evaluation of Persistence yields a deceptively low nMAE of $8.33\%$, proving that indiscriminate nocturnal inclusion deflates forecasting errors by over $38\%$. Tree-based gradient boosting substantially outperforms linear and persistence baselines: Gradient Boosting achieves daytime $\text{nMAE} = 5.93\%$ ($\text{MAE} = 2.97$~kW, $\text{RMSE} = 5.04$~kW, $R^2 = 0.9089$), representing a $+40.68\%$ skill score gain over Persistence. Random Forest demonstrates comparable performance ($\text{nMAE} = 6.01\%$, $R^2 = 0.9068$).
+On the Site A holdout ($N=1,098$ target-daytime hours), persistence achieved 14.04\% nMAE and LightGBM 6.11\% nMAE (nRMSE 10.29\%, $R^2=0.9004$, skill score 0.4085). All-hours error is lower because it includes inactive nighttime intervals; daytime is the primary comparison. Errors are reported in capacity-factor percentage points, not kW.
 
 \subsection{Cross-Site Adaptation Frontier (RQ1 and RQ2)}
-Table~\ref{tab:cross_site_adaptation} and Figure~2 present the empirical frontier of cross-site transfer and few-shot adaptation on the unseen target plant (Site B, $N=1,052$ daytime active test hours).
+Table~\ref{tab:cross_site_adaptation} and Figure~2 present the empirical frontier of cross-site transfer and few-shot adaptation on the Site B holdout (Site B (966 target-daytime samples)).
 
 \input{tables/table2_cross_site_adaptation.tex}
 
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.92\linewidth]{figures/fig2_adaptation_frontier.png}
-    \caption{Cross-site adaptation frontier on unseen target plant (Site B). (A) Scratch training vs. transfer learning error as target observation budget $k$ increases from 1 to 14 days; (B) Skill score comparison highlighting the catastrophic failure of scratch training under data scarcity.}
+    \caption{Cross-site adaptation frontier on the Site B holdout. (A) Scratch training vs. transfer learning error as target observation budget $k$ increases from 1 to 14 days; (B) Skill score comparison showing the measured outcomes for pooled adaptation and target-only fits.}
     \label{fig:adaptation_frontier}
 \end{figure}
 
-The empirical findings provide decisive answers to RQ1 and RQ2:
+Results on the Site B holdout were:
 \begin{enumerate}
-    \item \textbf{Catastrophic Scratch Failure:} When an operator trains a model from scratch using only 1 day of target telemetry, the model completely collapses ($\text{nMAE} = 28.17\%$, Skill Score $=-1.0056$, $R^2 = -0.1325$). Even with 3 days ($\text{nMAE} = 15.21\%$) and 7 days ($\text{nMAE} = 10.99\%$), scratch training remains severely compromised or barely competitive with simple persistence.
-    \item \textbf{Decisive Transfer Advantage:} In stark contrast, transferring knowledge from Source Site A enables the adapted model to achieve $\text{nMAE} = 6.05\%$ with just 1 day of local data—an immediate $\mathbf{78.5\%}$ error reduction compared to scratch training ($28.17\%$).
-    \item \textbf{Zero-Shot Efficacy:} Zero-shot transfer ($k=0$ days, no local training data) achieves $\text{nMAE} = 6.02\%$, $R^2 = 0.9059$, and Skill Score $=+0.4219$. This confirms that dimensionless capacity factor normalization and solar geometry encodings exhibit strong physical domain invariance across regional microclimates.
-    \item \textbf{Budget Saturation:} Error curves plateau between $k=1$ day ($6.05\%$) and $k=7$ days ($6.07\%$), establishing that a minimal budget of 1 to 3 days of local telemetry is sufficient to anchor transfer adaptation on a newly commissioned installation.
+    \item Target-only training produced 28.06\% nMAE with one day, 15.52\% with three days, 11.62\% with seven days, and 9.98\% with fourteen days.
+    \item One-day sample-weighted pooled adaptation achieved 6.97\% nMAE versus 28.06\% for target-only training (75.1\% lower target-only nMAE), but was slightly worse than zero-shot at 6.93\%.
+    \item Zero-shot transfer achieved 6.93\% nMAE ($R^2=0.8738$, skill 0.3759). This result applies to one Site B holdout.
+    \item Pooled adaptation errors ranged from 6.90\% to 6.97\% across tested budgets; no improvement over zero-shot was established.
 \end{enumerate}
 
 \subsection{Uncertainty Calibration and Sensor-Availability Shifts (RQ3)}
-Table~\ref{tab:uncertainty_robustness} and Figure~3 summarize the conformal uncertainty quantification results and sensor availability degradation stress-tests on the target plant.
+Table~\ref{tab:uncertainty_robustness} and Figure~3 summarize the empirical interval results and synthetic weather-feature perturbations on the Site B holdout.
 
 \input{tables/table3_uncertainty_robustness.tex}
 
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.92\linewidth]{figures/fig3_uncertainty_robustness.png}
-    \caption{Conformal uncertainty calibration and sensor degradation stress-testing on target plant. (A) Conformal calibration across regimes (Site B test); (B) Dual-axis error degradation and empirical coverage under increasing telemetry dropout and sensor outages.}
+    \caption{Empirical interval calibration and synthetic weather-feature perturbations on the target holdout. (A) Conformal calibration across regimes (Site B test); (B) Dual-axis error and empirical coverage under synthetic feature perturbations.}
     \label{fig:uncertainty_robustness}
 \end{figure}
 
-The target-adapted CQR achieves an empirical Prediction Interval Coverage Probability (PICP) of $\mathbf{89.26\%}$ against the nominal $90.0\%$ target on daytime operational hours, with a narrow Mean Prediction Interval Width (MPIW) of $0.2882$ and Winkler Score of $0.3921$. Notably, uncalibrated raw quantile regression achieves $87.83\%$ daytime coverage, demonstrating that local conformal calibration successfully recovers coverage under regional domain shifts.
+Target-daytime empirical PICP was 88.20\% for raw quantile regression, 90.27\% for source calibration, and 94.51\% for target calibration. Target-calibrated interval MPIW was 0.3609 and Winkler score 0.4299. These are observed holdout values; they do not guarantee coverage under temporal dependence or site shift.
 
-Under simulated field sensor degradation:
+We also tested synthetic corruption of the historical weather features:
 \begin{itemize}
-    \item The model demonstrates remarkable robustness to random missing telemetry: missing rates of $10\%$ and $30\%$ MCAR produce minimal error penalties ($8.65\%$ and $8.85\%$ nMAE vs. $8.50\%$ baseline), while empirical coverage remains solid ($88.31\%$ and $85.84\%$).
-    \item Contiguous 3-hour and 6-hour communication blackouts are effectively buffered by causal forward-holding, maintaining $8.52\%$ and $8.50\%$ nMAE with $89.16\%$ coverage.
-    \item Even under $50\%$ extreme communication dropout, nMAE increases moderately to $9.56\%$.
-    \item However, complete loss of the local pyranometer (total GHI outage) causes forecast error to climb to $11.30\%$, and empirical coverage drops to $71.58\%$. This identifies solar irradiance monitoring as the primary single point of physical failure.
+    \item Across five seeds, 30\% feature-wise MCAR produced mean nMAE 7.46\% and mean empirical PICP 92.78\%.
+    \item Synchronized 30\% packet loss yielded mean nMAE 7.31\% and PICP 92.90\%.
+    \item Complete GHI-input outage yielded nMAE 10.84\% and PICP 86.02\%; this is synthetic feature removal, not observed pyranometer failure.
 \end{itemize}
 
 \subsection{Deep Sequence Architectures (LSTM and TCN) and Diebold-Mariano Tests (RQ4)}
-To evaluate whether deep sequence architectures outperform gradient boosted trees on tabular solar telemetry, PyTorch implementations of a 2-layer LSTM and a causal dilated Temporal Convolutional Network (TCN) were trained under identical cross-site conditions. Table~\ref{tab:deep_learning_benchmark} presents empirical point metrics alongside stationary block bootstrap $95\%$ confidence intervals (12-hour block size) and Diebold-Mariano (DM) hypothesis tests with Harvey-Leybourne-Newbold finite-sample correction and Newey-West HAC spectral estimation.
+We also compared a two-layer LSTM and a causal temporal convolutional network (TCN) in one run with a fixed seed. Table~\ref{tab:deep_learning_benchmark} reports point metrics and moving-block bootstrap intervals. The Diebold-Mariano (DM) comparisons use Newey-West HAC estimation on the longest contiguous all-hours segment.
 
 \input{tables/table5_deep_learning_benchmark.tex}
 
-While PyTorch LSTM ($\text{nMAE} = 6.73\%$, $95\%\text{ CI: } [6.16, 7.38]\%$) and TCN ($\text{nMAE} = 6.43\%$, $95\%\text{ CI: } [5.82, 7.11]\%$) demonstrate strong sequence modeling capabilities, LightGBM achieves statistically superior forecasting accuracy ($\text{nMAE} = 6.02\%$, $95\%\text{ CI: } [5.41, 6.68]\%$; $\text{DM} = -6.1747, p < 0.0001$ vs. LSTM; $\text{DM} = -3.5131, p = 0.0005$ vs. TCN). Furthermore, GBDTs train over $20\times$ faster on standard computing hardware and maintain higher numerical stability during sudden sensor dropouts.
+LightGBM achieved 6.93\% daytime nMAE, LSTM 7.37\%, and TCN 7.69\% in a single-seed run. The exploratory DM comparisons use the longest contiguous all-hours test segment: LSTM $p=0.0117$, TCN $p=0.0004$. The neural comparison is exploratory; each network was run once.
 
-\subsection{Model Interpretability and Game-Theoretic SHAP Attribution}
-To understand the physical drivers enabling cross-site transfer robustness, Shapley Additive Explanations (SHAP) were computed across the target test set using \texttt{TreeExplainer}. As detailed in Table~\ref{tab:feature_importance} and Figure~4, immediate autoregressive power telemetry ($\texttt{lag\_0}$) accounts for the largest predictive contribution ($54.45\%$), followed by cyclic diurnal solar geometry ($\texttt{hour\_sin}$ at $10.81\%$, $\texttt{solar\_azimuth\_deg}$ at $4.49\%$, $\texttt{solar\_elevation\_deg}$ at $3.14\%$) and dynamic irradiance changes ($\texttt{ghi\_diff\_1h}$ at $7.77\%$).
+\subsection{Model Interpretability and SHAP Attribution}
+To describe model attributions on the target holdout, SHAP assigned the largest relative importance to lag_0 (54.54\%), followed by hour_sin (10.68\%) and ghi_diff_1h (8.65\%). SHAP values are not causal effects.
 
 \input{tables/table4_feature_importance.tex}
 
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.90\linewidth]{figures/fig4_shap_feature_importance.png}
-    \caption{Game-theoretic SHAP feature importance attribution on target plant. (A) Relative percentage importance ranking of top 10 features; (B) SHAP summary beeswarm distribution showing physical feature value impacts on 1-hour ahead predicted power.}
+    \caption{SHAP feature attribution on target plant. (A) Relative percentage importance ranking of top 10 features; (B) SHAP summary beeswarm distribution showing physical feature value impacts on next-hour predicted power.}
     \label{fig:shap_importance}
 \end{figure}
 
-These findings explain why the forecaster maintains resilience under partial weather dropout: cyclic diurnal solar geometry and autoregressive generation act as strong physical priors that anchor predictions even when remote atmospheric telemetry drops out.
+These attributions describe the fitted model; they are not causal effects.
 
-\subsection{Operational Parity Diagnostics and Seasonal Error Decomposition}
-To rigorously evaluate model fidelity across operational generation ranges, Figure~5 presents the parity diagnostic ($y_t$ vs. $\hat{y}_t$) and marginal residual distributions on the unseen target plant. Over $92.4\%$ of hourly observations fall within the $\pm 10\%$ operational tolerance envelope ($R^2 = 0.968$), with near-zero mean residual ($+0.0012$) and no heavy-tail dispersion.
+\subsection{Parity and Reliability Diagnostics}
+Figure~5 presents a parity diagnostic ($y_t$ vs. $\hat{y}_t$) and marginal residual distributions on the Site B holdout. This plot is descriptive; no operational threshold was set.
 
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.82\linewidth]{figures/fig5_parity_plots.png}
-    \caption{Figure 5: 1:1 Parity scatter diagnostic and marginal error distributions on unseen target plant. Dashed red line represents perfect 1:1 forecast; dotted gold lines delimit the $\pm 10\%$ operational tolerance band.}
+    \caption{Figure 5: 1:1 Parity scatter diagnostic and marginal error distributions on Site B holdout. Dashed red line represents perfect 1:1 forecast.}
     \label{fig:parity_plot}
 \end{figure}
 
-Figure~6 illustrates the Conformal Reliability Diagram and sharpness frontier. Empirical coverage tracks the theoretical $y = x$ calibration line across all confidence levels ($50\%$ to $99\%$), verifying that CQR does not suffer from undercoverage under domain shift.
+Figure~6 illustrates empirical coverage at the nominal levels evaluated and interval width. The figure shows observed coverage at the tested nominal levels. It does not establish calibration at other levels or under domain shift.
 
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.92\linewidth]{figures/fig6_reliability_diagram.png}
-    \caption{Figure 6: (A) Conformal reliability calibration curve comparing proposed CQR against uncalibrated pinball loss; (B) Prediction interval sharpness (MPIW) as a function of nominal confidence level.}
+    \caption{Figure 6: (A) Empirical interval coverage at nominal levels; (B) Prediction interval sharpness (MPIW) as a function of nominal confidence level.}
     \label{fig:reliability_diagram}
 \end{figure}
 
-Seasonal decomposition confirms consistent year-round stability: pre-monsoon clear-sky periods achieve the highest accuracy ($\text{nMAE} = 4.65\%$ in March), while convective summer cloud dynamics produce slightly higher errors ($\text{nMAE} = 6.10\%$ in July, $\text{PICP} = 91.5\%$). Crucially, conformal coverage remains above the nominal $90.0\%$ threshold across all twelve calendar months.
+We did not evaluate seasonal subgroups.
 
-\section{Grid Integration and Practical Implications}
+\section{Limitations and Practical Scope}
 \label{sec:discussion}
-Deploying the proposed data-efficient, uncertainty-calibrated framework provides two major operational benefits for transmission system operators and commercial fleet managers:
-\begin{enumerate}
-    \item \textbf{Rapid Plant Commissioning:} Commercial solar operators can deploy automated, accurate dispatch forecasts on Day 1 of commissioning via zero-shot or 1-day transfer adaptation, avoiding the standard 1--2 year telemetry collection latency.
-    \item \textbf{Dynamic Reserve Sizing via Conformal Bands:} Instead of committing static, expensive spinning reserves based on worst-case empirical heuristics, grid operators can dynamically size operating reserves to match the calibrated upper and lower conformal bounds $\hat{C}(\mathbf{x}_{t+1})$, reducing thermal reserve fuel consumption while strictly guaranteeing $90\%$ or $95\%$ reliability.
-\end{enumerate}
+This retrospective analysis uses historical reanalysis weather that was not available at operational forecast issue time. The two plants are in the same regional climate and do not support global or cross-climate transfer claims. Synthetic feature perturbations do not establish hardware-fault resilience. The single-seed neural comparison and dependence-sensitive interval evaluation require further study. Grid-dispatch and deployment benefits were not measured.
 
 \section{Conclusion}
 \label{sec:conclusion}
-This study presented a data-efficient and uncertainty-calibrated transfer learning framework for cross-site solar PV power forecasting under temporal and sensor-availability shifts. Evaluated on multi-year, 50~kWp commercial PV installations with rigorous causal preprocessing and daytime separation, the framework achieved a $78.5\%$ error reduction under 1-day target adaptation budgets compared to training from scratch, while zero-shot transfer yielded $6.02\%$ daytime nMAE ($R^2 = 0.9059$). Conformalized Quantile Regression delivered calibrated finite-sample prediction intervals, achieving $89.26\%$ empirical daytime coverage on unseen target plants and demonstrating resilience to up to $30\%$ telemetry dropout. Gradient boosted trees statistically outperformed deep sequence models (LSTM and TCN, $p \le 0.0005$) under Diebold-Mariano tests with Newey-West HAC estimation. Future research will explore multi-plant microgrid graph neural networks and sky-imaging camera fusion.
+This study compares two sites using a common temporal cutoff. Source-only LightGBM achieved 6.93\% daytime nMAE on Site B, while one-day pooled adaptation achieved 6.97\% and target-only training 28.06\%. Target-calibrated intervals had 94.51\% empirical daytime PICP at nominal 90\%, without a coverage guarantee under temporal or site shift. Five-seed synthetic 30\% MCAR perturbation yielded 7.46\% mean nMAE and 92.78\% mean PICP. The findings apply only to these two sites and retrospective weather inputs.
 
 \section*{Declaration of Competing Interest}
 The author declares that he has no known competing financial interests or personal relationships that could have appeared to influence the work reported in this paper.
 
-\section*{Data and Code Availability}
-All datasets, preprocessing pipelines, model architectures, hyperparameter configurations, and evaluation scripts are publicly available on GitHub at \url{https://github.com/aminur167/cross-site-solar-forecasting}.
+\section*{Data Availability}
+The bundled source dataset is available from UPB NLP under CC BY 4.0 (\url{https://github.com/upb-nlp/PV-Generation-Dataset}). Project code and generated artifacts are included in this repository snapshot; availability of any external repository should be checked by the authors before publication.
 
 \bibliographystyle{elsarticle-harv}
 \bibliography{paper/references}

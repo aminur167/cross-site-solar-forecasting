@@ -24,7 +24,7 @@ class SolarDataPreprocessor:
     Strictly prevents lookahead bias (data leakage).
     """
 
-    def __init__(self, rated_capacity_kw: float = 50.0, solar_elevation_threshold_deg: float = 0.0):
+    def __init__(self, rated_capacity_kw: float = 50.0, solar_elevation_threshold_deg: float = 5.0):
         self.rated_capacity_kw = rated_capacity_kw
         self.solar_elevation_threshold_deg = solar_elevation_threshold_deg
 
@@ -60,14 +60,14 @@ class SolarDataPreprocessor:
         if 'active_power_kw' not in data.columns:
             raise KeyError("Expected 'active_power_kw' column for target calculation.")
 
-        # Real inverter physics:
-        # Negative power (nighttime parasitic inverter self-consumption, e.g. -0.05 kW) clamped to 0
-        data['active_power_kw'] = data['active_power_kw'].clip(lower=0.0)
-
-        # Inverter AC nameplate ceiling: allow realistic over-irradiance up to 1.15x (57.5 kW)
-        inverter_ceiling = self.rated_capacity_kw * 1.15
-        data['active_power_kw'] = data['active_power_kw'].clip(upper=inverter_ceiling)
-        data['capacity_factor'] = data['active_power_kw'] / self.rated_capacity_kw
+        # Preserve observations and expose quality flags separately. Analytical
+        # target is bounded to the observed 1.15x operating envelope; source
+        # readings remain available unchanged in active_power_kw_raw.
+        data['active_power_kw_raw'] = data['active_power_kw']
+        data['negative_power_flag'] = (data['active_power_kw_raw'] < 0).fillna(False).astype(int)
+        data['over_nameplate_flag'] = (data['active_power_kw_raw'] > self.rated_capacity_kw).fillna(False).astype(int)
+        data['active_power_kw_analysis'] = data['active_power_kw_raw'].clip(lower=0.0, upper=self.rated_capacity_kw * 1.15)
+        data['capacity_factor'] = data['active_power_kw_analysis'] / self.rated_capacity_kw
 
         # 4. Physical constraints on meteorological sensors
         if 'humidity_pct' in data.columns:
@@ -84,12 +84,11 @@ class SolarDataPreprocessor:
             data['wind_speed_kmh'] = data['wind_speed_kmh'].clip(lower=0.0, upper=150.0)
 
         # 5. Astronomical Daytime vs Nighttime Segregation
-        # Sun elevation > threshold constitutes active daylight potential
+        # Dataset documentation uses >5 degrees; preserve twilight power values
+        # and flag possible nighttime/twilight generation rather than zeroing it.
         if 'solar_elevation_deg' in data.columns:
             daytime_mask = (data['solar_elevation_deg'] > self.solar_elevation_threshold_deg)
-            # Nocturnal active power is strictly 0.0 by physics
-            data.loc[~daytime_mask, 'active_power_kw'] = 0.0
-            data.loc[~daytime_mask, 'capacity_factor'] = 0.0
+            data['nighttime_generation_anomaly'] = ((~daytime_mask) & (data['active_power_kw_raw'] > 0.1)).fillna(False).astype(int)
             data['is_daytime'] = daytime_mask.astype(int)
         else:
             # Fallback if solar elevation missing

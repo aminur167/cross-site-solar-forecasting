@@ -54,8 +54,36 @@ class SensorPerturbationEngine:
                 mask = self.rng.rand(len(X_pert)) < missing_rate
                 X_pert.loc[mask, col] = np.nan
                 # Strictly causal forward-fill (never bfill!)
-                X_pert[col] = X_pert[col].ffill().fillna(0.0)
+                X_pert[col] = X_pert[col].ffill()
 
+        return X_pert
+
+    def simulate_synchronized_packet_loss(
+        self, X: pd.DataFrame, missing_rate: float, target_columns: Optional[List[str]] = None
+    ) -> pd.DataFrame:
+        """Drop the same timestamps across weather channels, then causal-hold."""
+        X_pert = X.copy()
+        cols = target_columns if target_columns is not None else [
+            c for c in X.columns if any(k in c for k in ['ghi', 'temp', 'cloud', 'humidity', 'wind'])
+        ]
+        cols = [c for c in cols if c in X_pert.columns]
+        if not cols or missing_rate <= 0:
+            return X_pert
+        mask = self.rng.rand(len(X_pert)) < missing_rate
+        X_pert.loc[mask, cols] = np.nan
+        X_pert.loc[:, cols] = X_pert.loc[:, cols].ffill()
+        return X_pert
+
+    def simulate_stuck_at_value(
+        self, X: pd.DataFrame, duration_hours: int = 24, target_columns: Optional[List[str]] = None
+    ) -> pd.DataFrame:
+        """Hold selected weather channels at their first value for a block."""
+        X_pert = X.copy()
+        cols = target_columns if target_columns is not None else [c for c in X.columns if 'ghi' in c]
+        cols = [c for c in cols if c in X_pert.columns]
+        if len(X_pert) and duration_hours > 0:
+            for col in cols:
+                X_pert.iloc[:duration_hours, X_pert.columns.get_loc(col)] = X_pert[col].iloc[0]
         return X_pert
 
     def simulate_contiguous_dropout(
@@ -88,7 +116,7 @@ class SensorPerturbationEngine:
         # Causal recovery: forward-hold last valid observation before outage
         for col in cols:
             if col in X_pert.columns:
-                X_pert[col] = X_pert[col].ffill().fillna(0.0)
+                X_pert[col] = X_pert[col].ffill()
 
         return X_pert
 

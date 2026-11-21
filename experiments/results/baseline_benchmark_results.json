@@ -1,122 +1,122 @@
 {
     "Persistence": {
-        "MAE": 0.1353,
-        "RMSE": 0.17,
-        "nMAE_pct": 13.53,
-        "nRMSE_pct": 17.0,
-        "R2": 0.7411,
+        "MAE": 0.1404,
+        "RMSE": 0.1739,
+        "nMAE_pct": 14.04,
+        "nRMSE_pct": 17.39,
+        "R2": 0.7153,
         "Skill_Score_vs_Persist": 0.0,
         "daytime": {
-            "MAE": 0.1353,
-            "RMSE": 0.17,
-            "nMAE_pct": 13.53,
-            "nRMSE_pct": 17.0,
-            "R2": 0.7411,
+            "MAE": 0.1404,
+            "RMSE": 0.1739,
+            "nMAE_pct": 14.04,
+            "nRMSE_pct": 17.39,
+            "R2": 0.7153,
             "Skill_Score_vs_Persist": 0.0
         },
         "all_hours": {
-            "MAE": 0.0833,
-            "RMSE": 0.1326,
-            "nMAE_pct": 8.33,
-            "nRMSE_pct": 13.26,
-            "R2": 0.8425,
+            "MAE": 0.0831,
+            "RMSE": 0.1324,
+            "nMAE_pct": 8.31,
+            "nRMSE_pct": 13.24,
+            "R2": 0.8423,
             "Skill_Score_vs_Persist": 0.0
         }
     },
     "Seasonal_Naive_24h": {
-        "MAE": 0.1358,
-        "RMSE": 0.2288,
-        "nMAE_pct": 13.58,
-        "nRMSE_pct": 22.88,
-        "R2": 0.531,
-        "Skill_Score_vs_Persist": -0.346,
+        "MAE": 0.1416,
+        "RMSE": 0.2329,
+        "nMAE_pct": 14.16,
+        "nRMSE_pct": 23.29,
+        "R2": 0.4893,
+        "Skill_Score_vs_Persist": -0.3392,
         "daytime": {
-            "MAE": 0.1358,
-            "RMSE": 0.2288,
-            "nMAE_pct": 13.58,
-            "nRMSE_pct": 22.88,
-            "R2": 0.531,
-            "Skill_Score_vs_Persist": -0.346
+            "MAE": 0.1416,
+            "RMSE": 0.2329,
+            "nMAE_pct": 14.16,
+            "nRMSE_pct": 23.29,
+            "R2": 0.4893,
+            "Skill_Score_vs_Persist": -0.3392
         },
         "all_hours": {
-            "MAE": 0.0829,
-            "RMSE": 0.1784,
-            "nMAE_pct": 8.29,
-            "nRMSE_pct": 17.84,
-            "R2": 0.7152,
-            "Skill_Score_vs_Persist": -0.3446
+            "MAE": 0.082,
+            "RMSE": 0.177,
+            "nMAE_pct": 8.2,
+            "nRMSE_pct": 17.7,
+            "R2": 0.7185,
+            "Skill_Score_vs_Persist": -0.3363
         }
     },
     "Ridge_Regression": {
-        "MAE": 0.0722,
-        "RMSE": 0.1101,
-        "nMAE_pct": 7.22,
-        "nRMSE_pct": 11.01,
-        "R2": 0.8914,
-        "Skill_Score_vs_Persist": 0.3523,
+        "MAE": 0.076,
+        "RMSE": 0.1129,
+        "nMAE_pct": 7.6,
+        "nRMSE_pct": 11.29,
+        "R2": 0.8801,
+        "Skill_Score_vs_Persist": 0.351,
         "daytime": {
-            "MAE": 0.0722,
-            "RMSE": 0.1101,
-            "nMAE_pct": 7.22,
-            "nRMSE_pct": 11.01,
-            "R2": 0.8914,
-            "Skill_Score_vs_Persist": 0.3523
+            "MAE": 0.076,
+            "RMSE": 0.1129,
+            "nMAE_pct": 7.6,
+            "nRMSE_pct": 11.29,
+            "R2": 0.8801,
+            "Skill_Score_vs_Persist": 0.351
         },
         "all_hours": {
-            "MAE": 0.0468,
-            "RMSE": 0.0862,
-            "nMAE_pct": 4.68,
-            "nRMSE_pct": 8.62,
-            "R2": 0.9336,
-            "Skill_Score_vs_Persist": 0.3505
+            "MAE": 0.0467,
+            "RMSE": 0.0861,
+            "nMAE_pct": 4.67,
+            "nRMSE_pct": 8.61,
+            "R2": 0.9334,
+            "Skill_Score_vs_Persist": 0.3502
         }
     },
     "Random_Forest": {
-        "MAE": 0.0601,
-        "RMSE": 0.102,
-        "nMAE_pct": 6.01,
-        "nRMSE_pct": 10.2,
-        "R2": 0.9068,
-        "Skill_Score_vs_Persist": 0.3999,
+        "MAE": 0.0629,
+        "RMSE": 0.1043,
+        "nMAE_pct": 6.29,
+        "nRMSE_pct": 10.43,
+        "R2": 0.8976,
+        "Skill_Score_vs_Persist": 0.4003,
         "daytime": {
-            "MAE": 0.0601,
-            "RMSE": 0.102,
-            "nMAE_pct": 6.01,
-            "nRMSE_pct": 10.2,
-            "R2": 0.9068,
-            "Skill_Score_vs_Persist": 0.3999
-        },
-        "all_hours": {
-            "MAE": 0.0368,
-            "RMSE": 0.0795,
-            "nMAE_pct": 3.68,
-            "nRMSE_pct": 7.95,
-            "R2": 0.9434,
-            "Skill_Score_vs_Persist": 0.4004
-        }
-    },
-    "Gradient_Boosting": {
-        "MAE": 0.0593,
-        "RMSE": 0.1008,
-        "nMAE_pct": 5.93,
-        "nRMSE_pct": 10.08,
-        "R2": 0.9089,
-        "Skill_Score_vs_Persist": 0.4068,
-        "daytime": {
-            "MAE": 0.0593,
-            "RMSE": 0.1008,
-            "nMAE_pct": 5.93,
-            "nRMSE_pct": 10.08,
-            "R2": 0.9089,
-            "Skill_Score_vs_Persist": 0.4068
+            "MAE": 0.0629,
+            "RMSE": 0.1043,
+            "nMAE_pct": 6.29,
+            "nRMSE_pct": 10.43,
+            "R2": 0.8976,
+            "Skill_Score_vs_Persist": 0.4003
         },
         "all_hours": {
             "MAE": 0.0365,
-            "RMSE": 0.0786,
+            "RMSE": 0.0793,
             "nMAE_pct": 3.65,
-            "nRMSE_pct": 7.86,
-            "R2": 0.9446,
-            "Skill_Score_vs_Persist": 0.4072
+            "nRMSE_pct": 7.93,
+            "R2": 0.9435,
+            "Skill_Score_vs_Persist": 0.4015
+        }
+    },
+    "Gradient_Boosting": {
+        "MAE": 0.0611,
+        "RMSE": 0.1029,
+        "nMAE_pct": 6.11,
+        "nRMSE_pct": 10.29,
+        "R2": 0.9004,
+        "Skill_Score_vs_Persist": 0.4085,
+        "daytime": {
+            "MAE": 0.0611,
+            "RMSE": 0.1029,
+            "nMAE_pct": 6.11,
+            "nRMSE_pct": 10.29,
+            "R2": 0.9004,
+            "Skill_Score_vs_Persist": 0.4085
+        },
+        "all_hours": {
+            "MAE": 0.0357,
+            "RMSE": 0.0782,
+            "nMAE_pct": 3.57,
+            "nRMSE_pct": 7.82,
+            "R2": 0.9451,
+            "Skill_Score_vs_Persist": 0.4097
         }
     }
 }

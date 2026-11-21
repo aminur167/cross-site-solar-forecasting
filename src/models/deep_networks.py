@@ -19,17 +19,28 @@ class TimeSeriesSequenceDataset(Dataset):
     Sliding window dataset for sequence models.
     At time t, takes features [t-seq_len+1 : t] to predict y(t+1).
     """
-    def __init__(self, X: np.ndarray, y: np.ndarray, seq_len: int = 6):
+    def __init__(self, X: np.ndarray, y: np.ndarray, seq_len: int = 6, timestamps=None):
         self.X = torch.tensor(X, dtype=torch.float32)
         self.y = torch.tensor(y, dtype=torch.float32)
         self.seq_len = seq_len
+        if timestamps is None:
+            self.end_indices = np.arange(seq_len - 1, len(self.X))
+        else:
+            ts = pd.DatetimeIndex(timestamps)
+            if len(ts) != len(self.X):
+                raise ValueError("timestamps must align with X and y")
+            self.end_indices = np.array([
+                end for end in range(seq_len - 1, len(ts))
+                if np.all(ts[end - seq_len + 1:end + 1].to_series().diff().iloc[1:] == pd.Timedelta(hours=1))
+            ], dtype=int)
 
     def __len__(self):
-        return len(self.X) - self.seq_len + 1
+        return len(self.end_indices)
 
     def __getitem__(self, idx):
-        x_seq = self.X[idx : idx + self.seq_len]
-        y_target = self.y[idx + self.seq_len - 1]
+        end = int(self.end_indices[idx])
+        x_seq = self.X[end - self.seq_len + 1 : end + 1]
+        y_target = self.y[end]
         return x_seq, y_target
 
 class SolarLSTM(nn.Module):

@@ -57,6 +57,7 @@ experiments/logs/*
 .env
 .env.local
 *.secret
+.audit_backups/
 
 # IDE and OS files
 .vscode/

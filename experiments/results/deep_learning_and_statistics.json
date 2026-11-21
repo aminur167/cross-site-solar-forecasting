@@ -1,49 +1,49 @@
 {
     "LightGBM (GBDT)": {
-        "MAE": 0.0602,
-        "RMSE": 0.0993,
-        "nMAE_pct": 6.02,
-        "nRMSE_pct": 9.93,
-        "R2": 0.9059,
+        "MAE": 0.0693,
+        "RMSE": 0.1111,
+        "nMAE_pct": 6.93,
+        "nRMSE_pct": 11.11,
+        "R2": 0.8738,
         "metrics": {
-            "MAE": 0.0602,
-            "RMSE": 0.0993,
-            "nMAE_pct": 6.02,
-            "nRMSE_pct": 9.93,
-            "R2": 0.9059
+            "MAE": 0.0693,
+            "RMSE": 0.1111,
+            "nMAE_pct": 6.93,
+            "nRMSE_pct": 11.11,
+            "R2": 0.8738
         },
         "daytime": {
-            "MAE": 0.0602,
-            "RMSE": 0.0993,
-            "nMAE_pct": 6.02,
-            "nRMSE_pct": 9.93,
-            "R2": 0.9059
+            "MAE": 0.0693,
+            "RMSE": 0.1111,
+            "nMAE_pct": 6.93,
+            "nRMSE_pct": 11.11,
+            "R2": 0.8738
         },
         "all_hours": {
-            "MAE": 0.0346,
-            "RMSE": 0.0748,
-            "nMAE_pct": 3.46,
-            "nRMSE_pct": 7.48,
-            "R2": 0.9431
+            "MAE": 0.0369,
+            "RMSE": 0.0805,
+            "nMAE_pct": 3.69,
+            "nRMSE_pct": 8.05,
+            "R2": 0.9344
         },
         "confidence_intervals": {
             "nMAE_CI_pct": [
-                5.41,
-                6.68
+                6.23,
+                7.66
             ],
             "nRMSE_CI_pct": [
-                8.89,
-                11.07
+                10.0,
+                12.28
             ]
         },
         "confidence_intervals_all": {
             "nMAE_CI_pct": [
-                3.08,
-                3.85
+                3.31,
+                4.13
             ],
             "nRMSE_CI_pct": [
-                6.64,
-                8.33
+                7.24,
+                8.93
             ]
         },
         "diebold_mariano_vs_gbdt": {
@@ -53,117 +53,119 @@
         }
     },
     "PyTorch LSTM": {
-        "MAE": 0.0673,
-        "RMSE": 0.1051,
-        "nMAE_pct": 6.73,
-        "nRMSE_pct": 10.51,
-        "R2": 0.8946,
+        "MAE": 0.0737,
+        "RMSE": 0.1099,
+        "nMAE_pct": 7.37,
+        "nRMSE_pct": 10.99,
+        "R2": 0.8765,
         "metrics": {
-            "MAE": 0.0673,
-            "RMSE": 0.1051,
-            "nMAE_pct": 6.73,
-            "nRMSE_pct": 10.51,
-            "R2": 0.8946
+            "MAE": 0.0737,
+            "RMSE": 0.1099,
+            "nMAE_pct": 7.37,
+            "nRMSE_pct": 10.99,
+            "R2": 0.8765
         },
         "daytime": {
-            "MAE": 0.0673,
-            "RMSE": 0.1051,
-            "nMAE_pct": 6.73,
-            "nRMSE_pct": 10.51,
-            "R2": 0.8946
+            "MAE": 0.0737,
+            "RMSE": 0.1099,
+            "nMAE_pct": 7.37,
+            "nRMSE_pct": 10.99,
+            "R2": 0.8765
         },
         "all_hours": {
-            "MAE": 0.0391,
-            "RMSE": 0.0793,
-            "nMAE_pct": 3.91,
-            "nRMSE_pct": 7.93,
-            "R2": 0.936
+            "MAE": 0.0392,
+            "RMSE": 0.0796,
+            "nMAE_pct": 3.92,
+            "nRMSE_pct": 7.96,
+            "R2": 0.9357
         },
         "confidence_intervals": {
             "nMAE_CI_pct": [
-                6.16,
-                7.38
+                6.79,
+                7.99
             ],
             "nRMSE_CI_pct": [
-                9.54,
-                11.59
+                10.06,
+                11.99
             ]
         },
         "confidence_intervals_all": {
             "nMAE_CI_pct": [
-                3.56,
+                3.6,
                 4.28
             ],
             "nRMSE_CI_pct": [
-                7.18,
-                8.72
+                7.25,
+                8.75
             ]
         },
         "diebold_mariano_vs_gbdt": {
-            "dm_stat": -6.1747,
-            "raw_p_value": 9.45884703895672e-10,
-            "p_value_str": "< 0.0001",
-            "mean_loss_diff": -0.007189,
-            "cohens_d": -0.1976,
+            "dm_stat": -2.525,
+            "raw_p_value": 0.011676493215200553,
+            "p_value_str": "0.0117",
+            "mean_loss_diff": -0.002568,
+            "cohens_d": -0.0848,
             "is_significant_005": true,
-            "is_significant_001": true
+            "is_significant_001": false,
+            "evaluation_scope": "longest_contiguous_all_hours_test_segment"
         }
     },
     "PyTorch TCN": {
-        "MAE": 0.0643,
-        "RMSE": 0.1042,
-        "nMAE_pct": 6.43,
-        "nRMSE_pct": 10.42,
-        "R2": 0.8964,
+        "MAE": 0.0769,
+        "RMSE": 0.1191,
+        "nMAE_pct": 7.69,
+        "nRMSE_pct": 11.91,
+        "R2": 0.8548,
         "metrics": {
-            "MAE": 0.0643,
-            "RMSE": 0.1042,
-            "nMAE_pct": 6.43,
-            "nRMSE_pct": 10.42,
-            "R2": 0.8964
+            "MAE": 0.0769,
+            "RMSE": 0.1191,
+            "nMAE_pct": 7.69,
+            "nRMSE_pct": 11.91,
+            "R2": 0.8548
         },
         "daytime": {
-            "MAE": 0.0643,
-            "RMSE": 0.1042,
-            "nMAE_pct": 6.43,
-            "nRMSE_pct": 10.42,
-            "R2": 0.8964
+            "MAE": 0.0769,
+            "RMSE": 0.1191,
+            "nMAE_pct": 7.69,
+            "nRMSE_pct": 11.91,
+            "R2": 0.8548
         },
         "all_hours": {
-            "MAE": 0.0372,
-            "RMSE": 0.0786,
-            "nMAE_pct": 3.72,
-            "nRMSE_pct": 7.86,
-            "R2": 0.9372
+            "MAE": 0.0409,
+            "RMSE": 0.0863,
+            "nMAE_pct": 4.09,
+            "nRMSE_pct": 8.63,
+            "R2": 0.9245
         },
         "confidence_intervals": {
             "nMAE_CI_pct": [
-                5.82,
-                7.11
+                6.97,
+                8.41
             ],
             "nRMSE_CI_pct": [
-                9.37,
-                11.6
+                10.78,
+                13.08
             ]
         },
         "confidence_intervals_all": {
             "nMAE_CI_pct": [
-                3.32,
-                4.13
+                3.72,
+                4.5
             ],
             "nRMSE_CI_pct": [
-                7.03,
-                8.69
+                7.81,
+                9.52
             ]
         },
         "diebold_mariano_vs_gbdt": {
-            "dm_stat": -3.5131,
-            "raw_p_value": 0.00046183173773450825,
-            "p_value_str": "0.0005",
-            "mean_loss_diff": -0.00414,
-            "cohens_d": -0.1161,
+            "dm_stat": -3.5559,
+            "raw_p_value": 0.0003889905418227086,
+            "p_value_str": "0.0004",
+            "mean_loss_diff": -0.003611,
+            "cohens_d": -0.1037,
             "is_significant_005": true,
-            "is_significant_001": true
+            "is_significant_001": true,
+            "evaluation_scope": "longest_contiguous_all_hours_test_segment"
         }
     }
 }

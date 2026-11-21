@@ -42,6 +42,7 @@ def run_benchmark():
     ]
     # Filter only available columns
     feature_cols = [c for c in feature_cols if c in df.columns]
+    feature_cols += [c for c in df.columns if c.endswith('_was_missing')]
     target_col = 'target_1h'
 
     logging.info(f"Features used ({len(feature_cols)}): {feature_cols}")
@@ -73,7 +74,7 @@ def run_benchmark():
 
     results = {}
     y_test_arr = y_test.values
-    is_daytime = test_df['is_daytime'].values == True
+    is_daytime = test_df['target_is_daytime'].values.astype(bool)
     n_daytime = int(np.sum(is_daytime))
     logging.info(f"Test Set Total Hours: {len(test_df)}, Daytime Active Hours (solar_elevation > 0): {n_daytime}")
 

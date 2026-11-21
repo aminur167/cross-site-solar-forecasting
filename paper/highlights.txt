@@ -1,5 +1,7 @@
-- Unified transfer learning framework couples GBDTs with Conformal Prediction.
-- Transfer adaptation cuts forecast error by 82.8% on 1-day newly commissioned sites.
-- Calibrated CQR intervals achieve 92.95% empirical coverage on unseen target plants.
-- Forecaster maintains robustness under 30% random sensor dropout in the field.
-- Game-theoretic SHAP confirms pyranometer loss as the primary failure point.
+# Research Highlights (current rerun)
+
+- Source-only LightGBM achieved 6.93% daytime nMAE on the Romanian target holdout.
+- One-day pooled adaptation achieved 6.97%; zero-shot scored 6.93%.
+- Target-calibrated CQR yielded 94.51% empirical PICP at nominal 90%.
+- Five-seed synthetic 30% MCAR yielded 7.46% mean nMAE and 92.78% PICP.
+- Historical weather inputs make the analysis retrospective, not operational evidence.

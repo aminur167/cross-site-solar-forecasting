@@ -28,6 +28,8 @@ def run_cross_site_adaptation_experiment():
     logging.info("Loading feature matrices for Site A (Source) and Site B (Target)...")
     df_a = pd.read_csv(path_a, index_col=0, parse_dates=True)
     df_b = pd.read_csv(path_b, index_col=0, parse_dates=True)
+    df_a['target_timestamp'] = pd.to_datetime(df_a['target_timestamp'])
+    df_b['target_timestamp'] = pd.to_datetime(df_b['target_timestamp'])
 
     feature_cols = [
         'hour_sin', 'hour_cos', 'doy_sin', 'doy_cos',
@@ -39,22 +41,27 @@ def run_cross_site_adaptation_experiment():
         'solar_elevation_deg', 'solar_azimuth_deg'
     ]
     feature_cols = [c for c in feature_cols if c in df_a.columns and c in df_b.columns]
+    feature_cols += [c for c in df_a.columns if c.endswith('_was_missing') and c in df_b.columns]
     target_col = 'target_1h'
 
     # 1. Source Split (Site A: 85% train/val, used as Source knowledge base)
     n_a = len(df_a)
-    source_train_df = df_a.iloc[:int(n_a * 0.85)]
-    X_source, y_source = source_train_df[feature_cols], source_train_df[target_col]
-
     # 2. Target Split (Site B: Fixed holdout 20% test set at the end)
     n_b = len(df_b)
     target_split_idx = int(n_b * 0.80)
     target_pool_df = df_b.iloc[:target_split_idx] # Adaptation pool
     target_test_df = df_b.iloc[target_split_idx:] # Fixed holdout evaluation set
 
+    # Common information cutoff: exclude source labels not known by the first
+    # target test origin. The target is the next hourly interval.
+    test_start = target_test_df.index.min()
+    source_train_df = df_a.loc[(df_a['target_timestamp'] < test_start) & (df_a['target_timestamp'] >= df_a.index)]
+    source_train_df = source_train_df.iloc[:int(len(source_train_df) * 0.85)]
+    X_source, y_source = source_train_df[feature_cols], source_train_df[target_col]
+
     X_test_b = target_test_df[feature_cols]
     y_test_b = target_test_df[target_col].values
-    is_daytime_b = target_test_df['is_daytime'].values == True
+    is_daytime_b = target_test_df['target_is_daytime'].values.astype(bool)
     n_daytime_b = int(np.sum(is_daytime_b))
 
     logging.info(f"Source Training Samples: {len(X_source)}")

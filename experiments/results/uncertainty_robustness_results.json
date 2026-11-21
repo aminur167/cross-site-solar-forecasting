@@ -1,485 +1,976 @@
 {
     "Uncertainty_Calibration_Regimes": {
         "Raw_Quantile_Regression": {
-            "PICP_pct": 87.83,
+            "PICP_pct": 88.2,
             "Target_Coverage_pct": 90.0,
-            "MPIW": 0.2852,
-            "Winkler_Score": 0.3927,
-            "Mean_Pinball_Loss": 0.0098,
+            "MPIW": 0.3135,
+            "Winkler_Score": 0.4198,
+            "Mean_Pinball_Loss": 0.0105,
             "Empirical_Coverage_Meets_Nominal_Target": false,
-            "Coverage_Guaranteed": false,
             "daytime": {
-                "PICP_pct": 87.83,
+                "PICP_pct": 88.2,
                 "Target_Coverage_pct": 90.0,
-                "MPIW": 0.2852,
-                "Winkler_Score": 0.3927,
-                "Mean_Pinball_Loss": 0.0098,
-                "Empirical_Coverage_Meets_Nominal_Target": false,
-                "Coverage_Guaranteed": false
+                "MPIW": 0.3135,
+                "Winkler_Score": 0.4198,
+                "Mean_Pinball_Loss": 0.0105,
+                "Empirical_Coverage_Meets_Nominal_Target": false
             },
             "all_hours": {
-                "PICP_pct": 92.58,
+                "PICP_pct": 92.44,
                 "Target_Coverage_pct": 90.0,
-                "MPIW": 0.1666,
-                "Winkler_Score": 0.2277,
-                "Mean_Pinball_Loss": 0.0057,
-                "Empirical_Coverage_Meets_Nominal_Target": true,
-                "Coverage_Guaranteed": true
+                "MPIW": 0.1692,
+                "Winkler_Score": 0.2253,
+                "Mean_Pinball_Loss": 0.0056,
+                "Empirical_Coverage_Meets_Nominal_Target": true
             }
         },
         "Source_Calibrated_CQR": {
-            "PICP_pct": 87.83,
+            "PICP_pct": 90.27,
             "Target_Coverage_pct": 90.0,
-            "MPIW": 0.2852,
-            "Winkler_Score": 0.3927,
-            "Mean_Pinball_Loss": 0.0098,
-            "Empirical_Coverage_Meets_Nominal_Target": false,
-            "Coverage_Guaranteed": false,
+            "MPIW": 0.3232,
+            "Winkler_Score": 0.4191,
+            "Mean_Pinball_Loss": 0.0105,
+            "Empirical_Coverage_Meets_Nominal_Target": true,
             "daytime": {
-                "PICP_pct": 87.83,
+                "PICP_pct": 90.27,
                 "Target_Coverage_pct": 90.0,
-                "MPIW": 0.2852,
-                "Winkler_Score": 0.3927,
-                "Mean_Pinball_Loss": 0.0098,
-                "Empirical_Coverage_Meets_Nominal_Target": false,
-                "Coverage_Guaranteed": false
+                "MPIW": 0.3232,
+                "Winkler_Score": 0.4191,
+                "Mean_Pinball_Loss": 0.0105,
+                "Empirical_Coverage_Meets_Nominal_Target": true
             },
             "all_hours": {
-                "PICP_pct": 92.58,
+                "PICP_pct": 94.65,
                 "Target_Coverage_pct": 90.0,
-                "MPIW": 0.1666,
-                "Winkler_Score": 0.2277,
+                "MPIW": 0.1789,
+                "Winkler_Score": 0.2291,
                 "Mean_Pinball_Loss": 0.0057,
-                "Empirical_Coverage_Meets_Nominal_Target": true,
-                "Coverage_Guaranteed": true
+                "Empirical_Coverage_Meets_Nominal_Target": true
             }
         },
         "Target_Adapted_CQR": {
-            "PICP_pct": 89.26,
+            "PICP_pct": 94.51,
             "Target_Coverage_pct": 90.0,
-            "MPIW": 0.2882,
-            "Winkler_Score": 0.3921,
-            "Mean_Pinball_Loss": 0.0098,
-            "Empirical_Coverage_Meets_Nominal_Target": false,
-            "Coverage_Guaranteed": false,
+            "MPIW": 0.3609,
+            "Winkler_Score": 0.4299,
+            "Mean_Pinball_Loss": 0.0107,
+            "Empirical_Coverage_Meets_Nominal_Target": true,
             "daytime": {
-                "PICP_pct": 89.26,
+                "PICP_pct": 94.51,
                 "Target_Coverage_pct": 90.0,
-                "MPIW": 0.2882,
-                "Winkler_Score": 0.3921,
-                "Mean_Pinball_Loss": 0.0098,
-                "Empirical_Coverage_Meets_Nominal_Target": false,
-                "Coverage_Guaranteed": false
+                "MPIW": 0.3609,
+                "Winkler_Score": 0.4299,
+                "Mean_Pinball_Loss": 0.0107,
+                "Empirical_Coverage_Meets_Nominal_Target": true
             },
             "all_hours": {
-                "PICP_pct": 93.71,
+                "PICP_pct": 97.14,
                 "Target_Coverage_pct": 90.0,
-                "MPIW": 0.169,
-                "Winkler_Score": 0.228,
-                "Mean_Pinball_Loss": 0.0057,
-                "Empirical_Coverage_Meets_Nominal_Target": true,
-                "Coverage_Guaranteed": true
+                "MPIW": 0.2166,
+                "Winkler_Score": 0.2526,
+                "Mean_Pinball_Loss": 0.0063,
+                "Empirical_Coverage_Meets_Nominal_Target": true
             }
         }
     },
     "Sensor_Availability_Stress_Test": {
         "Complete Telemetry (100% Sensors)": {
             "point_metrics": {
-                "MAE": 0.085,
-                "RMSE": 0.1184,
-                "nMAE_pct": 8.5,
-                "nRMSE_pct": 11.84,
-                "R2": 0.8663,
                 "daytime": {
-                    "MAE": 0.085,
-                    "RMSE": 0.1184,
-                    "nMAE_pct": 8.5,
-                    "nRMSE_pct": 11.84,
-                    "R2": 0.8663
+                    "MAE": 0.0693,
+                    "RMSE": 0.1111,
+                    "nMAE_pct": 6.93,
+                    "nRMSE_pct": 11.11,
+                    "R2": 0.8738,
+                    "std": {
+                        "MAE": 0.0,
+                        "RMSE": 0.0,
+                        "nMAE_pct": 0.0,
+                        "nRMSE_pct": 0.0,
+                        "R2": 0.0
+                    },
+                    "seeds": [
+                        42,
+                        43,
+                        44,
+                        45,
+                        46
+                    ]
                 },
                 "all_hours": {
-                    "MAE": 0.0506,
-                    "RMSE": 0.0892,
-                    "nMAE_pct": 5.06,
-                    "nRMSE_pct": 8.92,
-                    "R2": 0.919
+                    "MAE": 0.0367,
+                    "RMSE": 0.0802,
+                    "nMAE_pct": 3.67,
+                    "nRMSE_pct": 8.02,
+                    "R2": 0.9346,
+                    "std": {
+                        "MAE": 0.0,
+                        "RMSE": 0.0,
+                        "nMAE_pct": 0.0,
+                        "nRMSE_pct": 0.0,
+                        "R2": 0.0
+                    },
+                    "seeds": [
+                        42,
+                        43,
+                        44,
+                        45,
+                        46
+                    ]
                 }
             },
             "uncertainty_metrics": {
-                "PICP_pct": 89.26,
-                "Target_Coverage_pct": 90.0,
-                "MPIW": 0.2882,
-                "Winkler_Score": 0.3921,
-                "Mean_Pinball_Loss": 0.0098,
-                "Empirical_Coverage_Meets_Nominal_Target": false,
-                "Coverage_Guaranteed": false,
                 "daytime": {
-                    "PICP_pct": 89.26,
+                    "PICP_pct": 94.51,
                     "Target_Coverage_pct": 90.0,
-                    "MPIW": 0.2882,
-                    "Winkler_Score": 0.3921,
-                    "Mean_Pinball_Loss": 0.0098,
-                    "Empirical_Coverage_Meets_Nominal_Target": false,
-                    "Coverage_Guaranteed": false
+                    "MPIW": 0.3609,
+                    "Winkler_Score": 0.4299,
+                    "Mean_Pinball_Loss": 0.0107,
+                    "std": {
+                        "PICP_pct": 0.0,
+                        "Target_Coverage_pct": 0.0,
+                        "MPIW": 0.0,
+                        "Winkler_Score": 0.0,
+                        "Mean_Pinball_Loss": 0.0
+                    },
+                    "seeds": [
+                        42,
+                        43,
+                        44,
+                        45,
+                        46
+                    ]
                 },
                 "all_hours": {
-                    "PICP_pct": 93.71,
+                    "PICP_pct": 97.14,
                     "Target_Coverage_pct": 90.0,
-                    "MPIW": 0.169,
-                    "Winkler_Score": 0.228,
-                    "Mean_Pinball_Loss": 0.0057,
-                    "Empirical_Coverage_Meets_Nominal_Target": true,
-                    "Coverage_Guaranteed": true
+                    "MPIW": 0.2166,
+                    "Winkler_Score": 0.2526,
+                    "Mean_Pinball_Loss": 0.0063,
+                    "std": {
+                        "PICP_pct": 0.0,
+                        "Target_Coverage_pct": 0.0,
+                        "MPIW": 0.0,
+                        "Winkler_Score": 0.0,
+                        "Mean_Pinball_Loss": 0.0
+                    },
+                    "seeds": [
+                        42,
+                        43,
+                        44,
+                        45,
+                        46
+                    ]
                 }
             }
         },
         "Moderate Dropout (10% MCAR)": {
             "point_metrics": {
-                "MAE": 0.0865,
-                "RMSE": 0.12,
-                "nMAE_pct": 8.65,
-                "nRMSE_pct": 12.0,
-                "R2": 0.8625,
                 "daytime": {
-                    "MAE": 0.0865,
-                    "RMSE": 0.12,
-                    "nMAE_pct": 8.65,
-                    "nRMSE_pct": 12.0,
-                    "R2": 0.8625
+                    "MAE": 0.0707,
+                    "RMSE": 0.1121,
+                    "nMAE_pct": 7.072,
+                    "nRMSE_pct": 11.206,
+                    "R2": 0.8715,
+                    "std": {
+                        "MAE": 0.0005,
+                        "RMSE": 0.0005,
+                        "nMAE_pct": 0.055,
+                        "nRMSE_pct": 0.0537,
+                        "R2": 0.0012
+                    },
+                    "seeds": [
+                        42,
+                        43,
+                        44,
+                        45,
+                        46
+                    ]
                 },
                 "all_hours": {
-                    "MAE": 0.0514,
-                    "RMSE": 0.0905,
-                    "nMAE_pct": 5.14,
-                    "nRMSE_pct": 9.05,
-                    "R2": 0.9167
+                    "MAE": 0.0375,
+                    "RMSE": 0.081,
+                    "nMAE_pct": 3.748,
+                    "nRMSE_pct": 8.098,
+                    "R2": 0.9334,
+                    "std": {
+                        "MAE": 0.0003,
+                        "RMSE": 0.0004,
+                        "nMAE_pct": 0.0349,
+                        "nRMSE_pct": 0.0409,
+                        "R2": 0.0007
+                    },
+                    "seeds": [
+                        42,
+                        43,
+                        44,
+                        45,
+                        46
+                    ]
                 }
             },
             "uncertainty_metrics": {
-                "PICP_pct": 88.31,
-                "Target_Coverage_pct": 90.0,
-                "MPIW": 0.2883,
-                "Winkler_Score": 0.4042,
-                "Mean_Pinball_Loss": 0.0101,
-                "Empirical_Coverage_Meets_Nominal_Target": false,
-                "Coverage_Guaranteed": false,
                 "daytime": {
-                    "PICP_pct": 88.31,
+                    "PICP_pct": 94.1,
                     "Target_Coverage_pct": 90.0,
-                    "MPIW": 0.2883,
-                    "Winkler_Score": 0.4042,
-                    "Mean_Pinball_Loss": 0.0101,
-                    "Empirical_Coverage_Meets_Nominal_Target": false,
-                    "Coverage_Guaranteed": false
+                    "MPIW": 0.3609,
+                    "Winkler_Score": 0.4326,
+                    "Mean_Pinball_Loss": 0.0108,
+                    "std": {
+                        "PICP_pct": 0.3036,
+                        "Target_Coverage_pct": 0.0,
+                        "MPIW": 0.0005,
+                        "Winkler_Score": 0.0017,
+                        "Mean_Pinball_Loss": 0.0
+                    },
+                    "seeds": [
+                        42,
+                        43,
+                        44,
+                        45,
+                        46
+                    ]
                 },
                 "all_hours": {
-                    "PICP_pct": 93.22,
+                    "PICP_pct": 96.91,
                     "Target_Coverage_pct": 90.0,
-                    "MPIW": 0.1691,
-                    "Winkler_Score": 0.2349,
-                    "Mean_Pinball_Loss": 0.0059,
-                    "Empirical_Coverage_Meets_Nominal_Target": true,
-                    "Coverage_Guaranteed": true
+                    "MPIW": 0.2167,
+                    "Winkler_Score": 0.2542,
+                    "Mean_Pinball_Loss": 0.0064,
+                    "std": {
+                        "PICP_pct": 0.1554,
+                        "Target_Coverage_pct": 0.0,
+                        "MPIW": 0.0003,
+                        "Winkler_Score": 0.0008,
+                        "Mean_Pinball_Loss": 0.0001
+                    },
+                    "seeds": [
+                        42,
+                        43,
+                        44,
+                        45,
+                        46
+                    ]
+                }
+            }
+        },
+        "Synchronized Packet Loss (30%)": {
+            "point_metrics": {
+                "daytime": {
+                    "MAE": 0.0731,
+                    "RMSE": 0.1146,
+                    "nMAE_pct": 7.312,
+                    "nRMSE_pct": 11.456,
+                    "R2": 0.8658,
+                    "std": {
+                        "MAE": 0.0014,
+                        "RMSE": 0.0019,
+                        "nMAE_pct": 0.1377,
+                        "nRMSE_pct": 0.1884,
+                        "R2": 0.0044
+                    },
+                    "seeds": [
+                        42,
+                        43,
+                        44,
+                        45,
+                        46
+                    ]
+                },
+                "all_hours": {
+                    "MAE": 0.0389,
+                    "RMSE": 0.0828,
+                    "nMAE_pct": 3.89,
+                    "nRMSE_pct": 8.282,
+                    "R2": 0.9303,
+                    "std": {
+                        "MAE": 0.0008,
+                        "RMSE": 0.0014,
+                        "nMAE_pct": 0.084,
+                        "nRMSE_pct": 0.1406,
+                        "R2": 0.0023
+                    },
+                    "seeds": [
+                        42,
+                        43,
+                        44,
+                        45,
+                        46
+                    ]
+                }
+            },
+            "uncertainty_metrics": {
+                "daytime": {
+                    "PICP_pct": 92.898,
+                    "Target_Coverage_pct": 90.0,
+                    "MPIW": 0.361,
+                    "Winkler_Score": 0.445,
+                    "Mean_Pinball_Loss": 0.0111,
+                    "std": {
+                        "PICP_pct": 0.2989,
+                        "Target_Coverage_pct": 0.0,
+                        "MPIW": 0.0007,
+                        "Winkler_Score": 0.0038,
+                        "Mean_Pinball_Loss": 0.0001
+                    },
+                    "seeds": [
+                        42,
+                        43,
+                        44,
+                        45,
+                        46
+                    ]
+                },
+                "all_hours": {
+                    "PICP_pct": 96.262,
+                    "Target_Coverage_pct": 90.0,
+                    "MPIW": 0.2172,
+                    "Winkler_Score": 0.2612,
+                    "Mean_Pinball_Loss": 0.0065,
+                    "std": {
+                        "PICP_pct": 0.1782,
+                        "Target_Coverage_pct": 0.0,
+                        "MPIW": 0.0007,
+                        "Winkler_Score": 0.0025,
+                        "Mean_Pinball_Loss": 0.0001
+                    },
+                    "seeds": [
+                        42,
+                        43,
+                        44,
+                        45,
+                        46
+                    ]
                 }
             }
         },
         "Severe Dropout (30% MCAR)": {
             "point_metrics": {
-                "MAE": 0.0885,
-                "RMSE": 0.1207,
-                "nMAE_pct": 8.85,
-                "nRMSE_pct": 12.07,
-                "R2": 0.861,
                 "daytime": {
-                    "MAE": 0.0885,
-                    "RMSE": 0.1207,
-                    "nMAE_pct": 8.85,
-                    "nRMSE_pct": 12.07,
-                    "R2": 0.861
+                    "MAE": 0.0746,
+                    "RMSE": 0.1151,
+                    "nMAE_pct": 7.456,
+                    "nRMSE_pct": 11.512,
+                    "R2": 0.8644,
+                    "std": {
+                        "MAE": 0.0004,
+                        "RMSE": 0.0009,
+                        "nMAE_pct": 0.0434,
+                        "nRMSE_pct": 0.0939,
+                        "R2": 0.0022
+                    },
+                    "seeds": [
+                        42,
+                        43,
+                        44,
+                        45,
+                        46
+                    ]
                 },
                 "all_hours": {
-                    "MAE": 0.0526,
-                    "RMSE": 0.091,
-                    "nMAE_pct": 5.26,
-                    "nRMSE_pct": 9.1,
-                    "R2": 0.9158
+                    "MAE": 0.0396,
+                    "RMSE": 0.0832,
+                    "nMAE_pct": 3.962,
+                    "nRMSE_pct": 8.322,
+                    "R2": 0.9296,
+                    "std": {
+                        "MAE": 0.0002,
+                        "RMSE": 0.0007,
+                        "nMAE_pct": 0.0239,
+                        "nRMSE_pct": 0.0661,
+                        "R2": 0.0011
+                    },
+                    "seeds": [
+                        42,
+                        43,
+                        44,
+                        45,
+                        46
+                    ]
                 }
             },
             "uncertainty_metrics": {
-                "PICP_pct": 85.84,
-                "Target_Coverage_pct": 90.0,
-                "MPIW": 0.2888,
-                "Winkler_Score": 0.4069,
-                "Mean_Pinball_Loss": 0.0102,
-                "Empirical_Coverage_Meets_Nominal_Target": false,
-                "Coverage_Guaranteed": false,
                 "daytime": {
-                    "PICP_pct": 85.84,
+                    "PICP_pct": 92.776,
                     "Target_Coverage_pct": 90.0,
-                    "MPIW": 0.2888,
-                    "Winkler_Score": 0.4069,
-                    "Mean_Pinball_Loss": 0.0102,
-                    "Empirical_Coverage_Meets_Nominal_Target": false,
-                    "Coverage_Guaranteed": false
+                    "MPIW": 0.3613,
+                    "Winkler_Score": 0.4404,
+                    "Mean_Pinball_Loss": 0.011,
+                    "std": {
+                        "PICP_pct": 0.4532,
+                        "Target_Coverage_pct": 0.0,
+                        "MPIW": 0.0018,
+                        "Winkler_Score": 0.0047,
+                        "Mean_Pinball_Loss": 0.0001
+                    },
+                    "seeds": [
+                        42,
+                        43,
+                        44,
+                        45,
+                        46
+                    ]
                 },
                 "all_hours": {
-                    "PICP_pct": 91.66,
+                    "PICP_pct": 96.168,
                     "Target_Coverage_pct": 90.0,
-                    "MPIW": 0.1695,
-                    "Winkler_Score": 0.2365,
-                    "Mean_Pinball_Loss": 0.0059,
-                    "Empirical_Coverage_Meets_Nominal_Target": true,
-                    "Coverage_Guaranteed": true
+                    "MPIW": 0.2173,
+                    "Winkler_Score": 0.2587,
+                    "Mean_Pinball_Loss": 0.0065,
+                    "std": {
+                        "PICP_pct": 0.292,
+                        "Target_Coverage_pct": 0.0,
+                        "MPIW": 0.0013,
+                        "Winkler_Score": 0.0026,
+                        "Mean_Pinball_Loss": 0.0001
+                    },
+                    "seeds": [
+                        42,
+                        43,
+                        44,
+                        45,
+                        46
+                    ]
                 }
             }
         },
         "Extreme Dropout (50% MCAR)": {
             "point_metrics": {
-                "MAE": 0.0956,
-                "RMSE": 0.1275,
-                "nMAE_pct": 9.56,
-                "nRMSE_pct": 12.75,
-                "R2": 0.8448,
                 "daytime": {
-                    "MAE": 0.0956,
-                    "RMSE": 0.1275,
-                    "nMAE_pct": 9.56,
-                    "nRMSE_pct": 12.75,
-                    "R2": 0.8448
+                    "MAE": 0.0792,
+                    "RMSE": 0.119,
+                    "nMAE_pct": 7.924,
+                    "nRMSE_pct": 11.898,
+                    "R2": 0.8552,
+                    "std": {
+                        "MAE": 0.0015,
+                        "RMSE": 0.0012,
+                        "nMAE_pct": 0.1469,
+                        "nRMSE_pct": 0.1169,
+                        "R2": 0.0028
+                    },
+                    "seeds": [
+                        42,
+                        43,
+                        44,
+                        45,
+                        46
+                    ]
                 },
                 "all_hours": {
-                    "MAE": 0.057,
-                    "RMSE": 0.0963,
-                    "nMAE_pct": 5.7,
-                    "nRMSE_pct": 9.63,
-                    "R2": 0.9056
+                    "MAE": 0.0425,
+                    "RMSE": 0.0861,
+                    "nMAE_pct": 4.248,
+                    "nRMSE_pct": 8.614,
+                    "R2": 0.9246,
+                    "std": {
+                        "MAE": 0.0008,
+                        "RMSE": 0.0008,
+                        "nMAE_pct": 0.076,
+                        "nRMSE_pct": 0.0805,
+                        "R2": 0.0014
+                    },
+                    "seeds": [
+                        42,
+                        43,
+                        44,
+                        45,
+                        46
+                    ]
                 }
             },
             "uncertainty_metrics": {
-                "PICP_pct": 82.6,
-                "Target_Coverage_pct": 90.0,
-                "MPIW": 0.2966,
-                "Winkler_Score": 0.4378,
-                "Mean_Pinball_Loss": 0.0109,
-                "Empirical_Coverage_Meets_Nominal_Target": false,
-                "Coverage_Guaranteed": false,
                 "daytime": {
-                    "PICP_pct": 82.6,
+                    "PICP_pct": 90.704,
                     "Target_Coverage_pct": 90.0,
-                    "MPIW": 0.2966,
-                    "Winkler_Score": 0.4378,
-                    "Mean_Pinball_Loss": 0.0109,
-                    "Empirical_Coverage_Meets_Nominal_Target": false,
-                    "Coverage_Guaranteed": false
+                    "MPIW": 0.3641,
+                    "Winkler_Score": 0.457,
+                    "Mean_Pinball_Loss": 0.0114,
+                    "std": {
+                        "PICP_pct": 0.1971,
+                        "Target_Coverage_pct": 0.0,
+                        "MPIW": 0.0025,
+                        "Winkler_Score": 0.0048,
+                        "Mean_Pinball_Loss": 0.0001
+                    },
+                    "seeds": [
+                        42,
+                        43,
+                        44,
+                        45,
+                        46
+                    ]
                 },
                 "all_hours": {
-                    "PICP_pct": 89.89,
+                    "PICP_pct": 94.926,
                     "Target_Coverage_pct": 90.0,
-                    "MPIW": 0.1745,
-                    "Winkler_Score": 0.2547,
-                    "Mean_Pinball_Loss": 0.0064,
-                    "Empirical_Coverage_Meets_Nominal_Target": false,
-                    "Coverage_Guaranteed": false
+                    "MPIW": 0.22,
+                    "Winkler_Score": 0.2692,
+                    "Mean_Pinball_Loss": 0.0067,
+                    "std": {
+                        "PICP_pct": 0.2511,
+                        "Target_Coverage_pct": 0.0,
+                        "MPIW": 0.0016,
+                        "Winkler_Score": 0.0033,
+                        "Mean_Pinball_Loss": 0.0001
+                    },
+                    "seeds": [
+                        42,
+                        43,
+                        44,
+                        45,
+                        46
+                    ]
                 }
             }
         },
         "Contiguous Outage (3h Block)": {
             "point_metrics": {
-                "MAE": 0.0852,
-                "RMSE": 0.1186,
-                "nMAE_pct": 8.52,
-                "nRMSE_pct": 11.86,
-                "R2": 0.8658,
                 "daytime": {
-                    "MAE": 0.0852,
-                    "RMSE": 0.1186,
-                    "nMAE_pct": 8.52,
-                    "nRMSE_pct": 11.86,
-                    "R2": 0.8658
+                    "MAE": 0.0696,
+                    "RMSE": 0.1115,
+                    "nMAE_pct": 6.964,
+                    "nRMSE_pct": 11.152,
+                    "R2": 0.8728,
+                    "std": {
+                        "MAE": 0.0002,
+                        "RMSE": 0.0001,
+                        "nMAE_pct": 0.0152,
+                        "nRMSE_pct": 0.0148,
+                        "R2": 0.0003
+                    },
+                    "seeds": [
+                        42,
+                        43,
+                        44,
+                        45,
+                        46
+                    ]
                 },
                 "all_hours": {
-                    "MAE": 0.0507,
-                    "RMSE": 0.0894,
-                    "nMAE_pct": 5.07,
-                    "nRMSE_pct": 8.94,
-                    "R2": 0.9187
+                    "MAE": 0.0369,
+                    "RMSE": 0.0805,
+                    "nMAE_pct": 3.688,
+                    "nRMSE_pct": 8.054,
+                    "R2": 0.9341,
+                    "std": {
+                        "MAE": 0.0001,
+                        "RMSE": 0.0001,
+                        "nMAE_pct": 0.011,
+                        "nRMSE_pct": 0.0114,
+                        "R2": 0.0002
+                    },
+                    "seeds": [
+                        42,
+                        43,
+                        44,
+                        45,
+                        46
+                    ]
                 }
             },
             "uncertainty_metrics": {
-                "PICP_pct": 89.16,
-                "Target_Coverage_pct": 90.0,
-                "MPIW": 0.2882,
-                "Winkler_Score": 0.394,
-                "Mean_Pinball_Loss": 0.0098,
-                "Empirical_Coverage_Meets_Nominal_Target": false,
-                "Coverage_Guaranteed": false,
                 "daytime": {
-                    "PICP_pct": 89.16,
+                    "PICP_pct": 94.348,
                     "Target_Coverage_pct": 90.0,
-                    "MPIW": 0.2882,
-                    "Winkler_Score": 0.394,
-                    "Mean_Pinball_Loss": 0.0098,
-                    "Empirical_Coverage_Meets_Nominal_Target": false,
-                    "Coverage_Guaranteed": false
+                    "MPIW": 0.3609,
+                    "Winkler_Score": 0.4327,
+                    "Mean_Pinball_Loss": 0.0108,
+                    "std": {
+                        "PICP_pct": 0.1171,
+                        "Target_Coverage_pct": 0.0,
+                        "MPIW": 0.0003,
+                        "Winkler_Score": 0.0016,
+                        "Mean_Pinball_Loss": 0.0
+                    },
+                    "seeds": [
+                        42,
+                        43,
+                        44,
+                        45,
+                        46
+                    ]
                 },
                 "all_hours": {
-                    "PICP_pct": 93.65,
+                    "PICP_pct": 97.052,
                     "Target_Coverage_pct": 90.0,
-                    "MPIW": 0.1691,
-                    "Winkler_Score": 0.2291,
-                    "Mean_Pinball_Loss": 0.0057,
-                    "Empirical_Coverage_Meets_Nominal_Target": true,
-                    "Coverage_Guaranteed": true
+                    "MPIW": 0.2167,
+                    "Winkler_Score": 0.2541,
+                    "Mean_Pinball_Loss": 0.0063,
+                    "std": {
+                        "PICP_pct": 0.0606,
+                        "Target_Coverage_pct": 0.0,
+                        "MPIW": 0.0002,
+                        "Winkler_Score": 0.0008,
+                        "Mean_Pinball_Loss": 0.0001
+                    },
+                    "seeds": [
+                        42,
+                        43,
+                        44,
+                        45,
+                        46
+                    ]
                 }
             }
         },
         "Contiguous Outage (6h Block)": {
             "point_metrics": {
-                "MAE": 0.085,
-                "RMSE": 0.1182,
-                "nMAE_pct": 8.5,
-                "nRMSE_pct": 11.82,
-                "R2": 0.8666,
                 "daytime": {
-                    "MAE": 0.085,
-                    "RMSE": 0.1182,
-                    "nMAE_pct": 8.5,
-                    "nRMSE_pct": 11.82,
-                    "R2": 0.8666
+                    "MAE": 0.07,
+                    "RMSE": 0.1118,
+                    "nMAE_pct": 7.004,
+                    "nRMSE_pct": 11.182,
+                    "R2": 0.8721,
+                    "std": {
+                        "MAE": 0.0003,
+                        "RMSE": 0.0004,
+                        "nMAE_pct": 0.0251,
+                        "nRMSE_pct": 0.0396,
+                        "R2": 0.0009
+                    },
+                    "seeds": [
+                        42,
+                        43,
+                        44,
+                        45,
+                        46
+                    ]
                 },
                 "all_hours": {
-                    "MAE": 0.0506,
-                    "RMSE": 0.0891,
-                    "nMAE_pct": 5.06,
-                    "nRMSE_pct": 8.91,
-                    "R2": 0.9192
+                    "MAE": 0.0372,
+                    "RMSE": 0.0808,
+                    "nMAE_pct": 3.718,
+                    "nRMSE_pct": 8.084,
+                    "R2": 0.9335,
+                    "std": {
+                        "MAE": 0.0001,
+                        "RMSE": 0.0003,
+                        "nMAE_pct": 0.013,
+                        "nRMSE_pct": 0.0261,
+                        "R2": 0.0004
+                    },
+                    "seeds": [
+                        42,
+                        43,
+                        44,
+                        45,
+                        46
+                    ]
                 }
             },
             "uncertainty_metrics": {
-                "PICP_pct": 89.16,
-                "Target_Coverage_pct": 90.0,
-                "MPIW": 0.2876,
-                "Winkler_Score": 0.3921,
-                "Mean_Pinball_Loss": 0.0098,
-                "Empirical_Coverage_Meets_Nominal_Target": false,
-                "Coverage_Guaranteed": false,
                 "daytime": {
-                    "PICP_pct": 89.16,
+                    "PICP_pct": 94.286,
                     "Target_Coverage_pct": 90.0,
-                    "MPIW": 0.2876,
-                    "Winkler_Score": 0.3921,
-                    "Mean_Pinball_Loss": 0.0098,
-                    "Empirical_Coverage_Meets_Nominal_Target": false,
-                    "Coverage_Guaranteed": false
+                    "MPIW": 0.3612,
+                    "Winkler_Score": 0.4328,
+                    "Mean_Pinball_Loss": 0.0108,
+                    "std": {
+                        "PICP_pct": 0.1839,
+                        "Target_Coverage_pct": 0.0,
+                        "MPIW": 0.0005,
+                        "Winkler_Score": 0.0006,
+                        "Mean_Pinball_Loss": 0.0
+                    },
+                    "seeds": [
+                        42,
+                        43,
+                        44,
+                        45,
+                        46
+                    ]
                 },
                 "all_hours": {
-                    "PICP_pct": 93.65,
+                    "PICP_pct": 96.964,
                     "Target_Coverage_pct": 90.0,
-                    "MPIW": 0.1688,
-                    "Winkler_Score": 0.2282,
-                    "Mean_Pinball_Loss": 0.0057,
-                    "Empirical_Coverage_Meets_Nominal_Target": true,
-                    "Coverage_Guaranteed": true
+                    "MPIW": 0.2171,
+                    "Winkler_Score": 0.2548,
+                    "Mean_Pinball_Loss": 0.0064,
+                    "std": {
+                        "PICP_pct": 0.1563,
+                        "Target_Coverage_pct": 0.0,
+                        "MPIW": 0.0003,
+                        "Winkler_Score": 0.0011,
+                        "Mean_Pinball_Loss": 0.0001
+                    },
+                    "seeds": [
+                        42,
+                        43,
+                        44,
+                        45,
+                        46
+                    ]
                 }
             }
         },
         "Total Pyranometer Outage (No GHI)": {
             "point_metrics": {
-                "MAE": 0.113,
-                "RMSE": 0.1504,
-                "nMAE_pct": 11.3,
-                "nRMSE_pct": 15.04,
-                "R2": 0.7841,
                 "daytime": {
-                    "MAE": 0.113,
-                    "RMSE": 0.1504,
-                    "nMAE_pct": 11.3,
-                    "nRMSE_pct": 15.04,
-                    "R2": 0.7841
+                    "MAE": 0.1084,
+                    "RMSE": 0.1435,
+                    "nMAE_pct": 10.84,
+                    "nRMSE_pct": 14.35,
+                    "R2": 0.7894,
+                    "std": {
+                        "MAE": 0.0,
+                        "RMSE": 0.0,
+                        "nMAE_pct": 0.0,
+                        "nRMSE_pct": 0.0,
+                        "R2": 0.0
+                    },
+                    "seeds": [
+                        42,
+                        43,
+                        44,
+                        45,
+                        46
+                    ]
                 },
                 "all_hours": {
-                    "MAE": 0.0664,
-                    "RMSE": 0.1133,
-                    "nMAE_pct": 6.64,
-                    "nRMSE_pct": 11.33,
-                    "R2": 0.8694
+                    "MAE": 0.0571,
+                    "RMSE": 0.1037,
+                    "nMAE_pct": 5.71,
+                    "nRMSE_pct": 10.37,
+                    "R2": 0.8908,
+                    "std": {
+                        "MAE": 0.0,
+                        "RMSE": 0.0,
+                        "nMAE_pct": 0.0,
+                        "nRMSE_pct": 0.0,
+                        "R2": 0.0
+                    },
+                    "seeds": [
+                        42,
+                        43,
+                        44,
+                        45,
+                        46
+                    ]
                 }
             },
             "uncertainty_metrics": {
-                "PICP_pct": 71.58,
-                "Target_Coverage_pct": 90.0,
-                "MPIW": 0.3146,
-                "Winkler_Score": 0.5488,
-                "Mean_Pinball_Loss": 0.0137,
-                "Empirical_Coverage_Meets_Nominal_Target": false,
-                "Coverage_Guaranteed": false,
                 "daytime": {
-                    "PICP_pct": 71.58,
+                    "PICP_pct": 86.02,
                     "Target_Coverage_pct": 90.0,
-                    "MPIW": 0.3146,
-                    "Winkler_Score": 0.5488,
-                    "Mean_Pinball_Loss": 0.0137,
-                    "Empirical_Coverage_Meets_Nominal_Target": false,
-                    "Coverage_Guaranteed": false
+                    "MPIW": 0.401,
+                    "Winkler_Score": 0.5171,
+                    "Mean_Pinball_Loss": 0.0129,
+                    "std": {
+                        "PICP_pct": 0.0,
+                        "Target_Coverage_pct": 0.0,
+                        "MPIW": 0.0,
+                        "Winkler_Score": 0.0,
+                        "Mean_Pinball_Loss": 0.0
+                    },
+                    "seeds": [
+                        42,
+                        43,
+                        44,
+                        45,
+                        46
+                    ]
                 },
                 "all_hours": {
-                    "PICP_pct": 83.59,
+                    "PICP_pct": 92.71,
                     "Target_Coverage_pct": 90.0,
-                    "MPIW": 0.1838,
-                    "Winkler_Score": 0.3166,
-                    "Mean_Pinball_Loss": 0.0079,
-                    "Empirical_Coverage_Meets_Nominal_Target": false,
-                    "Coverage_Guaranteed": false
+                    "MPIW": 0.2381,
+                    "Winkler_Score": 0.2986,
+                    "Mean_Pinball_Loss": 0.0075,
+                    "std": {
+                        "PICP_pct": 0.0,
+                        "Target_Coverage_pct": 0.0,
+                        "MPIW": 0.0,
+                        "Winkler_Score": 0.0,
+                        "Mean_Pinball_Loss": 0.0
+                    },
+                    "seeds": [
+                        42,
+                        43,
+                        44,
+                        45,
+                        46
+                    ]
                 }
             }
         },
         "Pyranometer Drift (+15% Soiling Bias)": {
             "point_metrics": {
-                "MAE": 0.0844,
-                "RMSE": 0.1177,
-                "nMAE_pct": 8.44,
-                "nRMSE_pct": 11.77,
-                "R2": 0.8678,
                 "daytime": {
-                    "MAE": 0.0844,
-                    "RMSE": 0.1177,
-                    "nMAE_pct": 8.44,
-                    "nRMSE_pct": 11.77,
-                    "R2": 0.8678
+                    "MAE": 0.0695,
+                    "RMSE": 0.1124,
+                    "nMAE_pct": 6.95,
+                    "nRMSE_pct": 11.24,
+                    "R2": 0.8708,
+                    "std": {
+                        "MAE": 0.0,
+                        "RMSE": 0.0,
+                        "nMAE_pct": 0.0,
+                        "nRMSE_pct": 0.0,
+                        "R2": 0.0
+                    },
+                    "seeds": [
+                        42,
+                        43,
+                        44,
+                        45,
+                        46
+                    ]
                 },
                 "all_hours": {
-                    "MAE": 0.0502,
-                    "RMSE": 0.0887,
-                    "nMAE_pct": 5.02,
-                    "nRMSE_pct": 8.87,
-                    "R2": 0.92
+                    "MAE": 0.0368,
+                    "RMSE": 0.0812,
+                    "nMAE_pct": 3.68,
+                    "nRMSE_pct": 8.12,
+                    "R2": 0.933,
+                    "std": {
+                        "MAE": 0.0,
+                        "RMSE": 0.0,
+                        "nMAE_pct": 0.0,
+                        "nRMSE_pct": 0.0,
+                        "R2": 0.0
+                    },
+                    "seeds": [
+                        42,
+                        43,
+                        44,
+                        45,
+                        46
+                    ]
                 }
             },
             "uncertainty_metrics": {
-                "PICP_pct": 89.26,
-                "Target_Coverage_pct": 90.0,
-                "MPIW": 0.2871,
-                "Winkler_Score": 0.3939,
-                "Mean_Pinball_Loss": 0.0098,
-                "Empirical_Coverage_Meets_Nominal_Target": false,
-                "Coverage_Guaranteed": false,
                 "daytime": {
-                    "PICP_pct": 89.26,
+                    "PICP_pct": 94.2,
                     "Target_Coverage_pct": 90.0,
-                    "MPIW": 0.2871,
-                    "Winkler_Score": 0.3939,
-                    "Mean_Pinball_Loss": 0.0098,
-                    "Empirical_Coverage_Meets_Nominal_Target": false,
-                    "Coverage_Guaranteed": false
+                    "MPIW": 0.3592,
+                    "Winkler_Score": 0.4354,
+                    "Mean_Pinball_Loss": 0.0109,
+                    "std": {
+                        "PICP_pct": 0.0,
+                        "Target_Coverage_pct": 0.0,
+                        "MPIW": 0.0,
+                        "Winkler_Score": 0.0,
+                        "Mean_Pinball_Loss": 0.0
+                    },
+                    "seeds": [
+                        42,
+                        43,
+                        44,
+                        45,
+                        46
+                    ]
                 },
                 "all_hours": {
-                    "PICP_pct": 93.71,
+                    "PICP_pct": 96.98,
                     "Target_Coverage_pct": 90.0,
-                    "MPIW": 0.1684,
-                    "Winkler_Score": 0.229,
-                    "Mean_Pinball_Loss": 0.0057,
-                    "Empirical_Coverage_Meets_Nominal_Target": true,
-                    "Coverage_Guaranteed": true
+                    "MPIW": 0.2157,
+                    "Winkler_Score": 0.2555,
+                    "Mean_Pinball_Loss": 0.0064,
+                    "std": {
+                        "PICP_pct": 0.0,
+                        "Target_Coverage_pct": 0.0,
+                        "MPIW": 0.0,
+                        "Winkler_Score": 0.0,
+                        "Mean_Pinball_Loss": 0.0
+                    },
+                    "seeds": [
+                        42,
+                        43,
+                        44,
+                        45,
+                        46
+                    ]
+                }
+            }
+        },
+        "GHI Stuck-at-Value (24h)": {
+            "point_metrics": {
+                "daytime": {
+                    "MAE": 0.0702,
+                    "RMSE": 0.1119,
+                    "nMAE_pct": 7.02,
+                    "nRMSE_pct": 11.19,
+                    "R2": 0.8719,
+                    "std": {
+                        "MAE": 0.0,
+                        "RMSE": 0.0,
+                        "nMAE_pct": 0.0,
+                        "nRMSE_pct": 0.0,
+                        "R2": 0.0
+                    },
+                    "seeds": [
+                        42,
+                        43,
+                        44,
+                        45,
+                        46
+                    ]
+                },
+                "all_hours": {
+                    "MAE": 0.0372,
+                    "RMSE": 0.0809,
+                    "nMAE_pct": 3.72,
+                    "nRMSE_pct": 8.09,
+                    "R2": 0.9336,
+                    "std": {
+                        "MAE": 0.0,
+                        "RMSE": 0.0,
+                        "nMAE_pct": 0.0,
+                        "nRMSE_pct": 0.0,
+                        "R2": 0.0
+                    },
+                    "seeds": [
+                        42,
+                        43,
+                        44,
+                        45,
+                        46
+                    ]
+                }
+            },
+            "uncertainty_metrics": {
+                "daytime": {
+                    "PICP_pct": 94.51,
+                    "Target_Coverage_pct": 90.0,
+                    "MPIW": 0.3615,
+                    "Winkler_Score": 0.4305,
+                    "Mean_Pinball_Loss": 0.0108,
+                    "std": {
+                        "PICP_pct": 0.0,
+                        "Target_Coverage_pct": 0.0,
+                        "MPIW": 0.0,
+                        "Winkler_Score": 0.0,
+                        "Mean_Pinball_Loss": 0.0
+                    },
+                    "seeds": [
+                        42,
+                        43,
+                        44,
+                        45,
+                        46
+                    ]
+                },
+                "all_hours": {
+                    "PICP_pct": 97.14,
+                    "Target_Coverage_pct": 90.0,
+                    "MPIW": 0.2169,
+                    "Winkler_Score": 0.2529,
+                    "Mean_Pinball_Loss": 0.0063,
+                    "std": {
+                        "PICP_pct": 0.0,
+                        "Target_Coverage_pct": 0.0,
+                        "MPIW": 0.0,
+                        "Winkler_Score": 0.0,
+                        "Mean_Pinball_Loss": 0.0
+                    },
+                    "seeds": [
+                        42,
+                        43,
+                        44,
+                        45,
+                        46
+                    ]
                 }
             }
         }

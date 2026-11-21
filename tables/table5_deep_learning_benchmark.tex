@@ -7,9 +7,9 @@
 \toprule
 \textbf{Model Architecture} & \textbf{nMAE (\%)} & \textbf{95\% CI (nMAE)} & \textbf{nRMSE (\%)} & \textbf{DM Statistic vs. GBDT} & \textbf{$p$-value} \\
 \midrule
-\textbf{LightGBM (GBDT)} & \textbf{6.02} & \textbf{[5.41, 6.68]} & \textbf{9.93} & --- & Reference \\
-PyTorch LSTM & 6.73 & [6.16, 7.38] & 10.51 & -6.1747 & $p = < 0.0001$$^{***}$ \\
-PyTorch TCN & 6.43 & [5.82, 7.11] & 10.42 & -3.5131 & $p = 0.0005$$^{***}$ \\
+\textbf{LightGBM (GBDT)} & \textbf{6.93} & \textbf{[6.23, 7.66]} & \textbf{11.11} & --- & Reference \\
+PyTorch LSTM & 7.37 & [6.79, 7.99] & 10.99 & -2.5250 & $p = 0.0117$ \\
+PyTorch TCN & 7.69 & [6.97, 8.41] & 11.91 & -3.5559 & $p = 0.0004$$^{***}$ \\
 \midrule
 \multicolumn{6}{l}{\footnotesize $^{**}p < 0.01$, $^{***}p < 0.001$. Negative DM statistic indicates LightGBM has statistically significantly lower loss.} \\
 \bottomrule

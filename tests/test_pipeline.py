@@ -20,6 +20,7 @@ from src.evaluation.metrics import calculate_point_metrics, calculate_uncertaint
 from src.uncertainty.conformal_predictor import ConformalizedQuantileRegressor
 from src.evaluation.statistical_tests import diebold_mariano_test, block_bootstrap_confidence_interval
 from src.uncertainty.sensor_perturbation import SensorPerturbationEngine
+from src.models.deep_networks import TimeSeriesSequenceDataset
 
 class TestSolarPipeline(unittest.TestCase):
 
@@ -42,7 +43,9 @@ class TestSolarPipeline(unittest.TestCase):
         engineer = SolarFeatureEngineer(target_col="capacity_factor")
         dates = pd.date_range("2026-01-01 00:00:00", periods=50, freq="1h")
         df = pd.DataFrame({
-            "capacity_factor": np.linspace(0.1, 0.6, 50)
+            "capacity_factor": np.linspace(0.1, 0.6, 50),
+            "solar_elevation_deg": np.linspace(-10, 40, 50),
+            "solar_azimuth_deg": np.full(50, 180.0),
         }, index=dates)
 
         featured = engineer.build_features(df)
@@ -54,7 +57,8 @@ class TestSolarPipeline(unittest.TestCase):
         """Verify diurnal cyclic encodings map smoothly within [-1, 1] and periodicity holds."""
         engineer = SolarFeatureEngineer(target_col="capacity_factor")
         dates = pd.date_range("2026-06-01 00:00:00", periods=72, freq="1h")
-        df = pd.DataFrame({"capacity_factor": [0.5] * 72}, index=dates)
+        df = pd.DataFrame({"capacity_factor": [0.5] * 72, "solar_elevation_deg": [30.0] * 72,
+                           "solar_azimuth_deg": [180.0] * 72}, index=dates)
         featured = engineer.build_features(df)
 
         # Check amplitude bounds [-1, 1]
@@ -157,6 +161,64 @@ class TestSolarPipeline(unittest.TestCase):
         sub_1d = FewShotDomainAdapter.extract_budget_subset(df_target, budget_days=1)
         self.assertEqual(len(sub_1d), 24, "1 calendar day must contain exactly 24 hourly observations")
         self.assertEqual(sub_1d.index.max(), pd.Timestamp("2026-01-01 23:00:00"), "Right-open boundary must not leak 2026-01-02 00:00:00")
+
+    def test_target_day_mask_and_timestamp_are_aligned(self):
+        dates = pd.date_range("2026-06-01 00:00", periods=30, freq="h")
+        df = pd.DataFrame({"capacity_factor": np.arange(30) / 100, "is_daytime": [False] * 6 + [True] * 24,
+                           "solar_elevation_deg": [-1.0] * 6 + [10.0] * 24,
+                           "solar_azimuth_deg": [180.0] * 30}, index=dates)
+        out = SolarFeatureEngineer().build_features(df)
+        self.assertEqual(out.loc[dates[24], "target_timestamp"], dates[25])
+        self.assertTrue(bool(out.loc[dates[24], "target_is_daytime"]))
+
+    def test_feature_engineering_does_not_bridge_missing_hour(self):
+        dates = pd.date_range("2026-06-01", periods=30, freq="h").delete(15)
+        df = pd.DataFrame({"capacity_factor": np.full(len(dates), 0.4), "is_daytime": True,
+                           "solar_elevation_deg": 20.0, "solar_azimuth_deg": 180.0}, index=dates)
+        out = SolarFeatureEngineer().build_features(df)
+        self.assertNotIn(pd.Timestamp("2026-06-01 14:00"), out.index)
+
+    def test_missing_geometry_fails_clearly(self):
+        dates = pd.date_range("2026-06-01", periods=30, freq="h")
+        with self.assertRaisesRegex(ValueError, "Solar geometry is missing"):
+            SolarFeatureEngineer().build_features(pd.DataFrame({"capacity_factor": np.full(30, 0.2)}, index=dates))
+
+    def test_missingness_indicators_are_model_inputs(self):
+        dates = pd.date_range("2026-06-01", periods=30, freq="h")
+        df = pd.DataFrame({"capacity_factor": 0.2, "is_daytime": True, "solar_elevation_deg": 20.0,
+                           "solar_azimuth_deg": 180.0, "ghi_wm2": 100.0, "ghi_wm2_was_missing": 0}, index=dates)
+        out = SolarFeatureEngineer().build_features(df)
+        self.assertIn("ghi_wm2_was_missing", out.columns)
+
+    def test_uncertainty_metrics_do_not_claim_guarantee(self):
+        m = calculate_uncertainty_metrics(np.array([0.5]), np.array([0.4]), np.array([0.6]))
+        self.assertIn("Empirical_Coverage_Meets_Nominal_Target", m)
+        self.assertNotIn("Coverage_Guaranteed", m)
+
+    def test_sensor_packet_loss_is_synchronized_and_causal(self):
+        x = pd.DataFrame({"ghi_lag_0": [1., 2., 3., 4.], "temp_lag_0": [10., 20., 30., 40.]})
+        engine = SensorPerturbationEngine(42)
+        out = engine.simulate_synchronized_packet_loss(x, 0.75)
+        self.assertTrue(np.allclose(out.iloc[2].values, [2., 20.]))
+
+    def test_cqr_intervals_are_not_clipped(self):
+        cqr = ConformalizedQuantileRegressor()
+        class Fixed:
+            def predict(self, X): return np.full(len(X), -0.2)
+        class FixedHigh:
+            def predict(self, X): return np.full(len(X), 1.4)
+        cqr.model_low, cqr.model_high, cqr.is_calibrated_ = Fixed(), FixedHigh(), False
+        lo, hi = cqr.predict_intervals(pd.DataFrame({"x": [0]}), apply_conformal=False)
+        self.assertAlmostEqual(lo[0], -0.2)
+        self.assertAlmostEqual(hi[0], 1.4)
+
+    def test_sequence_windows_never_bridge_missing_hours(self):
+        dates = pd.date_range("2026-06-01", periods=12, freq="h").delete(6)
+        ds = TimeSeriesSequenceDataset(np.arange(len(dates)).reshape(-1, 1), np.arange(len(dates)), seq_len=3, timestamps=dates)
+        for i in range(len(ds)):
+            x, _ = ds[i]
+            self.assertEqual(len(x), 3)
+        self.assertLess(len(ds), len(dates) - 2)
 
     def test_diebold_mariano_hac_estimation(self):
         """Verify Diebold-Mariano test with Newey-West HAC variance and finite-sample correction."""

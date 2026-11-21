@@ -26,6 +26,7 @@ def run_shap_analysis():
     logging.info("Loading feature matrices for SHAP attribution...")
     df_a = pd.read_csv(path_a, index_col=0, parse_dates=True)
     df_b = pd.read_csv(path_b, index_col=0, parse_dates=True)
+    df_a['target_timestamp'] = pd.to_datetime(df_a['target_timestamp'])
 
     feature_cols = [
         'hour_sin', 'hour_cos', 'doy_sin', 'doy_cos',
@@ -37,15 +38,17 @@ def run_shap_analysis():
         'solar_elevation_deg', 'solar_azimuth_deg'
     ]
     feature_cols = [c for c in feature_cols if c in df_a.columns and c in df_b.columns]
+    feature_cols += [c for c in df_a.columns if c.endswith('_was_missing') and c in df_b.columns]
     target_col = 'target_1h'
 
     # Train model on Source Site A
     model = SolarLightGBM(n_estimators=150, learning_rate=0.05, max_depth=6)
-    model.fit(df_a[feature_cols], df_a[target_col])
-
-    # Sample test set from Target Site B
+    # Use source labels available before the target holdout begins.
     n_b = len(df_b)
     target_test_b = df_b.iloc[int(n_b * 0.80):]
+    source = df_a.loc[df_a['target_timestamp'] < target_test_b.index.min()]
+    source = source.iloc[:int(len(source) * 0.85)]
+    model.fit(source[feature_cols], source[target_col])
     X_test = target_test_b[feature_cols]
 
     logging.info(f"Computing TreeExplainer SHAP values on {len(X_test)} target test samples...")

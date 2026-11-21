@@ -8,19 +8,21 @@
 \textbf{Regime / Degradation Scenario} & \textbf{nMAE (\%)} & \textbf{nRMSE (\%)} & \textbf{PICP (\%)} & \textbf{MPIW} & \textbf{Winkler Score} \\
 \midrule
 \multicolumn{6}{l}{\textit{Panel A: Uncertainty Calibration Regimes (100\% Sensors Available)}} \\
-Raw Quantile Regression (No Conformal) & 8.50 & 11.84 & 87.83 & 0.2852 & 0.3927 \\
-Source-Calibrated CQR (Site A Calibration) & 8.50 & 11.84 & 87.83 & 0.2852 & 0.3927 \\
-Target-Adapted CQR (14-day Local Calibration) & 8.50 & 11.84 & \textbf{89.26} & 0.2882 & \textbf{0.3921} \\
+Raw Quantile Regression (No Conformal) & 8.50 & 11.84 & 88.20 & 0.3135 & 0.4198 \\
+Source-Calibrated CQR (Site A Calibration) & 8.50 & 11.84 & 90.27 & 0.3232 & 0.4191 \\
+Target-Adapted CQR (14-day Local Calibration) & 8.50 & 11.84 & \textbf{94.51} & 0.3609 & \textbf{0.4299} \\
 \midrule
 \multicolumn{6}{l}{\textit{Panel B: Sensor Availability Shifts \& Telemetry Degradation}} \\
-\textbf{Complete Telemetry (100\% Sensors)} & \textbf{8.50} & \textbf{11.84} & \textbf{89.26} & \textbf{0.2882} & 0.3921 \\
-Moderate Dropout (10\% MCAR) & 8.65 & 12.00 & 88.31 & 0.2883 & 0.4042 \\
-Severe Dropout (30\% MCAR) & 8.85 & 12.07 & 85.84 & 0.2888 & 0.4069 \\
-Extreme Dropout (50\% MCAR) & 9.56 & 12.75 & 82.60 & 0.2966 & 0.4378 \\
-Contiguous Outage (3h Block) & 8.52 & 11.86 & 89.16 & 0.2882 & 0.3940 \\
-Contiguous Outage (6h Block) & 8.50 & 11.82 & 89.16 & 0.2876 & 0.3921 \\
-Total Pyranometer Outage (No GHI) & 11.30 & 15.04 & 71.58 & 0.3146 & 0.5488 \\
-Pyranometer Drift (+15\% Soiling Bias) & 8.44 & 11.77 & 89.26 & 0.2871 & 0.3939 \\
+\textbf{Complete Telemetry (100\% Sensors)} & \textbf{6.93} & \textbf{11.11} & \textbf{94.51} & \textbf{0.3609} & 0.4299 \\
+Moderate Dropout (10\% MCAR) & 7.07 & 11.21 & 94.10 & 0.3609 & 0.4326 \\
+Synchronized Packet Loss (30\%) & 7.31 & 11.46 & 92.90 & 0.3610 & 0.4450 \\
+Severe Dropout (30\% MCAR) & 7.46 & 11.51 & 92.78 & 0.3613 & 0.4404 \\
+Extreme Dropout (50\% MCAR) & 7.92 & 11.90 & 90.70 & 0.3641 & 0.4570 \\
+Contiguous Outage (3h Block) & 6.96 & 11.15 & 94.35 & 0.3609 & 0.4327 \\
+Contiguous Outage (6h Block) & 7.00 & 11.18 & 94.29 & 0.3612 & 0.4328 \\
+Total Pyranometer Outage (No GHI) & 10.84 & 14.35 & 86.02 & 0.4010 & 0.5171 \\
+Pyranometer Drift (+15\% Soiling Bias) & 6.95 & 11.24 & 94.20 & 0.3592 & 0.4354 \\
+GHI Stuck-at-Value (24h) & 7.02 & 11.19 & 94.51 & 0.3615 & 0.4305 \\
 \bottomrule
 \end{tabular}
 \end{table}

@@ -6,7 +6,7 @@ Calculates deterministic point forecast metrics and probabilistic uncertainty me
 - Uncertainty Metrics: PICP (%), MPIW, Winkler Score, Pinball Loss.
 """
 
-from typing import Dict, Tuple, Optional
+from typing import Any, Dict, Tuple, Optional
 import numpy as np
 import pandas as pd
 
@@ -95,8 +95,7 @@ def calculate_uncertainty_metrics(
         "Winkler_Score": round(float(winkler_score), 4),
         "Mean_Pinball_Loss": round(float(mean_pinball), 4),
         # SCIENTIFIC HONESTY: An empirical metric meeting a nominal target is NOT a mathematical guarantee
-        "Empirical_Coverage_Meets_Nominal_Target": bool(picp >= target_cov),
-        "Coverage_Guaranteed": bool(picp >= target_cov) # Backward compatibility alias
+        "Empirical_Coverage_Meets_Nominal_Target": bool(picp >= target_cov)
     }
 
 
